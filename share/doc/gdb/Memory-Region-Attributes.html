@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
-<!-- Copyright (C) 1988-2021 Free Software Foundation, Inc.
+<!-- Copyright (C) 1988-2022 Free Software Foundation, Inc.
 
 Permission is granted to copy, distribute and/or modify this document
 under the terms of the GNU Free Documentation License, Version 1.3 or
@@ -68,7 +68,7 @@ Next: <a href="Dump_002fRestore-Files.html#Dump_002fRestore-Files" accesskey="n"
 </div>
 <hr>
 <a name="Memory-Region-Attributes-1"></a>
-<h3 class="section">10.17 Memory Region Attributes</h3>
+<h3 class="section">10.18 Memory Region Attributes</h3>
 <a name="index-memory-region-attributes"></a>
 
 <p><em>Memory region attributes</em> allow you to describe special handling
@@ -151,10 +151,10 @@ Disabled memory regions are marked with &lsquo;<samp>n</samp>&rsquo;.
 
 
 <a name="Attributes"></a>
-<h4 class="subsection">10.17.1 Attributes</h4>
+<h4 class="subsection">10.18.1 Attributes</h4>
 
 <a name="Memory-Access-Mode"></a>
-<h4 class="subsubsection">10.17.1.1 Memory Access Mode</h4>
+<h4 class="subsubsection">10.18.1.1 Memory Access Mode</h4>
 <p>The access mode attributes set whether <small>GDB</small> may make read or
 write accesses to a memory region.
 </p>
@@ -175,7 +175,7 @@ etc. from accessing memory.
 </dl>
 
 <a name="Memory-Access-Size"></a>
-<h4 class="subsubsection">10.17.1.2 Memory Access Size</h4>
+<h4 class="subsubsection">10.18.1.2 Memory Access Size</h4>
 <p>The access size attribute tells <small>GDB</small> to use specific sized
 accesses in the memory region.  Often memory mapped device registers
 require specific sized accesses.  If no access size attribute is
@@ -198,7 +198,7 @@ specified, <small>GDB</small> may use accesses of any size.
 
 
 <a name="Data-Cache"></a>
-<h4 class="subsubsection">10.17.1.3 Data Cache</h4>
+<h4 class="subsubsection">10.18.1.3 Data Cache</h4>
 <p>The data cache attributes set whether <small>GDB</small> will cache target
 memory.  While this generally improves performance by reducing debug
 protocol overhead, it can lead to incorrect results because <small>GDB</small>
@@ -215,7 +215,7 @@ registers.
 </dl>
 
 <a name="Memory-Access-Checking"></a>
-<h4 class="subsection">10.17.2 Memory Access Checking</h4>
+<h4 class="subsection">10.18.2 Memory Access Checking</h4>
 <p><small>GDB</small> can be instructed to refuse accesses to memory that is
 not explicitly described.  This can be useful if accessing such
 regions has undesired effects for a specific target, or to provide

@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
-<!-- Copyright (C) 1988-2020 Free Software Foundation, Inc.
+<!-- Copyright (C) 1988-2021 Free Software Foundation, Inc.
 
 Permission is granted to copy, distribute and/or modify this document
 under the terms of the GNU Free Documentation License, Version 1.3 or
@@ -123,7 +123,7 @@ the percentage of branches taken.
 exit without doing any further processing.
 </p>
 </dd>
-<dt><code>-i</code></dt>
+<dt><code>-j</code></dt>
 <dt><code>--json-format</code></dt>
 <dd><p>Output gcov file in an easy-to-parse JSON intermediate format
 which does not require source code for generation.  The JSON
@@ -262,7 +262,7 @@ Fields of the <var>line</var> element have following semantics:
 </li></ul>
 
 </dd>
-<dt><code>-j</code></dt>
+<dt><code>-H</code></dt>
 <dt><code>--human-readable</code></dt>
 <dd><p>Write counts in human readable format (like 24.6k).
 </p>
@@ -466,7 +466,8 @@ for each line.  For example, if your program is called <samp>tmp.cpp</samp>, thi
 is what you see when you use the basic <code>gcov</code> facility:
 </p>
 <div class="smallexample">
-<pre class="smallexample">$ g++ --coverage tmp.cpp
+<pre class="smallexample">$ g++ --coverage tmp.cpp -c
+$ g++ --coverage tmp.o
 $ a.out
 $ gcov tmp.cpp -m
 File 'tmp.cpp'

@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
-<!-- Copyright (C) 1988-2021 Free Software Foundation, Inc.
+<!-- Copyright (C) 1988-2022 Free Software Foundation, Inc.
 
 Permission is granted to copy, distribute and/or modify this document
 under the terms of the GNU Free Documentation License, Version 1.3 or
@@ -88,9 +88,10 @@ asynchronous command finishes its execution.  The default is off.
 <dt><code>show exec-done-display</code></dt>
 <dd><p>Displays the current setting of asynchronous command completion
 notification.
+</p>
 <a name="index-set-debug"></a>
 <a name="index-ARM-AArch64"></a>
-</p></dd>
+</dd>
 <dt><code>set debug aarch64</code></dt>
 <dd><p>Turns on or off display of debugging messages related to ARM AArch64.
 The default is off.
@@ -99,23 +100,26 @@ The default is off.
 <dt><code>show debug aarch64</code></dt>
 <dd><p>Displays the current state of displaying debugging messages related to
 ARM AArch64.
+</p>
 <a name="index-gdbarch-debugging-info"></a>
 <a name="index-architecture-debugging-info"></a>
-</p></dd>
+</dd>
 <dt><code>set debug arch</code></dt>
 <dd><p>Turns on or off display of gdbarch debugging info.  The default is off
 </p></dd>
 <dt><code>show debug arch</code></dt>
 <dd><p>Displays the current state of displaying gdbarch debugging info.
-</p></dd>
+</p>
+</dd>
 <dt><code>set debug aix-solib</code></dt>
 <dd><a name="index-AIX-shared-library-debugging"></a>
 <p>Control display of debugging messages from the AIX shared library
 support module.  The default is off.
 </p></dd>
-<dt><code>show debug aix-thread</code></dt>
+<dt><code>show debug aix-solib</code></dt>
 <dd><p>Show the current state of displaying AIX shared library debugging messages.
-</p></dd>
+</p>
+</dd>
 <dt><code>set debug aix-thread</code></dt>
 <dd><a name="index-AIX-threads"></a>
 <p>Display debugging messages about inner workings of the AIX thread
@@ -123,7 +127,8 @@ module.
 </p></dd>
 <dt><code>show debug aix-thread</code></dt>
 <dd><p>Show the current state of AIX thread debugging info display.
-</p></dd>
+</p>
+</dd>
 <dt><code>set debug check-physname</code></dt>
 <dd><a name="index-physname"></a>
 <p>Check the results of the &ldquo;physname&rdquo; computation.  When reading DWARF
@@ -135,7 +140,8 @@ both ways and display any discrepancies.
 </p></dd>
 <dt><code>show debug check-physname</code></dt>
 <dd><p>Show the current state of &ldquo;physname&rdquo; checking.
-</p></dd>
+</p>
+</dd>
 <dt><code>set debug coff-pe-read</code></dt>
 <dd><a name="index-COFF_002fPE-exported-symbols"></a>
 <p>Control display of debugging messages related to reading of COFF/PE
@@ -144,7 +150,8 @@ exported symbols.  The default is off.
 <dt><code>show debug coff-pe-read</code></dt>
 <dd><p>Displays the current state of displaying debugging messages related to
 reading of COFF/PE exported symbols.
-</p></dd>
+</p>
+</dd>
 <dt><code>set debug dwarf-die</code></dt>
 <dd><a name="index-DWARF-DIEs"></a>
 <p>Dump DWARF DIEs after they are read in.
@@ -153,7 +160,8 @@ A value of zero turns off the display.
 </p></dd>
 <dt><code>show debug dwarf-die</code></dt>
 <dd><p>Show the current state of DWARF DIE debugging.
-</p></dd>
+</p>
+</dd>
 <dt><code>set debug dwarf-line</code></dt>
 <dd><a name="index-DWARF-Line-Tables"></a>
 <p>Turns on or off display of debugging messages related to reading
@@ -163,7 +171,8 @@ A value greater than 1 provides more verbose information.
 </p></dd>
 <dt><code>show debug dwarf-line</code></dt>
 <dd><p>Show the current state of DWARF line table debugging.
-</p></dd>
+</p>
+</dd>
 <dt><code>set debug dwarf-read</code></dt>
 <dd><a name="index-DWARF-Reading"></a>
 <p>Turns on or off display of debugging messages related to reading
@@ -173,7 +182,8 @@ A value greater than 1 provides more verbose information.
 </p></dd>
 <dt><code>show debug dwarf-read</code></dt>
 <dd><p>Show the current state of DWARF reader debugging.
-</p></dd>
+</p>
+</dd>
 <dt><code>set debug displaced</code></dt>
 <dd><a name="index-displaced-stepping-debugging-info"></a>
 <p>Turns on or off display of <small>GDB</small> debugging info for the
@@ -182,7 +192,8 @@ displaced stepping support.  The default is off.
 <dt><code>show debug displaced</code></dt>
 <dd><p>Displays the current state of displaying <small>GDB</small> debugging info
 related to displaced stepping.
-</p></dd>
+</p>
+</dd>
 <dt><code>set debug event</code></dt>
 <dd><a name="index-event-debugging-info"></a>
 <p>Turns on or off display of <small>GDB</small> event debugging info.  The
@@ -191,7 +202,20 @@ default is off.
 <dt><code>show debug event</code></dt>
 <dd><p>Displays the current state of displaying <small>GDB</small> event debugging
 info.
+</p>
+</dd>
+<dt><code>set debug event-loop</code></dt>
+<dd><a name="index-event_002dloop-debugging"></a>
+<p>Controls output of debugging info about the event loop.  The possible
+values are &lsquo;<samp>off</samp>&rsquo;, &lsquo;<samp>all</samp>&rsquo; (shows all debugging info) and
+&lsquo;<samp>all-except-ui</samp>&rsquo; (shows all debugging info except those about
+UI-related events).
 </p></dd>
+<dt><code>show debug event-loop</code></dt>
+<dd><p>Shows the current state of displaying debugging info about the event
+loop.
+</p>
+</dd>
 <dt><code>set debug expression</code></dt>
 <dd><a name="index-expression-debugging-info"></a>
 <p>Turns on or off display of debugging info about <small>GDB</small>
@@ -200,21 +224,35 @@ expression parsing.  The default is off.
 <dt><code>show debug expression</code></dt>
 <dd><p>Displays the current state of displaying debugging info about
 <small>GDB</small> expression parsing.
-</p></dd>
+</p>
+</dd>
 <dt><code>set debug fbsd-lwp</code></dt>
 <dd><a name="index-FreeBSD-LWP-debug-messages"></a>
 <p>Turns on or off debugging messages from the FreeBSD LWP debug support.
 </p></dd>
 <dt><code>show debug fbsd-lwp</code></dt>
 <dd><p>Show the current state of FreeBSD LWP debugging messages.
-</p></dd>
+</p>
+</dd>
 <dt><code>set debug fbsd-nat</code></dt>
 <dd><a name="index-FreeBSD-native-target-debug-messages"></a>
 <p>Turns on or off debugging messages from the FreeBSD native target.
 </p></dd>
 <dt><code>show debug fbsd-nat</code></dt>
 <dd><p>Show the current state of FreeBSD native target debugging messages.
-</p></dd>
+</p>
+</dd>
+<dt><code>set debug fortran-array-slicing</code></dt>
+<dd><a name="index-fortran-array-slicing-debugging-info"></a>
+<p>Turns on or off display of <small>GDB</small> Fortran array slicing
+debugging info.  The default is off.
+</p>
+</dd>
+<dt><code>show debug fortran-array-slicing</code></dt>
+<dd><p>Displays the current state of displaying <small>GDB</small> Fortran array
+slicing debugging info.
+</p>
+</dd>
 <dt><code>set debug frame</code></dt>
 <dd><a name="index-frame-debugging-info"></a>
 <p>Turns on or off display of <small>GDB</small> frame debugging info.  The
@@ -223,14 +261,16 @@ default is off.
 <dt><code>show debug frame</code></dt>
 <dd><p>Displays the current state of displaying <small>GDB</small> frame debugging
 info.
-</p></dd>
+</p>
+</dd>
 <dt><code>set debug gnu-nat</code></dt>
 <dd><a name="index-GNU_002fHurd-debug-messages"></a>
 <p>Turn on or off debugging messages from the <small>GNU</small>/Hurd debug support.
 </p></dd>
 <dt><code>show debug gnu-nat</code></dt>
 <dd><p>Show the current state of <small>GNU</small>/Hurd debugging messages.
-</p></dd>
+</p>
+</dd>
 <dt><code>set debug infrun</code></dt>
 <dd><a name="index-inferior-debugging-info"></a>
 <p>Turns on or off display of <small>GDB</small> debugging info for running the inferior.
@@ -239,14 +279,16 @@ for implementing operations such as single-stepping the inferior.
 </p></dd>
 <dt><code>show debug infrun</code></dt>
 <dd><p>Displays the current state of <small>GDB</small> inferior debugging.
-</p></dd>
+</p>
+</dd>
 <dt><code>set debug jit</code></dt>
 <dd><a name="index-just_002din_002dtime-compilation_002c-debugging-messages"></a>
 <p>Turn on or off debugging messages from JIT debug support.
 </p></dd>
 <dt><code>show debug jit</code></dt>
 <dd><p>Displays the current state of <small>GDB</small> JIT debugging.
-</p></dd>
+</p>
+</dd>
 <dt><code>set debug lin-lwp</code></dt>
 <dd><a name="index-GNU_002fLinux-LWP-debug-messages"></a>
 <a name="index-Linux-lightweight-processes"></a>
@@ -254,14 +296,16 @@ for implementing operations such as single-stepping the inferior.
 </p></dd>
 <dt><code>show debug lin-lwp</code></dt>
 <dd><p>Show the current state of Linux LWP debugging messages.
-</p></dd>
+</p>
+</dd>
 <dt><code>set debug linux-namespaces</code></dt>
 <dd><a name="index-GNU_002fLinux-namespaces-debug-messages"></a>
 <p>Turn on or off debugging messages from the Linux namespaces debug support.
 </p></dd>
 <dt><code>show debug linux-namespaces</code></dt>
 <dd><p>Show the current state of Linux namespaces debugging messages.
-</p></dd>
+</p>
+</dd>
 <dt><code>set debug mach-o</code></dt>
 <dd><a name="index-Mach_002dO-symbols-processing"></a>
 <p>Control display of debugging messages related to Mach-O symbols
@@ -270,7 +314,8 @@ processing.  The default is off.
 <dt><code>show debug mach-o</code></dt>
 <dd><p>Displays the current state of displaying debugging messages related to
 reading of COFF/PE exported symbols.
-</p></dd>
+</p>
+</dd>
 <dt><code>set debug notification</code></dt>
 <dd><a name="index-remote-async-notification-debugging-info"></a>
 <p>Turn on or off debugging messages about remote async notification.
@@ -278,7 +323,8 @@ The default is off.
 </p></dd>
 <dt><code>show debug notification</code></dt>
 <dd><p>Displays the current state of remote async notification debugging messages.
-</p></dd>
+</p>
+</dd>
 <dt><code>set debug observer</code></dt>
 <dd><a name="index-observer-debugging-info"></a>
 <p>Turns on or off display of <small>GDB</small> observer debugging.  This
@@ -286,7 +332,8 @@ includes info such as the notification of observable events.
 </p></dd>
 <dt><code>show debug observer</code></dt>
 <dd><p>Displays the current state of observer debugging.
-</p></dd>
+</p>
+</dd>
 <dt><code>set debug overload</code></dt>
 <dd><a name="index-C_002b_002b-overload-debugging-info"></a>
 <p>Turns on or off display of <small>GDB</small> C<tt>++</tt> overload debugging
@@ -296,9 +343,10 @@ is off.
 <dt><code>show debug overload</code></dt>
 <dd><p>Displays the current state of displaying <small>GDB</small> C<tt>++</tt> overload
 debugging info.
+</p>
 <a name="index-expression-parser_002c-debugging-info"></a>
 <a name="index-debug-expression-parser"></a>
-</p></dd>
+</dd>
 <dt><code>set debug parser</code></dt>
 <dd><p>Turns on or off the display of expression parser debugging output.
 Internally, this sets the <code>yydebug</code> variable in the expression
@@ -307,12 +355,13 @@ details.  The default is off.
 </p></dd>
 <dt><code>show debug parser</code></dt>
 <dd><p>Show the current state of expression parser debugging.
+</p>
 <a name="index-packets_002c-reporting-on-stdout"></a>
 <a name="index-serial-connections_002c-debugging"></a>
 <a name="index-debug-remote-protocol"></a>
 <a name="index-remote-protocol-debugging"></a>
 <a name="index-display-remote-packets"></a>
-</p></dd>
+</dd>
 <dt><code>set debug remote</code></dt>
 <dd><p>Turns on or off display of reports on all packets sent back and forth across
 the serial line to the remote machine.  The info is printed on the
@@ -351,7 +400,8 @@ default is off.
 <dt><code>show debug serial</code></dt>
 <dd><p>Displays the current state of displaying <small>GDB</small> serial debugging
 info.
-</p></dd>
+</p>
+</dd>
 <dt><code>set debug solib-frv</code></dt>
 <dd><a name="index-FR_002dV-shared_002dlibrary-debugging"></a>
 <p>Turn on or off debugging messages for FR-V shared-library code.
@@ -359,7 +409,8 @@ info.
 <dt><code>show debug solib-frv</code></dt>
 <dd><p>Display the current state of FR-V shared-library code debugging
 messages.
-</p></dd>
+</p>
+</dd>
 <dt><code>set debug symbol-lookup</code></dt>
 <dd><a name="index-symbol-lookup"></a>
 <p>Turns on or off display of debugging messages related to symbol lookup.
@@ -369,7 +420,8 @@ A value greater than 1 provides more verbose information.
 </p></dd>
 <dt><code>show debug symbol-lookup</code></dt>
 <dd><p>Show the current state of symbol lookup debugging messages.
-</p></dd>
+</p>
+</dd>
 <dt><code>set debug symfile</code></dt>
 <dd><a name="index-symbol-file-functions"></a>
 <p>Turns on or off display of debugging messages related to symbol file functions.
@@ -377,7 +429,8 @@ The default is off.  See <a href="Files.html#Files">Files</a>.
 </p></dd>
 <dt><code>show debug symfile</code></dt>
 <dd><p>Show the current state of symbol file debugging messages.
-</p></dd>
+</p>
+</dd>
 <dt><code>set debug symtab-create</code></dt>
 <dd><a name="index-symbol-table-creation"></a>
 <p>Turns on or off display of debugging messages related to symbol table creation.
@@ -387,7 +440,8 @@ A value greater than 1 provides more verbose information.
 </p></dd>
 <dt><code>show debug symtab-create</code></dt>
 <dd><p>Show the current state of symbol table creation debugging.
-</p></dd>
+</p>
+</dd>
 <dt><code>set debug target</code></dt>
 <dd><a name="index-target-debugging-info"></a>
 <p>Turns on or off display of <small>GDB</small> target debugging info. This info
@@ -398,7 +452,8 @@ value of large memory transfers.
 <dt><code>show debug target</code></dt>
 <dd><p>Displays the current state of displaying <small>GDB</small> target debugging
 info.
-</p></dd>
+</p>
+</dd>
 <dt><code>set debug timestamp</code></dt>
 <dd><a name="index-timestamping-debugging-info"></a>
 <p>Turns on or off display of timestamps with <small>GDB</small> debugging info.
@@ -408,7 +463,8 @@ message.
 <dt><code>show debug timestamp</code></dt>
 <dd><p>Displays the current state of displaying timestamps with <small>GDB</small>
 debugging info.
-</p></dd>
+</p>
+</dd>
 <dt><code>set debug varobj</code></dt>
 <dd><a name="index-variable-object-debugging-info"></a>
 <p>Turns on or off display of <small>GDB</small> variable object debugging
@@ -417,7 +473,8 @@ info. The default is off.
 <dt><code>show debug varobj</code></dt>
 <dd><p>Displays the current state of displaying <small>GDB</small> variable object
 debugging info.
-</p></dd>
+</p>
+</dd>
 <dt><code>set debug xml</code></dt>
 <dd><a name="index-XML-parser-debugging"></a>
 <p>Turn on or off debugging messages for built-in XML parsers.

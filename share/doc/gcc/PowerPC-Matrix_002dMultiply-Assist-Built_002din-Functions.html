@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
-<!-- Copyright (C) 1988-2020 Free Software Foundation, Inc.
+<!-- Copyright (C) 1988-2021 Free Software Foundation, Inc.
 
 Permission is granted to copy, distribute and/or modify this document
 under the terms of the GNU Free Documentation License, Version 1.3 or
@@ -33,7 +33,7 @@ You have freedom to copy and modify this GNU Manual, like GNU
 <link href="Option-Index.html#Option-Index" rel="index" title="Option Index">
 <link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
 <link href="Target-Builtins.html#Target-Builtins" rel="up" title="Target Builtins">
-<link href="RISC_002dV-Built_002din-Functions.html#RISC_002dV-Built_002din-Functions" rel="next" title="RISC-V Built-in Functions">
+<link href="PRU-Built_002din-Functions.html#PRU-Built_002din-Functions" rel="next" title="PRU Built-in Functions">
 <link href="PowerPC-Atomic-Memory-Operation-Functions.html#PowerPC-Atomic-Memory-Operation-Functions" rel="previous" title="PowerPC Atomic Memory Operation Functions">
 <style type="text/css">
 <!--
@@ -71,7 +71,7 @@ ul.no-bullet {list-style: none}
 <a name="PowerPC-Matrix_002dMultiply-Assist-Built_002din-Functions"></a>
 <div class="header">
 <p>
-Next: <a href="RISC_002dV-Built_002din-Functions.html#RISC_002dV-Built_002din-Functions" accesskey="n" rel="next">RISC-V Built-in Functions</a>, Previous: <a href="PowerPC-Atomic-Memory-Operation-Functions.html#PowerPC-Atomic-Memory-Operation-Functions" accesskey="p" rel="previous">PowerPC Atomic Memory Operation Functions</a>, Up: <a href="Target-Builtins.html#Target-Builtins" accesskey="u" rel="up">Target Builtins</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html#Option-Index" title="Index" rel="index">Index</a>]</p>
+Next: <a href="PRU-Built_002din-Functions.html#PRU-Built_002din-Functions" accesskey="n" rel="next">PRU Built-in Functions</a>, Previous: <a href="PowerPC-Atomic-Memory-Operation-Functions.html#PowerPC-Atomic-Memory-Operation-Functions" accesskey="p" rel="previous">PowerPC Atomic Memory Operation Functions</a>, Up: <a href="Target-Builtins.html#Target-Builtins" accesskey="u" rel="up">Target Builtins</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html#Option-Index" title="Index" rel="index">Index</a>]</p>
 </div>
 <hr>
 <a name="PowerPC-Matrix_002dMultiply-Assist-Built_002din-Functions-1"></a>
@@ -79,10 +79,10 @@ Next: <a href="RISC_002dV-Built_002din-Functions.html#RISC_002dV-Built_002din-Fu
 <p>ISA 3.1 of the PowerPC added new Matrix-Multiply Assist (MMA) instructions.
 GCC provides support for these instructions through the following built-in
 functions which are enabled with the <code>-mmma</code> option.  The vec_t type
-below is defined to be a normal vector unsigned char type.Â  The uint2, uint4
+below is defined to be a normal vector unsigned char type.  The uint2, uint4
 and uint8 parameters are 2-bit, 4-bit and 8-bit unsigned integer constants
-respectively.Â  The compiler will verify that they are constants and that
-their values are within range.Â 
+respectively.  The compiler will verify that they are constants and that
+their values are within range.
 </p>
 <p>The built-in functions supported are:
 </p>
@@ -166,12 +166,15 @@ void __builtin_vsx_disassemble_pair (void *, __vector_pair *);
 
 vec_t __builtin_vsx_xvcvspbf16 (vec_t);
 vec_t __builtin_vsx_xvcvbf16spn (vec_t);
+
+__vector_pair __builtin_vsx_lxvp (size_t, __vector_pair *);
+void __builtin_vsx_stxvp (__vector_pair, size_t, __vector_pair *);
 </pre></div>
 
 <hr>
 <div class="header">
 <p>
-Next: <a href="RISC_002dV-Built_002din-Functions.html#RISC_002dV-Built_002din-Functions" accesskey="n" rel="next">RISC-V Built-in Functions</a>, Previous: <a href="PowerPC-Atomic-Memory-Operation-Functions.html#PowerPC-Atomic-Memory-Operation-Functions" accesskey="p" rel="previous">PowerPC Atomic Memory Operation Functions</a>, Up: <a href="Target-Builtins.html#Target-Builtins" accesskey="u" rel="up">Target Builtins</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html#Option-Index" title="Index" rel="index">Index</a>]</p>
+Next: <a href="PRU-Built_002din-Functions.html#PRU-Built_002din-Functions" accesskey="n" rel="next">PRU Built-in Functions</a>, Previous: <a href="PowerPC-Atomic-Memory-Operation-Functions.html#PowerPC-Atomic-Memory-Operation-Functions" accesskey="p" rel="previous">PowerPC Atomic Memory Operation Functions</a>, Up: <a href="Target-Builtins.html#Target-Builtins" accesskey="u" rel="up">Target Builtins</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html#Option-Index" title="Index" rel="index">Index</a>]</p>
 </div>
 
 

@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
-<!-- Copyright (C) 1988-2021 Free Software Foundation, Inc.
+<!-- Copyright (C) 1988-2022 Free Software Foundation, Inc.
 
 Permission is granted to copy, distribute and/or modify this document
 under the terms of the GNU Free Documentation License, Version 1.3 or
@@ -307,7 +307,7 @@ and only if there is a corresponding executable file.
 <h4 class="subheading">Example</h4>
 
 <div class="smallexample">
-<pre class="smallexample">gdb
+<pre class="smallexample">(gdb)
 -list-thread-groups
 ^done,groups=[{id=&quot;17&quot;,type=&quot;process&quot;,pid=&quot;yyy&quot;,num_children=&quot;2&quot;}]
 -list-thread-groups 17
@@ -359,7 +359,7 @@ system.
 like this:
 </p>
 <div class="smallexample">
-<pre class="smallexample">gdb
+<pre class="smallexample">(gdb)
 -info-os
 ^done,OSDataTable={nr_rows=&quot;10&quot;,nr_cols=&quot;3&quot;,
 hdr=[{width=&quot;10&quot;,alignment=&quot;-1&quot;,col_name=&quot;col0&quot;,colhdr=&quot;Type&quot;},
@@ -385,7 +385,7 @@ body=[item={col0=&quot;cpus&quot;,col1=&quot;Listing of all cpus/cores on the sy
             col2=&quot;Sockets&quot;},
       item={col0=&quot;threads&quot;,col1=&quot;Listing of all threads&quot;,
             col2=&quot;Threads&quot;}]
-gdb
+(gdb)
 -info-os processes
 ^done,OSDataTable={nr_rows=&quot;190&quot;,nr_cols=&quot;4&quot;,
 hdr=[{width=&quot;10&quot;,alignment=&quot;-1&quot;,col_name=&quot;col0&quot;,colhdr=&quot;pid&quot;},
@@ -429,7 +429,7 @@ thread group corresponding to the new inferior.
 <h4 class="subheading">Example</h4>
 
 <div class="smallexample">
-<pre class="smallexample">gdb
+<pre class="smallexample">(gdb)
 -add-inferior
 ^done,inferior=&quot;i3&quot;
 </pre></div>

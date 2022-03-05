@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
-<!-- Copyright (C) 1988-2020 Free Software Foundation, Inc.
+<!-- Copyright (C) 1988-2021 Free Software Foundation, Inc.
 
 Permission is granted to copy, distribute and/or modify this document
 under the terms of the GNU Free Documentation License, Version 1.3 or
@@ -441,6 +441,28 @@ Currently, the following sets are defined:
 -fsingle-precision-constant
 </pre></div>
 
+<p><samp>-mcustom-fpu-cfg=fph2</samp> is equivalent to:
+</p><div class="smallexample">
+<pre class="smallexample">-mcustom-fabss=224 
+-mcustom-fnegs=225 
+-mcustom-fcmpnes=226 
+-mcustom-fcmpeqs=227 
+-mcustom-fcmpges=228 
+-mcustom-fcmpgts=229 
+-mcustom-fcmples=230 
+-mcustom-fcmplts=231 
+-mcustom-fmaxs=232 
+-mcustom-fmins=233 
+-mcustom-round=248 
+-mcustom-fixsi=249 
+-mcustom-floatis=250 
+-mcustom-fsqrts=251 
+-mcustom-fmuls=252 
+-mcustom-fadds=253 
+-mcustom-fsubs=254 
+-mcustom-fdivs=255 
+</pre></div>
+
 <p>Custom instruction assignments given by individual
 <samp>-mcustom-<var>insn</var>=</samp> options override those given by
 <samp>-mcustom-fpu-cfg=</samp>, regardless of the
@@ -450,6 +472,14 @@ order of the options on the command line.
 configuration by using the <code>target(&quot;custom-fpu-cfg=<var>name</var>&quot;)</code>
 function attribute (see <a href="Function-Attributes.html#Function-Attributes">Function Attributes</a>)
 or pragma (see <a href="Function-Specific-Option-Pragmas.html#Function-Specific-Option-Pragmas">Function Specific Option Pragmas</a>).
+</p>
+<p>The name <var>fph2</var> is an abbreviation for <em>Nios II Floating Point
+Hardware 2 Component</em>.  Please note that the custom instructions enabled by
+<samp>-mcustom-fmins=233</samp> and <samp>-mcustom-fmaxs=234</samp> are only generated
+if <samp>-ffinite-math-only</samp> is specified.  The custom instruction enabled by
+<samp>-mcustom-round=248</samp> is only generated if <samp>-fno-math-errno</samp> is
+specified.  In contrast to the other configurations,
+<samp>-fsingle-precision-constant</samp> is not set.
 </p>
 </dd>
 </dl>

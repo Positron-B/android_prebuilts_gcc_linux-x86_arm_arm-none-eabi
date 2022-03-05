@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
-<!-- Copyright (C) 1988-2020 Free Software Foundation, Inc.
+<!-- Copyright (C) 1988-2021 Free Software Foundation, Inc.
 
 Permission is granted to copy, distribute and/or modify this document
 under the terms of the GNU Free Documentation License, Version 1.3 or
@@ -142,6 +142,7 @@ compilation time.
 -fif-conversion 
 -fif-conversion2 
 -finline-functions-called-once 
+-fipa-modref 
 -fipa-profile 
 -fipa-pure-const 
 -fipa-reference 
@@ -1358,10 +1359,18 @@ default at any optimization level.
 <dd><a name="index-fipa_002dprofile"></a>
 <p>Perform interprocedural profile propagation.  The functions called only from
 cold functions are marked as cold. Also functions executed once (such as
-<code>cold</code>, <code>noreturn</code>, static constructors or destructors) are identified. Cold
-functions and loop less parts of functions executed once are then optimized for
-size.
+<code>cold</code>, <code>noreturn</code>, static constructors or destructors) are
+identified. Cold functions and loop less parts of functions executed once are
+then optimized for size.
 Enabled by default at <samp>-O</samp> and higher.
+</p>
+</dd>
+<dt><code>-fipa-modref</code></dt>
+<dd><a name="index-fipa_002dmodref"></a>
+<p>Perform interprocedural mod/ref analysis.  This optimization analyzes the side
+effects of functions (memory locations that are modified or referenced) and
+enables better optimization across the function call boundary.  This flag is
+enabled by default at <samp>-O</samp> and higher.
 </p>
 </dd>
 <dt><code>-fipa-cp</code></dt>
@@ -1452,7 +1461,7 @@ callers are impacted, therefore need to be patched as well.
 <pre class="smallexample">-fwhole-program  -fipa-pta  -fipa-reference  -fipa-ra 
 -fipa-icf  -fipa-icf-functions  -fipa-icf-variables 
 -fipa-bit-cp  -fipa-vrp  -fipa-pure-const  -fipa-reference-addressable 
--fipa-stack-alignment
+-fipa-stack-alignment -fipa-modref
 </pre></div>
 
 </dd>
@@ -1857,7 +1866,8 @@ and <samp>-fauto-profile</samp>.
 <dt><code>-fvect-cost-model=<var>model</var></code></dt>
 <dd><a name="index-fvect_002dcost_002dmodel"></a>
 <p>Alter the cost model used for vectorization.  The <var>model</var> argument
-should be one of &lsquo;<samp>unlimited</samp>&rsquo;, &lsquo;<samp>dynamic</samp>&rsquo; or &lsquo;<samp>cheap</samp>&rsquo;.
+should be one of &lsquo;<samp>unlimited</samp>&rsquo;, &lsquo;<samp>dynamic</samp>&rsquo;, &lsquo;<samp>cheap</samp>&rsquo; or
+&lsquo;<samp>very-cheap</samp>&rsquo;.
 With the &lsquo;<samp>unlimited</samp>&rsquo; model the vectorized code-path is assumed
 to be profitable while with the &lsquo;<samp>dynamic</samp>&rsquo; model a runtime check
 guards the vectorized code-path to enable it only for iteration
@@ -1865,8 +1875,15 @@ counts that will likely execute faster than when executing the original
 scalar loop.  The &lsquo;<samp>cheap</samp>&rsquo; model disables vectorization of
 loops where doing so would be cost prohibitive for example due to
 required runtime checks for data dependence or alignment but otherwise
-is equal to the &lsquo;<samp>dynamic</samp>&rsquo; model.
-The default cost model depends on other optimization flags and is
+is equal to the &lsquo;<samp>dynamic</samp>&rsquo; model.  The &lsquo;<samp>very-cheap</samp>&rsquo; model only
+allows vectorization if the vector code would entirely replace the
+scalar code that is being vectorized.  For example, if each iteration
+of a vectorized loop would only be able to handle exactly four iterations
+of the scalar loop, the &lsquo;<samp>very-cheap</samp>&rsquo; model would only allow
+vectorization if the scalar iteration count is known to be a multiple
+of four.
+</p>
+<p>The default cost model depends on other optimization flags and is
 either &lsquo;<samp>dynamic</samp>&rsquo; or &lsquo;<samp>cheap</samp>&rsquo;.
 </p>
 </dd>
@@ -2241,7 +2258,18 @@ The maximum allowed <var>n</var> option value is 65536.
 </dd>
 <dt><code>-fallow-store-data-races</code></dt>
 <dd><a name="index-fallow_002dstore_002ddata_002draces"></a>
-<p>Allow the compiler to introduce new data races on stores.
+<p>Allow the compiler to perform optimizations that may introduce new data races
+on stores, without proving that the variable cannot be concurrently accessed
+by other threads.  Does not affect optimization of local data.  It is safe to
+use this option if it is known that global data will not be accessed by
+multiple threads.
+</p>
+<p>Examples of optimizations enabled by <samp>-fallow-store-data-races</samp> include
+hoisting or if-conversions that may cause a value that was already in memory
+to be re-written with that same value.  Such re-writing is safe in a single
+threaded context but may be unsafe in a multi-threaded context.  Note that on
+some processors, if-conversions may be required in order to enable
+vectorization.
 </p>
 <p>Enabled at level <samp>-Ofast</samp>.
 </p>
@@ -2359,7 +2387,7 @@ to more aggressive optimization decisions.
 <p>When a file is compiled with <samp>-flto</samp> without
 <samp>-fuse-linker-plugin</samp>, the generated object file is larger than
 a regular object file because it contains GIMPLE bytecodes and the usual
-final code (see <samp>-ffat-lto-objects</samp>.  This means that
+final code (see <samp>-ffat-lto-objects</samp>).  This means that
 object files with LTO information can be linked as normal object
 files; if <samp>-fno-lto</samp> is passed to the linker, no
 interprocedural optimizations are applied.  Note that when
@@ -2391,10 +2419,21 @@ not at link time.
 generating bytecodes, as they need to be used during the final link.
 Currently, the following options and their settings are taken from
 the first object file that explicitly specifies them: 
-<samp>-fPIC</samp>, <samp>-fpic</samp>, <samp>-fpie</samp>, <samp>-fcommon</samp>,
-<samp>-fexceptions</samp>, <samp>-fnon-call-exceptions</samp>, <samp>-fgnu-tm</samp>
-and all the <samp>-m</samp> target flags.
+<samp>-fcommon</samp>, <samp>-fexceptions</samp>, <samp>-fnon-call-exceptions</samp>,
+<samp>-fgnu-tm</samp> and all the <samp>-m</samp> target flags.
 </p>
+<p>The following options <samp>-fPIC</samp>, <samp>-fpic</samp>, <samp>-fpie</samp> and
+<samp>-fPIE</samp> are combined based on the following scheme:
+</p>
+<div class="smallexample">
+<pre class="smallexample"><samp>-fPIC</samp> + <samp>-fpic</samp> = <samp>-fpic</samp>
+<samp>-fPIC</samp> + <samp>-fno-pic</samp> = <samp>-fno-pic</samp>
+<samp>-fpic/-fPIC</samp> + (no option) = (no option)
+<samp>-fPIC</samp> + <samp>-fPIE</samp> = <samp>-fPIE</samp>
+<samp>-fpic</samp> + <samp>-fPIE</samp> = <samp>-fpie</samp>
+<samp>-fPIC/-fpic</samp> + <samp>-fpie</samp> = <samp>-fpie</samp>
+</pre></div>
+
 <p>Certain ABI-changing flags are required to match in all compilation units,
 and trying to override this at link time with a conflicting value
 is ignored.  This includes options such as <samp>-freg-struct-return</samp>
@@ -2535,10 +2574,12 @@ the link-time optimization step directly from the WPA phase.
 <dd><a name="index-flto_002dcompression_002dlevel"></a>
 <p>This option specifies the level of compression used for intermediate
 language written to LTO object files, and is only meaningful in
-conjunction with LTO mode (<samp>-flto</samp>).  Valid
-values are 0 (no compression) to 9 (maximum compression).  Values
-outside this range are clamped to either 0 or 9.  If the option is not
-given, a default balanced compression setting is used.
+conjunction with LTO mode (<samp>-flto</samp>).  GCC currently supports two
+LTO compression algorithms. For zstd, valid values are 0 (no compression)
+to 19 (maximum compression), while zlib supports values from 0 to 9.
+Values outside this range are clamped to either minimum or maximum
+of the supported values.  If the option is not given,
+a default balanced compression setting is used.
 </p>
 </dd>
 <dt><code>-fuse-linker-plugin</code></dt>
@@ -3211,6 +3252,20 @@ following pseudocode (which isn&rsquo;t valid C):
 <p>Not all targets support this option.
 </p>
 </dd>
+<dt><code>-fzero-call-used-regs=<var>choice</var></code></dt>
+<dd><a name="index-fzero_002dcall_002dused_002dregs"></a>
+<p>Zero call-used registers at function return to increase program
+security by either mitigating Return-Oriented Programming (ROP)
+attacks or preventing information leakage through registers.
+</p>
+<p>The possible values of <var>choice</var> are the same as for the
+<code>zero_call_used_regs</code> attribute (see <a href="Function-Attributes.html#Function-Attributes">Function Attributes</a>).
+The default is &lsquo;<samp>skip</samp>&rsquo;.
+</p>
+<p>You can control this behavior for a specific function by using the function
+attribute <code>zero_call_used_regs</code> (see <a href="Function-Attributes.html#Function-Attributes">Function Attributes</a>).
+</p>
+</dd>
 <dt><code>--param <var>name</var>=<var>value</var></code></dt>
 <dd><a name="index-param"></a>
 <p>In some places, GCC uses various constants to control the amount of
@@ -3245,7 +3300,6 @@ profitable.
 </p>
 </dd>
 <dt><code>max-rtl-if-conversion-predictable-cost</code></dt>
-<dt><code>max-rtl-if-conversion-unpredictable-cost</code></dt>
 <dd><p>RTL if-conversion will try to remove conditional branches around a block
 and replace them with conditionally executed instructions.  These parameters
 give the maximum permissible cost for the sequence that would be generated
@@ -3304,7 +3358,7 @@ control-flow graph.
 </p>
 </dd>
 <dt><code>max-gcse-memory</code></dt>
-<dd><p>The approximate maximum amount of memory that can be allocated in
+<dd><p>The approximate maximum amount of memory in <code>kB</code> that can be allocated in
 order to perform the global common subexpression elimination
 optimization.  If more memory than specified is required, the
 optimization is not done.
@@ -3413,6 +3467,10 @@ smaller units, the size is increased to <samp>--param large-unit-insns</samp>
 before applying <samp>--param inline-unit-growth</samp>.
 </p>
 </dd>
+<dt><code>lazy-modules</code></dt>
+<dd><p>Maximum number of concurrently open C++ module files when lazy loading.
+</p>
+</dd>
 <dt><code>inline-unit-growth</code></dt>
 <dd><p>Specifies maximal overall growth of the compilation unit caused by inlining.
 For example, parameter value 20 limits unit growth to 1.2 times the original
@@ -3424,6 +3482,10 @@ feedback) are not accounted into the unit size.
 <dd><p>Specifies maximal overall growth of the compilation unit caused by
 interprocedural constant propagation.  For example, parameter value 10 limits
 unit growth to 1.1 times the original size.
+</p>
+</dd>
+<dt><code>ipa-cp-large-unit-insns</code></dt>
+<dd><p>The size of translation unit that IPA-CP pass considers large.
 </p>
 </dd>
 <dt><code>large-stack-frame</code></dt>
@@ -3488,6 +3550,29 @@ Deeper chains are still handled by late inlining.
 are shared across multiple compilation units.
 </p>
 </dd>
+<dt><code>modref-max-bases</code></dt>
+<dt><code>modref-max-refs</code></dt>
+<dt><code>modref-max-accesses</code></dt>
+<dd><p>Specifies the maximal number of base pointers, references and accesses stored
+for a single function by mod/ref analysis.
+</p>
+</dd>
+<dt><code>modref-max-tests</code></dt>
+<dd><p>Specifies the maxmal number of tests alias oracle can perform to disambiguate
+memory locations using the mod/ref information.  This parameter ought to be
+bigger than <samp>--param modref-max-bases</samp> and <samp>--param
+modref-max-refs</samp>.
+</p>
+</dd>
+<dt><code>modref-max-depth</code></dt>
+<dd><p>Specifies the maximum depth of DFS walk used by modref escape analysis.
+Setting to 0 disables the analysis completely.
+</p>
+</dd>
+<dt><code>modref-max-escape-points</code></dt>
+<dd><p>Specifies the maximum number of escape points tracked by modref per SSA-name.
+</p>
+</dd>
 <dt><code>profile-func-internal-id</code></dt>
 <dd><p>A parameter to control whether to use function internal id in profile
 database lookup. If the value is 0, the compiler uses an id that
@@ -3545,6 +3630,16 @@ do so.
 <dt><code>max-stores-to-merge</code></dt>
 <dd><p>The maximum number of stores to attempt to merge into wider stores in the store
 merging pass.
+</p>
+</dd>
+<dt><code>max-store-chains-to-track</code></dt>
+<dd><p>The maximum number of store chains to track at the same time in the attempt
+to merge them into wider stores in the store merging pass.
+</p>
+</dd>
+<dt><code>max-stores-to-track</code></dt>
+<dd><p>The maximum number of stores to track at the same time in the attemt to
+to merge them into wider stores in the store merging pass.
 </p>
 </dd>
 <dt><code>max-unrolled-insns</code></dt>
@@ -4211,6 +4306,10 @@ length can be changed using the <samp>loop-block-tile-size</samp>
 parameter.
 </p>
 </dd>
+<dt><code>ipa-jump-function-lookups</code></dt>
+<dd><p>Specifies number of statements visited during jump function offset discovery.
+</p>
+</dd>
 <dt><code>ipa-cp-value-list-size</code></dt>
 <dd><p>IPA-CP attempts to track all possible values and types passed to a function&rsquo;s
 parameter in order to propagate them and perform devirtualization.
@@ -4254,6 +4353,11 @@ number of such values per one parameter.
 of iterations of a loop known, it adds a bonus of
 <samp>ipa-cp-loop-hint-bonus</samp> to the profitability score of
 the candidate.
+</p>
+</dd>
+<dt><code>ipa-max-loop-predicates</code></dt>
+<dd><p>The maximum number of different predicates IPA will use to describe when
+loops in a function have known properties.
 </p>
 </dd>
 <dt><code>ipa-max-aa-steps</code></dt>
@@ -4412,10 +4516,71 @@ E.g. to disable inline code use
 <samp>--param asan-instrumentation-with-call-threshold=0</samp>.
 </p>
 </dd>
+<dt><code>hwasan-instrument-stack</code></dt>
+<dd><p>Enable hwasan instrumentation of statically sized stack-allocated variables.
+This kind of instrumentation is enabled by default when using
+<samp>-fsanitize=hwaddress</samp> and disabled by default when using
+<samp>-fsanitize=kernel-hwaddress</samp>.
+To disable stack instrumentation use
+<samp>--param hwasan-instrument-stack=0</samp>, and to enable it use
+<samp>--param hwasan-instrument-stack=1</samp>.
+</p>
+</dd>
+<dt><code>hwasan-random-frame-tag</code></dt>
+<dd><p>When using stack instrumentation, decide tags for stack variables using a
+deterministic sequence beginning at a random tag for each frame.  With this
+parameter unset tags are chosen using the same sequence but beginning from 1.
+This is enabled by default for <samp>-fsanitize=hwaddress</samp> and unavailable
+for <samp>-fsanitize=kernel-hwaddress</samp>.
+To disable it use <samp>--param hwasan-random-frame-tag=0</samp>.
+</p>
+</dd>
+<dt><code>hwasan-instrument-allocas</code></dt>
+<dd><p>Enable hwasan instrumentation of dynamically sized stack-allocated variables.
+This kind of instrumentation is enabled by default when using
+<samp>-fsanitize=hwaddress</samp> and disabled by default when using
+<samp>-fsanitize=kernel-hwaddress</samp>.
+To disable instrumentation of such variables use
+<samp>--param hwasan-instrument-allocas=0</samp>, and to enable it use
+<samp>--param hwasan-instrument-allocas=1</samp>.
+</p>
+</dd>
+<dt><code>hwasan-instrument-reads</code></dt>
+<dd><p>Enable hwasan checks on memory reads.  Instrumentation of reads is enabled by
+default for both <samp>-fsanitize=hwaddress</samp> and
+<samp>-fsanitize=kernel-hwaddress</samp>.
+To disable checking memory reads use
+<samp>--param hwasan-instrument-reads=0</samp>.
+</p>
+</dd>
+<dt><code>hwasan-instrument-writes</code></dt>
+<dd><p>Enable hwasan checks on memory writes.  Instrumentation of writes is enabled by
+default for both <samp>-fsanitize=hwaddress</samp> and
+<samp>-fsanitize=kernel-hwaddress</samp>.
+To disable checking memory writes use
+<samp>--param hwasan-instrument-writes=0</samp>.
+</p>
+</dd>
+<dt><code>hwasan-instrument-mem-intrinsics</code></dt>
+<dd><p>Enable hwasan instrumentation of builtin functions.  Instrumentation of these
+builtin functions is enabled by default for both <samp>-fsanitize=hwaddress</samp>
+and <samp>-fsanitize=kernel-hwaddress</samp>.
+To disable instrumentation of builtin functions use
+<samp>--param hwasan-instrument-mem-intrinsics=0</samp>.
+</p>
+</dd>
 <dt><code>use-after-scope-direct-emission-threshold</code></dt>
 <dd><p>If the size of a local variable in bytes is smaller or equal to this
 number, directly poison (or unpoison) shadow memory instead of using
 run-time callbacks.
+</p>
+</dd>
+<dt><code>tsan-distinguish-volatile</code></dt>
+<dd><p>Emit special instrumentation for accesses to volatiles.
+</p>
+</dd>
+<dt><code>tsan-instrument-func-entry-exit</code></dt>
+<dd><p>Emit instrumentation calls to __tsan_func_entry() and __tsan_func_exit().
 </p>
 </dd>
 <dt><code>max-fsm-thread-path-insns</code></dt>
@@ -4455,13 +4620,6 @@ like fold routines.  One level of recursion corresponds to following a
 use-def chain.
 </p>
 </dd>
-<dt><code>hsa-gen-debug-stores</code></dt>
-<dd><p>Enable emission of special debug stores within HSA kernels which are
-then read and reported by libgomp plugin.  Generation of these stores
-is disabled by default, use <samp>--param hsa-gen-debug-stores=1</samp> to
-enable it.
-</p>
-</dd>
 <dt><code>max-speculative-devirt-maydefs</code></dt>
 <dd><p>The maximum number of may-defs we analyze when looking for a must-def
 specifying the dynamic type of an object that invokes a virtual call
@@ -4471,6 +4629,10 @@ we may be able to devirtualize speculatively.
 <dt><code>max-vrp-switch-assertions</code></dt>
 <dd><p>The maximum number of assertions to add along the default edge of a switch
 statement during VRP.
+</p>
+</dd>
+<dt><code>evrp-mode</code></dt>
+<dd><p>Specifies the mode Early VRP should operate in.
 </p>
 </dd>
 <dt><code>unroll-jam-min-percent</code></dt>
@@ -4528,9 +4690,14 @@ by the copy loop headers pass.
 <dd><p>Enable loop epilogue vectorization using smaller vector size.
 </p>
 </dd>
-<dt><code>slp-max-insns-in-bb</code></dt>
-<dd><p>Maximum number of instructions in basic block to be
-considered for SLP vectorization.
+<dt><code>vect-partial-vector-usage</code></dt>
+<dd><p>Controls when the loop vectorizer considers using partial vector loads
+and stores as an alternative to falling back to scalar code.  0 stops
+the vectorizer from ever using partial vector loads and stores.  1 allows
+partial vector loads and stores if vectorization removes the need for the
+code to iterate.  2 allows partial vector loads and stores in all loops.
+The parameter only has an effect on targets that support partial
+vector loads and stores.
 </p>
 </dd>
 <dt><code>avoid-fma-max-bits</code></dt>
@@ -4673,15 +4840,34 @@ for each searched element.
 the analyzer, before terminating analysis of that point.
 </p>
 </dd>
+<dt><code>analyzer-max-constraints</code></dt>
+<dd><p>The maximum number of constraints per state.
+</p>
+</dd>
 <dt><code>analyzer-min-snodes-for-call-summary</code></dt>
 <dd><p>The minimum number of supernodes within a function for the
 analyzer to consider summarizing its effects at call sites.
+</p>
+</dd>
+<dt><code>analyzer-max-enodes-for-full-dump</code></dt>
+<dd><p>The maximum depth of exploded nodes that should appear in a dot dump
+before switching to a less verbose format.
 </p>
 </dd>
 <dt><code>analyzer-max-recursion-depth</code></dt>
 <dd><p>The maximum number of times a callsite can appear in a call stack
 within the analyzer, before terminating analysis of a call that would
 recurse deeper.
+</p>
+</dd>
+<dt><code>analyzer-max-svalue-depth</code></dt>
+<dd><p>The maximum depth of a symbolic value, before approximating
+the value as unknown.
+</p>
+</dd>
+<dt><code>analyzer-max-infeasible-edges</code></dt>
+<dd><p>The maximum number of infeasible edges to reject before declaring
+a diagnostic as infeasible.
 </p>
 </dd>
 <dt><code>gimple-fe-computed-hot-bb-threshold</code></dt>
@@ -4692,6 +4878,22 @@ The parameter is used only in GIMPLE FE.
 <dt><code>analyzer-bb-explosion-factor</code></dt>
 <dd><p>The maximum number of &rsquo;after supernode&rsquo; exploded nodes within the analyzer
 per supernode, before terminating analysis.
+</p>
+</dd>
+<dt><code>ranger-logical-depth</code></dt>
+<dd><p>Maximum depth of logical expression evaluation ranger will look through
+when evaluating outgoing edge ranges.
+</p>
+</dd>
+<dt><code>openacc-kernels</code></dt>
+<dd><p>Specify mode of OpenACC &lsquo;kernels&rsquo; constructs handling.
+With <samp>--param=openacc-kernels=decompose</samp>, OpenACC &lsquo;kernels&rsquo;
+constructs are decomposed into parts, a sequence of compute
+constructs, each then handled individually.
+This is work in progress.
+With <samp>--param=openacc-kernels=parloops</samp>, OpenACC &lsquo;kernels&rsquo;
+constructs are handled by the &lsquo;<samp>parloops</samp>&rsquo; pass, en bloc.
+This is the current default.
 </p>
 </dd>
 </dl>
@@ -4743,6 +4945,15 @@ deemed equal.
 </p></dd>
 </dl>
 <p>The default value is 0.
+</p>
+</dd>
+<dt><code>aarch64-loop-vect-issue-rate-niters</code></dt>
+<dd><p>The tuning for some AArch64 CPUs tries to take both latencies and issue
+rates into account when deciding whether a loop should be vectorized
+using SVE, vectorized using Advanced SIMD, or not vectorized at all.
+If this parameter is set to <var>n</var>, GCC will not use this heuristic
+for loops that are known to execute in fewer than <var>n</var> Advanced
+SIMD iterations.
 </p>
 </dd>
 </dl>

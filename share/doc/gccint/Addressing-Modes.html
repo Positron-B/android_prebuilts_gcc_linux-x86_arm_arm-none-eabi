@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
-<!-- Copyright (C) 1988-2020 Free Software Foundation, Inc.
+<!-- Copyright (C) 1988-2021 Free Software Foundation, Inc.
 
 Permission is granted to copy, distribute and/or modify this document
 under the terms of the GNU Free Documentation License, Version 1.3 or
@@ -322,6 +322,16 @@ addresses.  Many RISC machines have no mode-dependent addresses.
 </p></dd></dl>
 
 <dl>
+<dt><a name="index-TARGET_005fPRECOMPUTE_005fTLS_005fP"></a>Target Hook: <em>bool</em> <strong>TARGET_PRECOMPUTE_TLS_P</strong> <em>(machine_mode <var>mode</var>, rtx <var>x</var>)</em></dt>
+<dd><p>This hook returns true if <var>x</var> is a TLS operand on the target
+machine that should be pre-computed when used as the argument in a call.
+You can assume that <var>x</var> satisfies <code>CONSTANT_P</code>, so you need not 
+check this.
+</p>
+<p>The default definition returns false.
+</p></dd></dl>
+
+<dl>
 <dt><a name="index-TARGET_005fDELEGITIMIZE_005fADDRESS"></a>Target Hook: <em>rtx</em> <strong>TARGET_DELEGITIMIZE_ADDRESS</strong> <em>(rtx <var>x</var>)</em></dt>
 <dd><p>This hook is used to undo the possibly obfuscating effects of the
 <code>LEGITIMIZE_ADDRESS</code> and <code>LEGITIMIZE_RELOAD_ADDRESS</code> target
@@ -579,7 +589,7 @@ all zeros.  GCC can then try to branch around the instruction instead.
 </p></dd></dl>
 
 <dl>
-<dt><a name="index-TARGET_005fVECTORIZE_005fADD_005fSTMT_005fCOST"></a>Target Hook: <em>unsigned</em> <strong>TARGET_VECTORIZE_ADD_STMT_COST</strong> <em>(void *<var>data</var>, int <var>count</var>, enum vect_cost_for_stmt <var>kind</var>, class _stmt_vec_info *<var>stmt_info</var>, int <var>misalign</var>, enum vect_cost_model_location <var>where</var>)</em></dt>
+<dt><a name="index-TARGET_005fVECTORIZE_005fADD_005fSTMT_005fCOST"></a>Target Hook: <em>unsigned</em> <strong>TARGET_VECTORIZE_ADD_STMT_COST</strong> <em>(class vec_info *<var></var>, void *<var>data</var>, int <var>count</var>, enum vect_cost_for_stmt <var>kind</var>, class _stmt_vec_info *<var>stmt_info</var>, tree <var>vectype</var>, int <var>misalign</var>, enum vect_cost_model_location <var>where</var>)</em></dt>
 <dd><p>This hook should update the target-specific <var>data</var> in response to adding <var>count</var> copies of the given <var>kind</var> of statement to a loop or basic block.  The default adds the builtin vectorizer cost for the copies of the statement to the accumulator specified by <var>where</var>, (the prologue, body, or epilogue) and returns the amount added.  The return value should be viewed as a tentative cost that may later be revised.
 </p></dd></dl>
 

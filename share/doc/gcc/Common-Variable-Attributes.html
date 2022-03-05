@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
-<!-- Copyright (C) 1988-2020 Free Software Foundation, Inc.
+<!-- Copyright (C) 1988-2021 Free Software Foundation, Inc.
 
 Permission is granted to copy, distribute and/or modify this document
 under the terms of the GNU Free Documentation License, Version 1.3 or
@@ -479,6 +479,17 @@ attribute also means that the member is instantiated if the
 class itself is instantiated.
 </p>
 </dd>
+<dt><code>retain</code></dt>
+<dd><a name="index-retain-variable-attribute"></a>
+<p>For ELF targets that support the GNU or FreeBSD OSABIs, this attribute
+will save the variable from linker garbage collection.  To support
+this behavior, variables that have not been placed in specific sections
+(e.g. by the <code>section</code> attribute, or the <code>-fdata-sections</code> option),
+will be placed in new, unique sections.
+</p>
+<p>This additional functionality requires Binutils version 2.36 or later.
+</p>
+</dd>
 <dt><code>vector_size (<var>bytes</var>)</code></dt>
 <dd><a name="index-vector_005fsize-variable-attribute"></a>
 <p>This attribute specifies the vector size for the type of the declared
@@ -529,9 +540,51 @@ The <code>visibility</code> attribute is described in
 <dd><a name="index-noinit-variable-attribute"></a>
 <p>Any data with the <code>noinit</code> attribute will not be initialized by
 the C runtime startup code, or the program loader.  Not initializing
-data in this way can reduce program startup times.  This attribute is
-specific to ELF targets and relies on the linker to place such data in
-the right location
+data in this way can reduce program startup times.
+</p>
+<p>This attribute is specific to ELF targets and relies on the linker
+script to place sections with the <code>.noinit</code> prefix in the right
+location.
+</p>
+</dd>
+<dt><code>persistent</code></dt>
+<dd><a name="index-persistent-variable-attribute"></a>
+<p>Any data with the <code>persistent</code> attribute will not be initialized by
+the C runtime startup code, but will be initialized by the program
+loader.  This enables the value of the variable to &lsquo;<samp>persist</samp>&rsquo;
+between processor resets.
+</p>
+<p>This attribute is specific to ELF targets and relies on the linker
+script to place the sections with the <code>.persistent</code> prefix in the
+right location.  Specifically, some type of non-volatile, writeable
+memory is required.
+</p>
+</dd>
+<dt><code>objc_nullability (<var>nullability kind</var>) <span class="roman">(Objective-C and Objective-C++ only)</span></code></dt>
+<dd><a name="index-objc_005fnullability-variable-attribute"></a>
+<p>This attribute applies to pointer variables only.  It allows marking the
+pointer with one of four possible values describing the conditions under
+which the pointer might have a <code>nil</code> value. In most cases, the
+attribute is intended to be an internal representation for property and
+method nullability (specified by language keywords); it is not recommended
+to use it directly.
+</p>
+<p>When <var>nullability kind</var> is <code>&quot;unspecified&quot;</code> or <code>0</code>, nothing is
+known about the conditions in which the pointer might be <code>nil</code>. Making
+this state specific serves to avoid false positives in diagnostics.
+</p>
+<p>When <var>nullability kind</var> is <code>&quot;nonnull&quot;</code> or <code>1</code>, the pointer has
+no meaning if it is <code>nil</code> and thus the compiler is free to emit
+diagnostics if it can be determined that the value will be <code>nil</code>.
+</p>
+<p>When <var>nullability kind</var> is <code>&quot;nullable&quot;</code> or <code>2</code>, the pointer might
+be <code>nil</code> and carry meaning as such.
+</p>
+<p>When <var>nullability kind</var> is <code>&quot;resettable&quot;</code> or <code>3</code> (used only in
+the context of property attribute lists) this describes the case in which a
+property setter may take the value <code>nil</code> (which perhaps causes the
+property to be reset in some manner to a default) but for which the property
+getter will never validly return <code>nil</code>.
 </p>
 </dd>
 </dl>

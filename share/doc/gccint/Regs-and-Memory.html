@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
-<!-- Copyright (C) 1988-2020 Free Software Foundation, Inc.
+<!-- Copyright (C) 1988-2021 Free Software Foundation, Inc.
 
 Permission is granted to copy, distribute and/or modify this document
 under the terms of the GNU Free Documentation License, Version 1.3 or
@@ -383,17 +383,22 @@ whether the subreg is a lowpart of a block.
 </dl>
 
 <p>A <code>MODE_PARTIAL_INT</code> mode behaves as if it were as wide as the
-corresponding <code>MODE_INT</code> mode, except that it has an unknown
-number of undefined bits.  For example:
+corresponding <code>MODE_INT</code> mode, except that it has a number of
+undefined bits, which are determined by the precision of the
+mode.
+</p>
+<p>For example, on a little-endian target which defines <code>PSImode</code>
+to have a precision of 20 bits:
 </p>
 <div class="smallexample">
 <pre class="smallexample">(subreg:PSI (reg:SI 0) 0)
 </pre></div>
 
+<p>accesses the low 20 bits of &lsquo;<samp>(reg:SI 0)</samp>&rsquo;.
+</p>
 <a name="index-REGMODE_005fNATURAL_005fSIZE-1"></a>
-<p>accesses the whole of &lsquo;<samp>(reg:SI 0)</samp>&rsquo;, but the exact relationship
-between the <code>PSImode</code> value and the <code>SImode</code> value is not
-defined.  If we assume &lsquo;<samp>REGMODE_NATURAL_SIZE (DImode) &lt;= 4</samp>&rsquo;,
+<p>Continuing with a <code>PSImode</code> precision of 20 bits, if we assume
+&lsquo;<samp>REGMODE_NATURAL_SIZE (DImode) &lt;= 4</samp>&rsquo;,
 then the following two <code>subreg</code>s:
 </p>
 <div class="smallexample">
@@ -401,9 +406,8 @@ then the following two <code>subreg</code>s:
 (subreg:PSI (reg:DI 0) 4)
 </pre></div>
 
-<p>represent independent 4-byte accesses to the two halves of
-&lsquo;<samp>(reg:DI 0)</samp>&rsquo;.  Both <code>subreg</code>s have an unknown number
-of undefined bits.
+<p>represent accesses to the low 20 bits of the two halves of
+&lsquo;<samp>(reg:DI 0)</samp>&rsquo;.
 </p>
 <p>If &lsquo;<samp>REGMODE_NATURAL_SIZE (PSImode) &lt;= 2</samp>&rsquo; then these two <code>subreg</code>s:
 </p>
@@ -414,15 +418,17 @@ of undefined bits.
 
 <p>represent independent 2-byte accesses that together span the whole
 of &lsquo;<samp>(reg:PSI 0)</samp>&rsquo;.  Storing to the first <code>subreg</code> does not
-affect the value of the second, and vice versa.  &lsquo;<samp>(reg:PSI 0)</samp>&rsquo;
-has an unknown number of undefined bits, so the assignment:
+affect the value of the second, and vice versa, so the assignment:
 </p>
 <div class="smallexample">
 <pre class="smallexample">(set (subreg:HI (reg:PSI 0) 0) (reg:HI 4))
 </pre></div>
 
-<p>does not guarantee that &lsquo;<samp>(subreg:HI (reg:PSI 0) 0)</samp>&rsquo; has the
-value &lsquo;<samp>(reg:HI 4)</samp>&rsquo;.
+<p>sets the low 16 bits of &lsquo;<samp>(reg:PSI 0)</samp>&rsquo; to &lsquo;<samp>(reg:HI 4)</samp>&rsquo;, and
+the high 4 defined bits of &lsquo;<samp>(reg:PSI 0)</samp>&rsquo; retain their
+original value.  The behavior here is the same as for
+normal <code>subreg</code>s, when there are no
+<code>MODE_PARTIAL_INT</code> modes involved.
 </p>
 <a name="index-TARGET_005fCAN_005fCHANGE_005fMODE_005fCLASS-and-subreg-semantics"></a>
 <p>The rules above apply to both pseudo <var>reg</var>s and hard <var>reg</var>s.

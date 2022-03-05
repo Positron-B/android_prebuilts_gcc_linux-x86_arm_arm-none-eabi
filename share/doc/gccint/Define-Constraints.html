@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
-<!-- Copyright (C) 1988-2020 Free Software Foundation, Inc.
+<!-- Copyright (C) 1988-2021 Free Software Foundation, Inc.
 
 Permission is granted to copy, distribute and/or modify this document
 under the terms of the GNU Free Documentation License, Version 1.3 or
@@ -203,7 +203,34 @@ specifically aligned memory is necessary or desirable for some insn
 operand.
 </p>
 <p>The syntax and semantics are otherwise identical to
-<code>define_constraint</code>.
+<code>define_memory_constraint</code>.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-define_005frelaxed_005fmemory_005fconstraint"></a>MD Expression: <strong>define_relaxed_memory_constraint</strong> <em>name docstring exp</em></dt>
+<dd><p>The test expression in a <code>define_memory_constraint</code> can assume
+that <code>TARGET_LEGITIMATE_ADDRESS_P</code> holds for the address inside
+a <code>mem</code> rtx and so it does not need to test this condition itself.
+In other words, a <code>define_memory_constraint</code> test of the form:
+</p>
+<div class="smallexample">
+<pre class="smallexample">(match_test &quot;mem&quot;)
+</pre></div>
+
+<p>is enough to test whether an rtx is a <code>mem</code> <em>and</em> whether
+its address satisfies <code>TARGET_MEM_CONSTRAINT</code> (which is usually
+&lsquo;<samp>'m'</samp>&rsquo;).  Thus the conditions imposed by a <code>define_memory_constraint</code>
+always apply on top of the conditions imposed by <code>TARGET_MEM_CONSTRAINT</code>.
+</p>
+<p>However, it is sometimes useful to define memory constraints that allow
+addresses beyond those accepted by <code>TARGET_LEGITIMATE_ADDRESS_P</code>.
+<code>define_relaxed_memory_constraint</code> exists for this case.
+The test expression in a <code>define_relaxed_memory_constraint</code> is
+applied with no preconditions, so that the expression can determine
+&ldquo;from scratch&rdquo; exactly which addresses are valid and which are not.
+</p>
+<p>The syntax and semantics are otherwise identical to
+<code>define_memory_constraint</code>.
 </p></dd></dl>
 
 <dl>

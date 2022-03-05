@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
-<!-- Copyright (C) 1988-2021 Free Software Foundation, Inc.
+<!-- Copyright (C) 1988-2022 Free Software Foundation, Inc.
 
 Permission is granted to copy, distribute and/or modify this document
 under the terms of the GNU Free Documentation License, Version 1.3 or
@@ -123,6 +123,71 @@ existed when your program stopped.
 value is nonzero&mdash;that is, if <var>cond</var> evaluates as true.
 &lsquo;<samp>&hellip;</samp>&rsquo; stands for one of the possible arguments described
 above (or no argument) specifying where to break.  See <a href="Conditions.html#Conditions">Break Conditions</a>, for more information on breakpoint conditions.
+</p>
+<p>The breakpoint may be mapped to multiple locations.  If the breakpoint
+condition <var>cond</var> is invalid at some but not all of the locations,
+the locations for which the condition is invalid are disabled.  For
+example, <small>GDB</small> reports below that two of the three locations
+are disabled.
+</p>
+<div class="smallexample">
+<pre class="smallexample">(gdb) break func if a == 10
+warning: failed to validate condition at location 0x11ce, disabling:
+  No symbol &quot;a&quot; in current context.
+warning: failed to validate condition at location 0x11b6, disabling:
+  No symbol &quot;a&quot; in current context.
+Breakpoint 1 at 0x11b6: func. (3 locations)
+</pre></div>
+
+<p>Locations that are disabled because of the condition are denoted by an
+uppercase <code>N</code> in the output of the <code>info breakpoints</code>
+command:
+</p>
+<div class="smallexample">
+<pre class="smallexample">(gdb) info breakpoints
+Num     Type           Disp Enb Address            What
+1       breakpoint     keep y   &lt;MULTIPLE&gt;
+        stop only if a == 10
+1.1                         N*  0x00000000000011b6 in ...
+1.2                         y   0x00000000000011c2 in ...
+1.3                         N*  0x00000000000011ce in ...
+(*): Breakpoint condition is invalid at this location.
+</pre></div>
+
+<p>If the breakpoint condition <var>cond</var> is invalid in the context of
+<em>all</em> the locations of the breakpoint, <small>GDB</small> refuses to
+define the breakpoint.  For example, if variable <code>foo</code> is an
+undefined variable:
+</p>
+<div class="smallexample">
+<pre class="smallexample">(gdb) break func if foo
+No symbol &quot;foo&quot; in current context.
+</pre></div>
+
+</dd>
+<dt><code>break &hellip; -force-condition if <var>cond</var></code></dt>
+<dd><p>There may be cases where the condition <var>cond</var> is invalid at all
+the current locations, but the user knows that it will be valid at a
+future location; for example, because of a library load.  In such
+cases, by using the <code>-force-condition</code> keyword before &lsquo;<samp>if</samp>&rsquo;,
+<small>GDB</small> can be forced to define the breakpoint with the given
+condition expression instead of refusing it.
+</p>
+<div class="smallexample">
+<pre class="smallexample">(gdb) break func -force-condition if foo
+warning: failed to validate condition at location 1, disabling:
+  No symbol &quot;foo&quot; in current context.
+warning: failed to validate condition at location 2, disabling:
+  No symbol &quot;foo&quot; in current context.
+warning: failed to validate condition at location 3, disabling:
+  No symbol &quot;foo&quot; in current context.
+Breakpoint 1 at 0x1158: test.c:18. (3 locations)
+</pre></div>
+
+<p>This causes all the present locations where the breakpoint would
+otherwise be inserted, to be disabled, as seen in the example above.
+However, if there exist locations at which the condition is valid, the
+<code>-force-condition</code> keyword has no effect.
 </p>
 <a name="index-tbreak"></a>
 </dd>

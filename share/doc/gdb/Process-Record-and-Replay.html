@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
-<!-- Copyright (C) 1988-2021 Free Software Foundation, Inc.
+<!-- Copyright (C) 1988-2022 Free Software Foundation, Inc.
 
 Permission is granted to copy, distribute and/or modify this document
 under the terms of the GNU Free Documentation License, Version 1.3 or
@@ -593,15 +593,14 @@ instruction-history</code> command.
 <a name="index-rec-function_002dcall_002dhistory"></a>
 </dd>
 <dt><code>record function-call-history</code></dt>
-<dd><p>Prints the execution history at function granularity. It prints one
-line for each sequence of instructions that belong to the same
-function giving the name of that function, the source lines
-for this instruction sequence (if the <code>/l</code> modifier is
-specified), and the instructions numbers that form the sequence (if
-the <code>/i</code> modifier is specified).  The function names are indented
-to reflect the call stack depth if the <code>/c</code> modifier is
-specified.  The <code>/l</code>, <code>/i</code>, and <code>/c</code> modifiers can be
-given together.
+<dd><p>Prints the execution history at function granularity.  For each sequence
+of instructions that belong to the same function, it prints the name of
+that function, the source lines for this instruction sequence (if the
+<code>/l</code> modifier is specified), and the instructions numbers that form
+the sequence (if the <code>/i</code> modifier is specified).  The function names
+are indented to reflect the call stack depth if the <code>/c</code> modifier is
+specified.  The <code>/l</code>, <code>/i</code>, and <code>/c</code> modifiers can be given
+together.
 </p>
 <div class="smallexample">
 <pre class="smallexample">(gdb) <b>list 1, 10</b>
@@ -621,7 +620,7 @@ given together.
 3  bar     inst 11,13   at foo.c:9,10
 </pre></div>
 
-<p>By default, ten lines are printed.  This can be changed using the
+<p>By default, ten functions are printed.  This can be changed using the
 <code>set record function-call-history-size</code> command.  Functions are
 printed in execution order.  There are several ways to specify what
 to print:
@@ -639,11 +638,11 @@ prints <var>n</var> functions before function number <var>func</var>.
 </p>
 </dd>
 <dt><code>record function-call-history</code></dt>
-<dd><p>Prints ten more functions after the last ten-line print.
+<dd><p>Prints ten more functions after the last ten-function print.
 </p>
 </dd>
 <dt><code>record function-call-history -</code></dt>
-<dd><p>Prints ten more functions before the last ten-line print.
+<dd><p>Prints ten more functions before the last ten-function print.
 </p>
 </dd>
 <dt><code>record function-call-history <var>begin</var>, <var>end</var></code></dt>
@@ -657,13 +656,13 @@ function number <var>end</var>.  The function number <var>end</var> is included.
 </dd>
 <dt><code>set record function-call-history-size <var>size</var></code></dt>
 <dt><code>set record function-call-history-size unlimited</code></dt>
-<dd><p>Define how many lines to print in the
+<dd><p>Define how many functions to print in the
 <code>record function-call-history</code> command.  The default value is 10.
-A size of <code>unlimited</code> means unlimited lines.
+A size of <code>unlimited</code> means unlimited functions.
 </p>
 </dd>
 <dt><code>show record function-call-history-size</code></dt>
-<dd><p>Show how many lines to print in the
+<dd><p>Show how many functions to print in the
 <code>record function-call-history</code> command.
 </p></dd>
 </dl>

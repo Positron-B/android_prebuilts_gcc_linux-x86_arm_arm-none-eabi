@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
-<!-- Copyright (C) 1988-2021 Free Software Foundation, Inc.
+<!-- Copyright (C) 1988-2022 Free Software Foundation, Inc.
 
 Permission is granted to copy, distribute and/or modify this document
 under the terms of the GNU Free Documentation License, Version 1.3 or
@@ -176,19 +176,79 @@ whether or not the file includes preprocessor macro information.
 
 <a name="The-_002dfile_002dlist_002dexec_002dsource_002dfiles-Command"></a>
 <h4 class="subheading">The <code>-file-list-exec-source-files</code> Command</h4>
+<a name="index-info-sources-1"></a>
 <a name="index-_002dfile_002dlist_002dexec_002dsource_002dfiles"></a>
 
 <a name="Synopsis-90"></a>
 <h4 class="subsubheading">Synopsis</h4>
 
 <div class="smallexample">
-<pre class="smallexample"> -file-list-exec-source-files
+<pre class="smallexample"> -file-list-exec-source-files <span class="roman">[</span> <var>--group-by-objfile</var> <span class="roman">]</span>
+                              <span class="roman">[</span> <var>--dirname</var> <span class="roman">|</span> <var>--basename</var> <span class="roman">]</span>
+                              <span class="roman">[</span> -- <span class="roman">]</span>
+                              <span class="roman">[</span> <var>regexp</var> <span class="roman">]</span>
 </pre></div>
 
-<p>List the source files for the current executable.
+<p>This command returns information about the source files <small>GDB</small>
+knows about, it will output both the filename and fullname (absolute
+file name) of a source file, though the fullname can be elided if this
+information is not known to <small>GDB</small>.
 </p>
-<p>It will always output both the filename and fullname (absolute file
-name) of a source file.
+<p>With no arguments this command returns a list of source files.  Each
+source file is represented by a tuple with the fields; <var>file</var>,
+<var>fullname</var>, and <var>debug-fully-read</var>.  The <var>file</var> is the
+display name for the file, while <var>fullname</var> is the absolute name
+of the file.  The <var>fullname</var> field can be elided if the absolute
+name of the source file can&rsquo;t be computed.  The field
+<var>debug-fully-read</var> will be a string, either <code>true</code> or
+<code>false</code>.  When <code>true</code>, this indicates the full debug
+information for the compilation unit describing this file has been
+read in.  When <code>false</code>, the full debug information has not yet
+been read in.  While reading in the full debug information it is
+possible that <small>GDB</small> could become aware of additional source
+files.
+</p>
+<p>The optional <var>regexp</var> can be used to filter the list of source
+files returned.  The <var>regexp</var> will be matched against the full
+source file name.  The matching is case-sensitive, except on operating
+systems that have case-insensitive filesystem (e.g.,
+MS-Windows).  &lsquo;<samp>--</samp>&rsquo; can be used before <var>regexp</var> to prevent
+<small>GDB</small> interpreting <var>regexp</var> as a command option (e.g. if
+<var>regexp</var> starts with &lsquo;<samp>-</samp>&rsquo;).
+</p>
+<p>If <code>--dirname</code> is provided, then <var>regexp</var> is matched only
+against the directory name of each source file.  If <code>--basename</code>
+is provided, then <var>regexp</var> is matched against the basename of each
+source file.  Only one of <code>--dirname</code> or <code>--basename</code> may be
+given, and if either is given then <var>regexp</var> is required.
+</p>
+<p>If <code>--group-by-objfile</code> is used then the format of the results is
+changed.  The results will now be a list of tuples, with each tuple
+representing an object file (executable or shared library) loaded into
+<small>GDB</small>.  The fields of these tuples are; <var>filename</var>,
+<var>debug-info</var>, and <var>sources</var>.  The <var>filename</var> is the
+absolute name of the object file, <var>debug-info</var> is a string with
+one of the following values:
+</p>
+<dl compact="compact">
+<dt><code>none</code></dt>
+<dd><p>This object file has no debug information.
+</p></dd>
+<dt><code>partially-read</code></dt>
+<dd><p>This object file has debug information, but it is not fully read in
+yet.  When it is read in later, GDB might become aware of additional
+source files.
+</p></dd>
+<dt><code>fully-read</code></dt>
+<dd><p>This object file has debug information, and this information is fully
+read into GDB.  The list of source files is complete.
+</p></dd>
+</dl>
+
+<p>The <var>sources</var> is a list or tuples, with each tuple describing a
+single source file with the same fields as described previously.  The
+<var>sources</var> list can be empty for object files that have no debug
+information.
 </p>
 <a name="GDB-Command-72"></a>
 <h4 class="subsubheading"><small>GDB</small> Command</h4>
@@ -201,11 +261,64 @@ name) of a source file.
 <div class="smallexample">
 <pre class="smallexample">(gdb)
 -file-list-exec-source-files
-^done,files=[
-{file=foo.c,fullname=/home/foo.c},
-{file=/home/bar.c,fullname=/home/bar.c},
-{file=gdb_could_not_find_fullpath.c}]
+^done,files=[{file=&quot;foo.c&quot;,fullname=&quot;/home/foo.c&quot;,debug-fully-read=&quot;true&quot;},
+             {file=&quot;/home/bar.c&quot;,fullname=&quot;/home/bar.c&quot;,debug-fully-read=&quot;true&quot;},
+             {file=&quot;gdb_could_not_find_fullpath.c&quot;,debug-fully-read=&quot;true&quot;}]
 (gdb)
+-file-list-exec-source-files
+^done,files=[{file=&quot;test.c&quot;,
+              fullname=&quot;/tmp/info-sources/test.c&quot;,
+              debug-fully-read=&quot;true&quot;},
+             {file=&quot;/usr/include/stdc-predef.h&quot;,
+              fullname=&quot;/usr/include/stdc-predef.h&quot;,
+              debug-fully-read=&quot;true&quot;},
+             {file=&quot;header.h&quot;,
+              fullname=&quot;/tmp/info-sources/header.h&quot;,
+              debug-fully-read=&quot;true&quot;},
+             {file=&quot;helper.c&quot;,
+              fullname=&quot;/tmp/info-sources/helper.c&quot;,
+              debug-fully-read=&quot;true&quot;}]
+(gdb)
+-file-list-exec-source-files -- \\.c
+^done,files=[{file=&quot;test.c&quot;,
+              fullname=&quot;/tmp/info-sources/test.c&quot;,
+              debug-fully-read=&quot;true&quot;},
+             {file=&quot;helper.c&quot;,
+              fullname=&quot;/tmp/info-sources/helper.c&quot;,
+              debug-fully-read=&quot;true&quot;}]
+(gdb)
+-file-list-exec-source-files --group-by-objfile
+^done,files=[{filename=&quot;/tmp/info-sources/test.x&quot;,
+              debug-info=&quot;fully-read&quot;,
+              sources=[{file=&quot;test.c&quot;,
+                        fullname=&quot;/tmp/info-sources/test.c&quot;,
+                        debug-fully-read=&quot;true&quot;},
+                       {file=&quot;/usr/include/stdc-predef.h&quot;,
+                        fullname=&quot;/usr/include/stdc-predef.h&quot;,
+                        debug-fully-read=&quot;true&quot;},
+                       {file=&quot;header.h&quot;,
+                        fullname=&quot;/tmp/info-sources/header.h&quot;,
+                        debug-fully-read=&quot;true&quot;}]},
+             {filename=&quot;/lib64/ld-linux-x86-64.so.2&quot;,
+              debug-info=&quot;none&quot;,
+              sources=[]},
+             {filename=&quot;system-supplied DSO at 0x7ffff7fcf000&quot;,
+              debug-info=&quot;none&quot;,
+              sources=[]},
+             {filename=&quot;/tmp/info-sources/libhelper.so&quot;,
+              debug-info=&quot;fully-read&quot;,
+              sources=[{file=&quot;helper.c&quot;,
+                        fullname=&quot;/tmp/info-sources/helper.c&quot;,
+                        debug-fully-read=&quot;true&quot;},
+                       {file=&quot;/usr/include/stdc-predef.h&quot;,
+                        fullname=&quot;/usr/include/stdc-predef.h&quot;,
+                        debug-fully-read=&quot;true&quot;},
+                       {file=&quot;header.h&quot;,
+                        fullname=&quot;/tmp/info-sources/header.h&quot;,
+                        debug-fully-read=&quot;true&quot;}]},
+             {filename=&quot;/lib64/libc.so.6&quot;,
+              debug-info=&quot;none&quot;,
+              sources=[]}]
 </pre></div>
 
 <a name="The-_002dfile_002dlist_002dshared_002dlibraries-Command"></a>

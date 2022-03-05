@@ -1,5 +1,5 @@
 # -*- python -*-
-# Copyright (C) 2009-2020 Free Software Foundation, Inc.
+# Copyright (C) 2009-2021 Free Software Foundation, Inc.
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -19,8 +19,8 @@ import gdb
 import os
 import os.path
 
-pythondir = '/data/jenkins/workspace/GNU-toolchain/arm-10/build-arm-none-eabi/install/share/gcc-10.3.1/python'
-libdir = '/data/jenkins/workspace/GNU-toolchain/arm-10/build-arm-none-eabi/install/arm-none-eabi/lib/thumb/v7e-m+fp/softfp'
+pythondir = '/data/jenkins/workspace/GNU-toolchain/arm-11/build-arm-none-eabi/install/share/gcc-11.2.1/python'
+libdir = '/data/jenkins/workspace/GNU-toolchain/arm-11/build-arm-none-eabi/install/arm-none-eabi/lib/thumb/v7e-m+fp/softfp'
 
 # This file might be loaded when there is no current objfile.  This
 # can happen if the user loads it manually.  In this case we don't

@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
-<!-- Copyright (C) 1988-2020 Free Software Foundation, Inc.
+<!-- Copyright (C) 1988-2021 Free Software Foundation, Inc.
 
 Permission is granted to copy, distribute and/or modify this document
 under the terms of the GNU Free Documentation License, Version 1.3 or
@@ -95,6 +95,16 @@ implemented.
 that source is reached.  By putting a series of these in the source, it&rsquo;s
 much easier to effectively step through the program state as it&rsquo;s analyzed.
 </p>
+<p>The analyzer handles:
+</p>
+<div class="smallexample">
+<pre class="smallexample">__analyzer_describe (0, expr);
+</pre></div>
+
+<p>by emitting a warning describing the 2nd argument (which can be of any
+type), at a verbosity level given by the 1st argument.  This is for use when
+debugging, and may be of use in DejaGnu tests.
+</p>
 <div class="smallexample">
 <pre class="smallexample">__analyzer_dump ();
 </pre></div>
@@ -147,26 +157,12 @@ truthfulness of the argument.  This is useful for writing DejaGnu tests.
 <a name="Other-Debugging-Techniques"></a>
 <h4 class="subsection">27.2.2 Other Debugging Techniques</h4>
 
+<p>The option <samp>-fdump-analyzer-json</samp> will dump both the supergraph
+and the exploded graph in compressed JSON form.
+</p>
 <p>One approach when tracking down where a particular bogus state is
 introduced into the <code>exploded_graph</code> is to add custom code to
-<code>region_model::validate</code>.
-</p>
-<p>For example, this custom code (added to <code>region_model::validate</code>)
-breaks with an assertion failure when a variable called <code>ptr</code>
-acquires a value that&rsquo;s unknown, using
-<code>region_model::get_value_by_name</code> to locate the variable
-</p>
-<div class="smallexample">
-<pre class="smallexample">    /* Find a variable matching &quot;ptr&quot;.  */
-    svalue_id sid = get_value_by_name (&quot;ptr&quot;);
-    if (!sid.null_p ())
-      {
-	svalue *sval = get_svalue (sid);
-	gcc_assert (sval-&gt;get_kind () != SK_UNKNOWN);
-      }
-</pre></div>
-
-<p>making it easier to investigate further in a debugger when this occurs.
+<code>program_state::validate</code>.
 </p>
 <hr>
 <div class="header">

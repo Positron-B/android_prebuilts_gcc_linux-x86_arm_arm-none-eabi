@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
-<!-- Copyright (C) 1988-2020 Free Software Foundation, Inc.
+<!-- Copyright (C) 1988-2021 Free Software Foundation, Inc.
 
 Permission is granted to copy, distribute and/or modify this document
 under the terms of the GNU Free Documentation License, Version 1.3 or
@@ -34,7 +34,7 @@ You have freedom to copy and modify this GNU Manual, like GNU
 <link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
 <link href="Target-Builtins.html#Target-Builtins" rel="up" title="Target Builtins">
 <link href="PowerPC-AltiVec-Built_002din-Functions-on-ISA-2_002e05.html#PowerPC-AltiVec-Built_002din-Functions-on-ISA-2_002e05" rel="next" title="PowerPC AltiVec Built-in Functions on ISA 2.05">
-<link href="Basic-PowerPC-Built_002din-Functions-Available-on-ISA-3_002e0.html#Basic-PowerPC-Built_002din-Functions-Available-on-ISA-3_002e0" rel="previous" title="Basic PowerPC Built-in Functions Available on ISA 3.0">
+<link href="Basic-PowerPC-Built_002din-Functions-Available-on-ISA-3_002e1.html#Basic-PowerPC-Built_002din-Functions-Available-on-ISA-3_002e1" rel="previous" title="Basic PowerPC Built-in Functions Available on ISA 3.1">
 <style type="text/css">
 <!--
 a.summary-letter {text-decoration: none}
@@ -160,15 +160,87 @@ Internally, GCC uses built-in functions to achieve the functionality in
 the aforementioned header file, but they are not supported and are
 subject to change without notice.
 </p>
-<p>GCC complies with the OpenPOWER 64-Bit ELF V2 ABI Specification,
+<p>GCC complies with the Power Vector Intrinsic Programming Reference (PVIPR),
 which may be found at
-<a href="https://openpowerfoundation.org/?resource_lib=64-bit-elf-v2-abi-specification-power-architecture">https://openpowerfoundation.org/?resource_lib=64-bit-elf-v2-abi-specification-power-architecture</a>.
-Appendix A of this document lists the vector API interfaces that must be
+<a href="https://openpowerfoundation.org/?resource_lib=power-vector-intrinsic-programming-reference">https://openpowerfoundation.org/?resource_lib=power-vector-intrinsic-programming-reference</a>.
+Chapter 4 of this document fully documents the vector API interfaces
+that must be
 provided by compliant compilers.  Programmers should preferentially use
 the interfaces described therein.  However, historically GCC has provided
 additional interfaces for access to vector instructions.  These are
-briefly described below.
+briefly described below.  Where the PVIPR provides a portable interface,
+other functions in GCC that provide the same capabilities should be
+considered deprecated.
 </p>
+<p>The PVIPR documents the following overloaded functions:
+</p>
+<table>
+<tr><td width="33%"><code>vec_abs</code></td><td width="33%"><code>vec_absd</code></td><td width="33%"><code>vec_abss</code></td></tr>
+<tr><td width="33%"><code>vec_add</code></td><td width="33%"><code>vec_addc</code></td><td width="33%"><code>vec_adde</code></td></tr>
+<tr><td width="33%"><code>vec_addec</code></td><td width="33%"><code>vec_adds</code></td><td width="33%"><code>vec_all_eq</code></td></tr>
+<tr><td width="33%"><code>vec_all_ge</code></td><td width="33%"><code>vec_all_gt</code></td><td width="33%"><code>vec_all_in</code></td></tr>
+<tr><td width="33%"><code>vec_all_le</code></td><td width="33%"><code>vec_all_lt</code></td><td width="33%"><code>vec_all_nan</code></td></tr>
+<tr><td width="33%"><code>vec_all_ne</code></td><td width="33%"><code>vec_all_nge</code></td><td width="33%"><code>vec_all_ngt</code></td></tr>
+<tr><td width="33%"><code>vec_all_nle</code></td><td width="33%"><code>vec_all_nlt</code></td><td width="33%"><code>vec_all_numeric</code></td></tr>
+<tr><td width="33%"><code>vec_and</code></td><td width="33%"><code>vec_andc</code></td><td width="33%"><code>vec_any_eq</code></td></tr>
+<tr><td width="33%"><code>vec_any_ge</code></td><td width="33%"><code>vec_any_gt</code></td><td width="33%"><code>vec_any_le</code></td></tr>
+<tr><td width="33%"><code>vec_any_lt</code></td><td width="33%"><code>vec_any_nan</code></td><td width="33%"><code>vec_any_ne</code></td></tr>
+<tr><td width="33%"><code>vec_any_nge</code></td><td width="33%"><code>vec_any_ngt</code></td><td width="33%"><code>vec_any_nle</code></td></tr>
+<tr><td width="33%"><code>vec_any_nlt</code></td><td width="33%"><code>vec_any_numeric</code></td><td width="33%"><code>vec_any_out</code></td></tr>
+<tr><td width="33%"><code>vec_avg</code></td><td width="33%"><code>vec_bperm</code></td><td width="33%"><code>vec_ceil</code></td></tr>
+<tr><td width="33%"><code>vec_cipher_be</code></td><td width="33%"><code>vec_cipherlast_be</code></td><td width="33%"><code>vec_cmpb</code></td></tr>
+<tr><td width="33%"><code>vec_cmpeq</code></td><td width="33%"><code>vec_cmpge</code></td><td width="33%"><code>vec_cmpgt</code></td></tr>
+<tr><td width="33%"><code>vec_cmple</code></td><td width="33%"><code>vec_cmplt</code></td><td width="33%"><code>vec_cmpne</code></td></tr>
+<tr><td width="33%"><code>vec_cmpnez</code></td><td width="33%"><code>vec_cntlz</code></td><td width="33%"><code>vec_cntlz_lsbb</code></td></tr>
+<tr><td width="33%"><code>vec_cnttz</code></td><td width="33%"><code>vec_cnttz_lsbb</code></td><td width="33%"><code>vec_cpsgn</code></td></tr>
+<tr><td width="33%"><code>vec_ctf</code></td><td width="33%"><code>vec_cts</code></td><td width="33%"><code>vec_ctu</code></td></tr>
+<tr><td width="33%"><code>vec_div</code></td><td width="33%"><code>vec_double</code></td><td width="33%"><code>vec_doublee</code></td></tr>
+<tr><td width="33%"><code>vec_doubleh</code></td><td width="33%"><code>vec_doublel</code></td><td width="33%"><code>vec_doubleo</code></td></tr>
+<tr><td width="33%"><code>vec_eqv</code></td><td width="33%"><code>vec_expte</code></td><td width="33%"><code>vec_extract</code></td></tr>
+<tr><td width="33%"><code>vec_extract_exp</code></td><td width="33%"><code>vec_extract_fp32_from_shorth</code></td><td width="33%"><code>vec_extract_fp32_from_shortl</code></td></tr>
+<tr><td width="33%"><code>vec_extract_sig</code></td><td width="33%"><code>vec_extract_4b</code></td><td width="33%"><code>vec_first_match_index</code></td></tr>
+<tr><td width="33%"><code>vec_first_match_or_eos_index</code></td><td width="33%"><code>vec_first_mismatch_index</code></td><td width="33%"><code>vec_first_mismatch_or_eos_index</code></td></tr>
+<tr><td width="33%"><code>vec_float</code></td><td width="33%"><code>vec_float2</code></td><td width="33%"><code>vec_floate</code></td></tr>
+<tr><td width="33%"><code>vec_floato</code></td><td width="33%"><code>vec_floor</code></td><td width="33%"><code>vec_gb</code></td></tr>
+<tr><td width="33%"><code>vec_insert</code></td><td width="33%"><code>vec_insert_exp</code></td><td width="33%"><code>vec_insert4b</code></td></tr>
+<tr><td width="33%"><code>vec_ld</code></td><td width="33%"><code>vec_lde</code></td><td width="33%"><code>vec_ldl</code></td></tr>
+<tr><td width="33%"><code>vec_loge</code></td><td width="33%"><code>vec_madd</code></td><td width="33%"><code>vec_madds</code></td></tr>
+<tr><td width="33%"><code>vec_max</code></td><td width="33%"><code>vec_mergee</code></td><td width="33%"><code>vec_mergeh</code></td></tr>
+<tr><td width="33%"><code>vec_mergel</code></td><td width="33%"><code>vec_mergeo</code></td><td width="33%"><code>vec_mfvscr</code></td></tr>
+<tr><td width="33%"><code>vec_min</code></td><td width="33%"><code>vec_mradds</code></td><td width="33%"><code>vec_msub</code></td></tr>
+<tr><td width="33%"><code>vec_msum</code></td><td width="33%"><code>vec_msums</code></td><td width="33%"><code>vec_mtvscr</code></td></tr>
+<tr><td width="33%"><code>vec_mul</code></td><td width="33%"><code>vec_mule</code></td><td width="33%"><code>vec_mulo</code></td></tr>
+<tr><td width="33%"><code>vec_nabs</code></td><td width="33%"><code>vec_nand</code></td><td width="33%"><code>vec_ncipher_be</code></td></tr>
+<tr><td width="33%"><code>vec_ncipherlast_be</code></td><td width="33%"><code>vec_nearbyint</code></td><td width="33%"><code>vec_neg</code></td></tr>
+<tr><td width="33%"><code>vec_nmadd</code></td><td width="33%"><code>vec_nmsub</code></td><td width="33%"><code>vec_nor</code></td></tr>
+<tr><td width="33%"><code>vec_or</code></td><td width="33%"><code>vec_orc</code></td><td width="33%"><code>vec_pack</code></td></tr>
+<tr><td width="33%"><code>vec_pack_to_short_fp32</code></td><td width="33%"><code>vec_packpx</code></td><td width="33%"><code>vec_packs</code></td></tr>
+<tr><td width="33%"><code>vec_packsu</code></td><td width="33%"><code>vec_parity_lsbb</code></td><td width="33%"><code>vec_perm</code></td></tr>
+<tr><td width="33%"><code>vec_permxor</code></td><td width="33%"><code>vec_pmsum_be</code></td><td width="33%"><code>vec_popcnt</code></td></tr>
+<tr><td width="33%"><code>vec_re</code></td><td width="33%"><code>vec_recipdiv</code></td><td width="33%"><code>vec_revb</code></td></tr>
+<tr><td width="33%"><code>vec_reve</code></td><td width="33%"><code>vec_rint</code></td><td width="33%"><code>vec_rl</code></td></tr>
+<tr><td width="33%"><code>vec_rlmi</code></td><td width="33%"><code>vec_rlnm</code></td><td width="33%"><code>vec_round</code></td></tr>
+<tr><td width="33%"><code>vec_rsqrt</code></td><td width="33%"><code>vec_rsqrte</code></td><td width="33%"><code>vec_sbox_be</code></td></tr>
+<tr><td width="33%"><code>vec_sel</code></td><td width="33%"><code>vec_shasigma_be</code></td><td width="33%"><code>vec_signed</code></td></tr>
+<tr><td width="33%"><code>vec_signed2</code></td><td width="33%"><code>vec_signede</code></td><td width="33%"><code>vec_signedo</code></td></tr>
+<tr><td width="33%"><code>vec_sl</code></td><td width="33%"><code>vec_sld</code></td><td width="33%"><code>vec_sldw</code></td></tr>
+<tr><td width="33%"><code>vec_sll</code></td><td width="33%"><code>vec_slo</code></td><td width="33%"><code>vec_slv</code></td></tr>
+<tr><td width="33%"><code>vec_splat</code></td><td width="33%"><code>vec_splat_s8</code></td><td width="33%"><code>vec_splat_s16</code></td></tr>
+<tr><td width="33%"><code>vec_splat_s32</code></td><td width="33%"><code>vec_splat_u8</code></td><td width="33%"><code>vec_splat_u16</code></td></tr>
+<tr><td width="33%"><code>vec_splat_u32</code></td><td width="33%"><code>vec_splats</code></td><td width="33%"><code>vec_sqrt</code></td></tr>
+<tr><td width="33%"><code>vec_sr</code></td><td width="33%"><code>vec_sra</code></td><td width="33%"><code>vec_srl</code></td></tr>
+<tr><td width="33%"><code>vec_sro</code></td><td width="33%"><code>vec_srv</code></td><td width="33%"><code>vec_st</code></td></tr>
+<tr><td width="33%"><code>vec_ste</code></td><td width="33%"><code>vec_stl</code></td><td width="33%"><code>vec_sub</code></td></tr>
+<tr><td width="33%"><code>vec_subc</code></td><td width="33%"><code>vec_sube</code></td><td width="33%"><code>vec_subec</code></td></tr>
+<tr><td width="33%"><code>vec_subs</code></td><td width="33%"><code>vec_sum2s</code></td><td width="33%"><code>vec_sum4s</code></td></tr>
+<tr><td width="33%"><code>vec_sums</code></td><td width="33%"><code>vec_test_data_class</code></td><td width="33%"><code>vec_trunc</code></td></tr>
+<tr><td width="33%"><code>vec_unpackh</code></td><td width="33%"><code>vec_unpackl</code></td><td width="33%"><code>vec_unsigned</code></td></tr>
+<tr><td width="33%"><code>vec_unsigned2</code></td><td width="33%"><code>vec_unsignede</code></td><td width="33%"><code>vec_unsignedo</code></td></tr>
+<tr><td width="33%"><code>vec_xl</code></td><td width="33%"><code>vec_xl_be</code></td><td width="33%"><code>vec_xl_len</code></td></tr>
+<tr><td width="33%"><code>vec_xl_len_r</code></td><td width="33%"><code>vec_xor</code></td><td width="33%"><code>vec_xst</code></td></tr>
+<tr><td width="33%"><code>vec_xst_be</code></td><td width="33%"><code>vec_xst_len</code></td><td width="33%"><code>vec_xst_len_r</code></td></tr>
+</table>
+
 <table class="menu" border="0" cellspacing="0">
 <tr><td align="left" valign="top">&bull; <a href="PowerPC-AltiVec-Built_002din-Functions-on-ISA-2_002e05.html#PowerPC-AltiVec-Built_002din-Functions-on-ISA-2_002e05" accesskey="1">PowerPC AltiVec Built-in Functions on ISA 2.05</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
 </td></tr>
@@ -177,6 +249,8 @@ briefly described below.
 <tr><td align="left" valign="top">&bull; <a href="PowerPC-AltiVec-Built_002din-Functions-Available-on-ISA-2_002e07.html#PowerPC-AltiVec-Built_002din-Functions-Available-on-ISA-2_002e07" accesskey="3">PowerPC AltiVec Built-in Functions Available on ISA 2.07</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
 </td></tr>
 <tr><td align="left" valign="top">&bull; <a href="PowerPC-AltiVec-Built_002din-Functions-Available-on-ISA-3_002e0.html#PowerPC-AltiVec-Built_002din-Functions-Available-on-ISA-3_002e0" accesskey="4">PowerPC AltiVec Built-in Functions Available on ISA 3.0</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="PowerPC-AltiVec-Built_002din-Functions-Available-on-ISA-3_002e1.html#PowerPC-AltiVec-Built_002din-Functions-Available-on-ISA-3_002e1" accesskey="5">PowerPC AltiVec Built-in Functions Available on ISA 3.1</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
 </td></tr>
 </table>
 

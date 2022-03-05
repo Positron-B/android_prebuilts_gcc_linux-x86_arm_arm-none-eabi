@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
-<!-- Copyright (C) 1988-2020 Free Software Foundation, Inc.
+<!-- Copyright (C) 1988-2021 Free Software Foundation, Inc.
 
 Permission is granted to copy, distribute and/or modify this document
 under the terms of the GNU Free Documentation License, Version 1.3 or
@@ -88,7 +88,7 @@ Next: <a href="x86-Windows-Options.html#x86-Windows-Options" accesskey="n" rel="
 for the specified <var>cpu-type</var>, <samp>-march=<var>cpu-type</var></samp> allows GCC
 to generate code that may not run at all on processors other than the one
 indicated.  Specifying <samp>-march=<var>cpu-type</var></samp> implies 
-<samp>-mtune=<var>cpu-type</var></samp>.
+<samp>-mtune=<var>cpu-type</var></samp>, except where noted otherwise.
 </p>
 <p>The choices for <var>cpu-type</var> are:
 </p>
@@ -104,6 +104,21 @@ of the selected instruction set.
 </dd>
 <dt>&lsquo;<samp>x86-64</samp>&rsquo;</dt>
 <dd><p>A generic CPU with 64-bit extensions.
+</p>
+</dd>
+<dt>&lsquo;<samp>x86-64-v2</samp>&rsquo;</dt>
+<dt>&lsquo;<samp>x86-64-v3</samp>&rsquo;</dt>
+<dt>&lsquo;<samp>x86-64-v4</samp>&rsquo;</dt>
+<dd><p>These choices for <var>cpu-type</var> select the corresponding
+micro-architecture level from the x86-64 psABI.  On ABIs other than
+the x86-64 psABI they select the same CPU features as the x86-64 psABI
+documents for the particular micro-architecture level.
+</p>
+<p>Since these <var>cpu-type</var> values do not have a corresponding
+<samp>-mtune</samp> setting, using <samp>-march</samp> with these values enables
+generic tuning.  Specific tuning can be enabled using the
+<samp>-mtune=<var>other-cpu-type</var></samp> option with an appropriate
+<var>other-cpu-type</var> value.
 </p>
 </dd>
 <dt>&lsquo;<samp>i386</samp>&rsquo;</dt>
@@ -314,6 +329,34 @@ AVX512VL, AVX512BW, AVX512DQ, AVX512CD, AVX512VBMI, AVX512IFMA, SHA, CLWB, UMIP,
 RDPID, GFNI, AVX512VBMI2, AVX512VPOPCNTDQ, AVX512BITALG, AVX512VNNI, VPCLMULQDQ,
 VAES, PCONFIG, WBNOINVD, MOVDIRI, MOVDIR64B, AVX512VP2INTERSECT and KEYLOCKER
 instruction set support.
+</p>
+</dd>
+<dt>&lsquo;<samp>sapphirerapids</samp>&rsquo;</dt>
+<dd><p>Intel sapphirerapids CPU with 64-bit extensions, MOVBE, MMX, SSE, SSE2, SSE3,
+SSSE3, SSE4.1, SSE4.2, POPCNT, PKU, AVX, AVX2, AES, PCLMUL, FSGSBASE, RDRND,
+FMA, BMI, BMI2, F16C, RDSEED, ADCX, PREFETCHW, CLFLUSHOPT, XSAVEC, XSAVES,
+AVX512F, CLWB, AVX512VL, AVX512BW, AVX512DQ, AVX512CD, AVX512VNNI, AVX512BF16,
+MOVDIRI, MOVDIR64B, AVX512VP2INTERSECT, ENQCMD, CLDEMOTE, PTWRITE, WAITPKG,
+SERIALIZE, TSXLDTRK, UINTR, AMX-BF16, AMX-TILE, AMX-INT8 and AVX-VNNI
+instruction set support.
+</p>
+</dd>
+<dt>&lsquo;<samp>alderlake</samp>&rsquo;</dt>
+<dd><p>Intel Alderlake CPU with 64-bit extensions, MOVBE, MMX, SSE, SSE2, SSE3, SSSE3,
+SSE4.1, SSE4.2, POPCNT, AES, PREFETCHW, PCLMUL, RDRND, XSAVE, XSAVEC, XSAVES,
+XSAVEOPT, FSGSBASE, PTWRITE, RDPID, SGX, UMIP, GFNI-SSE, CLWB, MOVDIRI,
+MOVDIR64B, CLDEMOTE, WAITPKG, ADCX, AVX, AVX2, BMI, BMI2, F16C, FMA, LZCNT,
+PCONFIG, PKU, VAES, VPCLMULQDQ, SERIALIZE, HRESET, KL, WIDEKL and AVX-VNNI
+instruction set support.
+</p>
+</dd>
+<dt>&lsquo;<samp>rocketlake</samp>&rsquo;</dt>
+<dd><p>Intel Rocketlake CPU with 64-bit extensions, MOVBE, MMX, SSE, SSE2,
+SSE3, SSSE3, SSE4.1, SSE4.2, POPCNT, PKU, AVX, AVX2, AES, PCLMUL, FSGSBASE,
+RDRND, FMA, BMI, BMI2, F16C, RDSEED, ADCX, PREFETCHW, CLFLUSHOPT, XSAVEC,
+XSAVES, AVX512F, AVX512VL, AVX512BW, AVX512DQ, AVX512CD, AVX512VBMI,
+AVX512IFMA, SHA, CLWB, UMIP, RDPID, GFNI, AVX512VBMI2, AVX512VPOPCNTDQ,
+AVX512BITALG, AVX512VNNI, VPCLMULQDQ, VAES instruction set support.
 </p>
 </dd>
 <dt>&lsquo;<samp>k6</samp>&rsquo;</dt>
@@ -577,7 +620,7 @@ processors) for which the code is optimized.
 
 </dd>
 <dt><code>-mcpu=<var>cpu-type</var></code></dt>
-<dd><a name="index-mcpu-15"></a>
+<dd><a name="index-mcpu-16"></a>
 <p>A deprecated synonym for <samp>-mtune</samp>.
 </p>
 </dd>
@@ -1137,6 +1180,12 @@ preferred alignment to <samp>-mpreferred-stack-boundary=2</samp>.
 <dt><code>-menqcmd</code></dt>
 <dd><a name="index-menqcmd"></a>
 </dd>
+<dt><code>-muintr</code></dt>
+<dd><a name="index-muintr"></a>
+</dd>
+<dt><code>-mtsxldtrk</code></dt>
+<dd><a name="index-mtsxldtrk"></a>
+</dd>
 <dt><code>-mavx512vpopcntdq</code></dt>
 <dd><a name="index-mavx512vpopcntdq"></a>
 </dd>
@@ -1149,11 +1198,35 @@ preferred alignment to <samp>-mpreferred-stack-boundary=2</samp>.
 <dt><code>-mavx512vnni</code></dt>
 <dd><a name="index-mavx512vnni"></a>
 </dd>
+<dt><code>-mavxvnni</code></dt>
+<dd><a name="index-mavxvnni"></a>
+</dd>
 <dt><code>-mavx5124vnniw</code></dt>
 <dd><a name="index-mavx5124vnniw"></a>
 </dd>
 <dt><code>-mcldemote</code></dt>
 <dd><a name="index-mcldemote"></a>
+</dd>
+<dt><code>-mserialize</code></dt>
+<dd><a name="index-mserialize"></a>
+</dd>
+<dt><code>-mamx-tile</code></dt>
+<dd><a name="index-mamx_002dtile"></a>
+</dd>
+<dt><code>-mamx-int8</code></dt>
+<dd><a name="index-mamx_002dint8"></a>
+</dd>
+<dt><code>-mamx-bf16</code></dt>
+<dd><a name="index-mamx_002dbf16"></a>
+</dd>
+<dt><code>-mhreset</code></dt>
+<dd><a name="index-mhreset"></a>
+</dd>
+<dt><code>-mkl</code></dt>
+<dd><a name="index-mkl"></a>
+</dd>
+<dt><code>-mwidekl</code></dt>
+<dd><a name="index-mwidekl"></a>
 <p>These switches enable the use of instructions in the MMX, SSE,
 SSE2, SSE3, SSSE3, SSE4, SSE4A, SSE4.1, SSE4.2, AVX, AVX2, AVX512F, AVX512PF,
 AVX512ER, AVX512CD, AVX512VL, AVX512BW, AVX512DQ, AVX512IFMA, AVX512VBMI, SHA,
@@ -1162,8 +1235,9 @@ WBNOINVD, FMA4, PREFETCHW, RDPID, PREFETCHWT1, RDSEED, SGX, XOP, LWP,
 3DNow!, enhanced 3DNow!, POPCNT, ABM, ADX, BMI, BMI2, LZCNT, FXSR, XSAVE,
 XSAVEOPT, XSAVEC, XSAVES, RTM, HLE, TBM, MWAITX, CLZERO, PKU, AVX512VBMI2,
 GFNI, VAES, WAITPKG, VPCLMULQDQ, AVX512BITALG, MOVDIRI, MOVDIR64B, AVX512BF16,
-ENQCMD, AVX512VPOPCNTDQ, AVX5124FMAPS, AVX512VNNI, AVX5124VNNIW, or CLDEMOTE
-extended instruction sets.  Each has a corresponding <samp>-mno-</samp> option to
+ENQCMD, AVX512VPOPCNTDQ, AVX5124FMAPS, AVX512VNNI, AVX5124VNNIW, SERIALIZE,
+UINTR, HRESET, AMXTILE, AMXINT8, AMXBF16, KL, WIDEKL, AVXVNNI or CLDEMOTE
+extended instruction sets. Each has a corresponding <samp>-mno-</samp> option to
 disable use of these instructions.
 </p>
 <p>These extensions are also available as built-in functions: see
@@ -1302,6 +1376,13 @@ from x86 Control-flow Enforcement Technology (CET).
 <p>This option enables built-in functions <code>__builtin_ia32_crc32qi</code>,
 <code>__builtin_ia32_crc32hi</code>, <code>__builtin_ia32_crc32si</code> and
 <code>__builtin_ia32_crc32di</code> to generate the <code>crc32</code> machine instruction.
+</p>
+</dd>
+<dt><code>-mmwait</code></dt>
+<dd><a name="index-mmwait"></a>
+<p>This option enables built-in functions <code>__builtin_ia32_monitor</code>,
+and <code>__builtin_ia32_mwait</code> to generate the <code>monitor</code> and
+<code>mwait</code> machine instructions.
 </p>
 </dd>
 <dt><code>-mrecip</code></dt>
@@ -1867,7 +1948,7 @@ on x86-64 processors in 64-bit environments.
 <dt><code>-mx32</code></dt>
 <dt><code>-m16</code></dt>
 <dt><code>-miamcu</code></dt>
-<dd><a name="index-m32-5"></a>
+<dd><a name="index-m32-4"></a>
 <a name="index-m64-5"></a>
 <a name="index-mx32"></a>
 <a name="index-m16"></a>
@@ -1946,6 +2027,13 @@ environments.
 <p>Generate code for short address mode.  This is only supported for 32-bit
 and x32 environments.  It is the default address mode for 32-bit and
 x32 environments.
+</p>
+</dd>
+<dt><code>-mneeded</code></dt>
+<dt><code>-mno-needed</code></dt>
+<dd><a name="index-mneeded"></a>
+<p>Emit GNU_PROPERTY_X86_ISA_1_NEEDED GNU property for Linux target to
+indicate the micro-architecture ISA level required to execute the binary.
 </p></dd>
 </dl>
 

@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
-<!-- Copyright (C) 1988-2020 Free Software Foundation, Inc.
+<!-- Copyright (C) 1988-2021 Free Software Foundation, Inc.
 
 Permission is granted to copy, distribute and/or modify this document
 under the terms of the GNU Free Documentation License, Version 1.3 or
@@ -82,7 +82,7 @@ ul.no-bullet {list-style: none}
 
 <p>This file documents the internals of the GNU compilers.
 </p><br>
-<p>Copyright &copy; 1988-2020 Free Software Foundation, Inc.
+<p>Copyright &copy; 1988-2021 Free Software Foundation, Inc.
 </p>
 <p>Permission is granted to copy, distribute and/or modify this document
 under the terms of the GNU Free Documentation License, Version 1.3 or
@@ -236,12 +236,13 @@ Texts being (a) (see below), and with the Back-Cover Texts being (b)
         <li><a name="toc-Modify-the-test-timeout-value" href="Directives.html#Modify-the-test-timeout-value">7.2.1.3 Modify the test timeout value</a></li>
         <li><a name="toc-Skip-a-test-for-some-targets" href="Directives.html#Skip-a-test-for-some-targets">7.2.1.4 Skip a test for some targets</a></li>
         <li><a name="toc-Expect-a-test-to-fail-for-some-targets" href="Directives.html#Expect-a-test-to-fail-for-some-targets">7.2.1.5 Expect a test to fail for some targets</a></li>
-        <li><a name="toc-Expect-the-test-executable-to-fail" href="Directives.html#Expect-the-test-executable-to-fail">7.2.1.6 Expect the test executable to fail</a></li>
-        <li><a name="toc-Verify-compiler-messages" href="Directives.html#Verify-compiler-messages">7.2.1.7 Verify compiler messages</a></li>
-        <li><a name="toc-Verify-output-of-the-test-executable" href="Directives.html#Verify-output-of-the-test-executable">7.2.1.8 Verify output of the test executable</a></li>
-        <li><a name="toc-Specify-environment-variables-for-a-test" href="Directives.html#Specify-environment-variables-for-a-test">7.2.1.9 Specify environment variables for a test</a></li>
-        <li><a name="toc-Specify-additional-files-for-a-test" href="Directives.html#Specify-additional-files-for-a-test">7.2.1.10 Specify additional files for a test</a></li>
-        <li><a name="toc-Add-checks-at-the-end-of-a-test" href="Directives.html#Add-checks-at-the-end-of-a-test">7.2.1.11 Add checks at the end of a test</a></li>
+        <li><a name="toc-Expect-the-compiler-to-crash" href="Directives.html#Expect-the-compiler-to-crash">7.2.1.6 Expect the compiler to crash</a></li>
+        <li><a name="toc-Expect-the-test-executable-to-fail" href="Directives.html#Expect-the-test-executable-to-fail">7.2.1.7 Expect the test executable to fail</a></li>
+        <li><a name="toc-Verify-compiler-messages" href="Directives.html#Verify-compiler-messages">7.2.1.8 Verify compiler messages</a></li>
+        <li><a name="toc-Verify-output-of-the-test-executable" href="Directives.html#Verify-output-of-the-test-executable">7.2.1.9 Verify output of the test executable</a></li>
+        <li><a name="toc-Specify-environment-variables-for-a-test" href="Directives.html#Specify-environment-variables-for-a-test">7.2.1.10 Specify environment variables for a test</a></li>
+        <li><a name="toc-Specify-additional-files-for-a-test" href="Directives.html#Specify-additional-files-for-a-test">7.2.1.11 Specify additional files for a test</a></li>
+        <li><a name="toc-Add-checks-at-the-end-of-a-test" href="Directives.html#Add-checks-at-the-end-of-a-test">7.2.1.12 Add checks at the end of a test</a></li>
       </ul></li>
       <li><a name="toc-Selecting-targets-to-which-a-test-applies" href="Selectors.html#Selectors">7.2.2 Selecting targets to which a test applies</a></li>
       <li><a name="toc-Keywords-describing-target-attributes" href="Effective_002dTarget-Keywords.html#Effective_002dTarget-Keywords">7.2.3 Keywords describing target attributes</a>
@@ -255,12 +256,13 @@ Texts being (a) (see below), and with the Back-Cover Texts being (b)
         <li><a name="toc-ARM_002dspecific-attributes" href="Effective_002dTarget-Keywords.html#ARM_002dspecific-attributes">7.2.3.7 ARM-specific attributes</a></li>
         <li><a name="toc-AArch64_002dspecific-attributes" href="Effective_002dTarget-Keywords.html#AArch64_002dspecific-attributes">7.2.3.8 AArch64-specific attributes</a></li>
         <li><a name="toc-MIPS_002dspecific-attributes" href="Effective_002dTarget-Keywords.html#MIPS_002dspecific-attributes">7.2.3.9 MIPS-specific attributes</a></li>
-        <li><a name="toc-PowerPC_002dspecific-attributes" href="Effective_002dTarget-Keywords.html#PowerPC_002dspecific-attributes">7.2.3.10 PowerPC-specific attributes</a></li>
-        <li><a name="toc-Other-hardware-attributes" href="Effective_002dTarget-Keywords.html#Other-hardware-attributes">7.2.3.11 Other hardware attributes</a></li>
-        <li><a name="toc-Environment-attributes" href="Effective_002dTarget-Keywords.html#Environment-attributes">7.2.3.12 Environment attributes</a></li>
-        <li><a name="toc-Other-attributes" href="Effective_002dTarget-Keywords.html#Other-attributes">7.2.3.13 Other attributes</a></li>
-        <li><a name="toc-Local-to-tests-in-gcc_002etarget_002fi386" href="Effective_002dTarget-Keywords.html#Local-to-tests-in-gcc_002etarget_002fi386">7.2.3.14 Local to tests in <code>gcc.target/i386</code></a></li>
-        <li><a name="toc-Local-to-tests-in-gcc_002etest_002dframework" href="Effective_002dTarget-Keywords.html#Local-to-tests-in-gcc_002etest_002dframework">7.2.3.15 Local to tests in <code>gcc.test-framework</code></a></li>
+        <li><a name="toc-MSP430_002dspecific-attributes" href="Effective_002dTarget-Keywords.html#MSP430_002dspecific-attributes">7.2.3.10 MSP430-specific attributes</a></li>
+        <li><a name="toc-PowerPC_002dspecific-attributes" href="Effective_002dTarget-Keywords.html#PowerPC_002dspecific-attributes">7.2.3.11 PowerPC-specific attributes</a></li>
+        <li><a name="toc-Other-hardware-attributes" href="Effective_002dTarget-Keywords.html#Other-hardware-attributes">7.2.3.12 Other hardware attributes</a></li>
+        <li><a name="toc-Environment-attributes" href="Effective_002dTarget-Keywords.html#Environment-attributes">7.2.3.13 Environment attributes</a></li>
+        <li><a name="toc-Other-attributes" href="Effective_002dTarget-Keywords.html#Other-attributes">7.2.3.14 Other attributes</a></li>
+        <li><a name="toc-Local-to-tests-in-gcc_002etarget_002fi386" href="Effective_002dTarget-Keywords.html#Local-to-tests-in-gcc_002etarget_002fi386">7.2.3.15 Local to tests in <code>gcc.target/i386</code></a></li>
+        <li><a name="toc-Local-to-tests-in-gcc_002etest_002dframework" href="Effective_002dTarget-Keywords.html#Local-to-tests-in-gcc_002etest_002dframework">7.2.3.16 Local to tests in <code>gcc.test-framework</code></a></li>
       </ul></li>
       <li><a name="toc-Features-for-dg_002dadd_002doptions" href="Add-Options.html#Add-Options">7.2.4 Features for <code>dg-add-options</code></a></li>
       <li><a name="toc-Variants-of-dg_002drequire_002dsupport" href="Require-Support.html#Require-Support">7.2.5 Variants of <code>dg-require-<var>support</var></code></a></li>
@@ -389,10 +391,7 @@ Texts being (a) (see below), and with the Back-Cover Texts being (b)
       <li><a name="toc-Namespaces-1" href="Namespaces.html#Namespaces">11.10.2 Namespaces</a></li>
       <li><a name="toc-Classes-1" href="Classes.html#Classes">11.10.3 Classes</a></li>
       <li><a name="toc-Functions-for-C_002b_002b-1" href="Functions-for-C_002b_002b.html#Functions-for-C_002b_002b">11.10.4 Functions for C++</a></li>
-      <li><a name="toc-Statements-for-C_002b_002b-1" href="Statements-for-C_002b_002b.html#Statements-for-C_002b_002b">11.10.5 Statements for C++</a>
-      <ul class="no-bullet">
-        <li><a name="toc-Statements-2" href="Statements-for-C_002b_002b.html#Statements-2">11.10.5.1 Statements</a></li>
-      </ul></li>
+      <li><a name="toc-Statements-for-C-and-C_002b_002b-1" href="Statements-for-C-and-C_002b_002b.html#Statements-for-C-and-C_002b_002b">11.10.5 Statements for C and C++</a></li>
       <li><a name="toc-C_002b_002b-Expressions-1" href="C_002b_002b-Expressions.html#C_002b_002b-Expressions">11.10.6 C++ Expressions</a></li>
     </ul></li>
   </ul></li>
@@ -499,8 +498,23 @@ Texts being (a) (see below), and with the Back-Cover Texts being (b)
     <li><a name="toc-Variable-Location-Debug-Information-in-RTL" href="Debug-Information.html#Debug-Information">14.18 Variable Location Debug Information in RTL</a></li>
     <li><a name="toc-Insns-1" href="Insns.html#Insns">14.19 Insns</a></li>
     <li><a name="toc-RTL-Representation-of-Function_002dCall-Insns" href="Calls.html#Calls">14.20 RTL Representation of Function-Call Insns</a></li>
-    <li><a name="toc-Structure-Sharing-Assumptions" href="Sharing.html#Sharing">14.21 Structure Sharing Assumptions</a></li>
-    <li><a name="toc-Reading-RTL-1" href="Reading-RTL.html#Reading-RTL">14.22 Reading RTL</a></li>
+    <li><a name="toc-On_002dthe_002dSide-SSA-Form-for-RTL" href="RTL-SSA.html#RTL-SSA">14.21 On-the-Side SSA Form for RTL</a>
+    <ul class="no-bullet">
+      <li><a name="toc-Using-RTL-SSA-in-a-pass" href="Using-RTL-SSA.html#Using-RTL-SSA">14.21.1 Using RTL SSA in a pass</a></li>
+      <li><a name="toc-RTL-SSA-Instructions-1" href="RTL-SSA-Instructions.html#RTL-SSA-Instructions">14.21.2 RTL SSA Instructions</a></li>
+      <li><a name="toc-RTL-SSA-Basic-Blocks-1" href="RTL-SSA-Basic-Blocks.html#RTL-SSA-Basic-Blocks">14.21.3 RTL SSA Basic Blocks</a></li>
+      <li><a name="toc-RTL-SSA-Resources-1" href="RTL-SSA-Resources.html#RTL-SSA-Resources">14.21.4 RTL SSA Resources</a></li>
+      <li><a name="toc-RTL-SSA-Register-and-Memory-Accesses" href="RTL-SSA-Accesses.html#RTL-SSA-Accesses">14.21.5 RTL SSA Register and Memory Accesses</a></li>
+      <li><a name="toc-RTL-SSA-Phi-Nodes-1" href="RTL-SSA-Phi-Nodes.html#RTL-SSA-Phi-Nodes">14.21.6 RTL SSA Phi Nodes</a></li>
+      <li><a name="toc-RTL-SSA-Access-Lists-1" href="RTL-SSA-Access-Lists.html#RTL-SSA-Access-Lists">14.21.7 RTL SSA Access Lists</a></li>
+      <li><a name="toc-Using-the-RTL-SSA-framework-to-change-instructions" href="Changing-RTL-Instructions.html#Changing-RTL-Instructions">14.21.8 Using the RTL SSA framework to change instructions</a>
+      <ul class="no-bullet">
+        <li><a name="toc-Changing-One-RTL-SSA-Instruction-1" href="Changing-One-RTL-SSA-Instruction.html#Changing-One-RTL-SSA-Instruction">14.21.8.1 Changing One RTL SSA Instruction</a></li>
+        <li><a name="toc-Changing-Multiple-RTL-SSA-Instructions-1" href="Changing-Multiple-RTL-SSA-Instructions.html#Changing-Multiple-RTL-SSA-Instructions">14.21.8.2 Changing Multiple RTL SSA Instructions</a></li>
+      </ul></li>
+    </ul></li>
+    <li><a name="toc-Structure-Sharing-Assumptions" href="Sharing.html#Sharing">14.22 Structure Sharing Assumptions</a></li>
+    <li><a name="toc-Reading-RTL-1" href="Reading-RTL.html#Reading-RTL">14.23 Reading RTL</a></li>
   </ul></li>
   <li><a name="toc-Control-Flow-Graph" href="Control-Flow.html#Control-Flow">15 Control Flow Graph</a>
   <ul class="no-bullet">
@@ -768,19 +782,20 @@ Texts being (a) (see below), and with the Back-Cover Texts being (b)
       <li><a name="toc-Talk-in-terms-of-the-user_0027s-code" href="Guidelines-for-Diagnostics.html#Talk-in-terms-of-the-user_0027s-code">28.1.1 Talk in terms of the user&rsquo;s code</a></li>
       <li><a name="toc-Diagnostics-are-actionable" href="Guidelines-for-Diagnostics.html#Diagnostics-are-actionable">28.1.2 Diagnostics are actionable</a></li>
       <li><a name="toc-The-user_0027s-attention-is-important" href="Guidelines-for-Diagnostics.html#The-user_0027s-attention-is-important">28.1.3 The user&rsquo;s attention is important</a></li>
-      <li><a name="toc-Precision-of-Wording" href="Guidelines-for-Diagnostics.html#Precision-of-Wording">28.1.4 Precision of Wording</a></li>
-      <li><a name="toc-Try-the-diagnostic-on-real_002dworld-code" href="Guidelines-for-Diagnostics.html#Try-the-diagnostic-on-real_002dworld-code">28.1.5 Try the diagnostic on real-world code</a></li>
-      <li><a name="toc-Make-mismatches-clear" href="Guidelines-for-Diagnostics.html#Make-mismatches-clear">28.1.6 Make mismatches clear</a></li>
-      <li><a name="toc-Location-Information" href="Guidelines-for-Diagnostics.html#Location-Information">28.1.7 Location Information</a></li>
-      <li><a name="toc-Coding-Conventions" href="Guidelines-for-Diagnostics.html#Coding-Conventions">28.1.8 Coding Conventions</a></li>
-      <li><a name="toc-Group-logically_002drelated-diagnostics" href="Guidelines-for-Diagnostics.html#Group-logically_002drelated-diagnostics">28.1.9 Group logically-related diagnostics</a></li>
-      <li><a name="toc-Quoting" href="Guidelines-for-Diagnostics.html#Quoting">28.1.10 Quoting</a></li>
-      <li><a name="toc-Spelling-and-Terminology" href="Guidelines-for-Diagnostics.html#Spelling-and-Terminology">28.1.11 Spelling and Terminology</a></li>
-      <li><a name="toc-Fix_002dit-hints" href="Guidelines-for-Diagnostics.html#Fix_002dit-hints">28.1.12 Fix-it hints</a>
+      <li><a name="toc-Sometimes-the-user-didn_0027t-write-the-code" href="Guidelines-for-Diagnostics.html#Sometimes-the-user-didn_0027t-write-the-code">28.1.4 Sometimes the user didn&rsquo;t write the code</a></li>
+      <li><a name="toc-Precision-of-Wording" href="Guidelines-for-Diagnostics.html#Precision-of-Wording">28.1.5 Precision of Wording</a></li>
+      <li><a name="toc-Try-the-diagnostic-on-real_002dworld-code" href="Guidelines-for-Diagnostics.html#Try-the-diagnostic-on-real_002dworld-code">28.1.6 Try the diagnostic on real-world code</a></li>
+      <li><a name="toc-Make-mismatches-clear" href="Guidelines-for-Diagnostics.html#Make-mismatches-clear">28.1.7 Make mismatches clear</a></li>
+      <li><a name="toc-Location-Information" href="Guidelines-for-Diagnostics.html#Location-Information">28.1.8 Location Information</a></li>
+      <li><a name="toc-Coding-Conventions" href="Guidelines-for-Diagnostics.html#Coding-Conventions">28.1.9 Coding Conventions</a></li>
+      <li><a name="toc-Group-logically_002drelated-diagnostics" href="Guidelines-for-Diagnostics.html#Group-logically_002drelated-diagnostics">28.1.10 Group logically-related diagnostics</a></li>
+      <li><a name="toc-Quoting" href="Guidelines-for-Diagnostics.html#Quoting">28.1.11 Quoting</a></li>
+      <li><a name="toc-Spelling-and-Terminology" href="Guidelines-for-Diagnostics.html#Spelling-and-Terminology">28.1.12 Spelling and Terminology</a></li>
+      <li><a name="toc-Fix_002dit-hints" href="Guidelines-for-Diagnostics.html#Fix_002dit-hints">28.1.13 Fix-it hints</a>
       <ul class="no-bullet">
-        <li><a name="toc-Fix_002dit-hints-should-work" href="Guidelines-for-Diagnostics.html#Fix_002dit-hints-should-work">28.1.12.1 Fix-it hints should work</a></li>
-        <li><a name="toc-Express-deletion-in-terms-of-deletion_002c-not-replacement" href="Guidelines-for-Diagnostics.html#Express-deletion-in-terms-of-deletion_002c-not-replacement">28.1.12.2 Express deletion in terms of deletion, not replacement</a></li>
-        <li><a name="toc-Multiple-suggestions" href="Guidelines-for-Diagnostics.html#Multiple-suggestions">28.1.12.3 Multiple suggestions</a></li>
+        <li><a name="toc-Fix_002dit-hints-should-work" href="Guidelines-for-Diagnostics.html#Fix_002dit-hints-should-work">28.1.13.1 Fix-it hints should work</a></li>
+        <li><a name="toc-Express-deletion-in-terms-of-deletion_002c-not-replacement" href="Guidelines-for-Diagnostics.html#Express-deletion-in-terms-of-deletion_002c-not-replacement">28.1.13.2 Express deletion in terms of deletion, not replacement</a></li>
+        <li><a name="toc-Multiple-suggestions" href="Guidelines-for-Diagnostics.html#Multiple-suggestions">28.1.13.3 Multiple suggestions</a></li>
       </ul></li>
     </ul></li>
     <li><a name="toc-Guidelines-for-Options-1" href="Guidelines-for-Options.html#Guidelines-for-Options">28.2 Guidelines for Options</a></li>
@@ -812,8 +827,8 @@ Next: <a href="Contributing.html#Contributing" accesskey="n" rel="next">Contribu
 <p>This manual documents the internals of the GNU compilers, including
 how to port them to new targets and some information about how to
 write front ends for new languages.  It corresponds to the compilers
-(GNU Toolchain for the A-profile Architecture 10.3-2021.07 (arm-10.29))
-version 10.3.1.  The use of the GNU compilers is documented in a
+(GNU Toolchain for the Arm Architecture 11.2-2022.02 (arm-11.14))
+version 11.2.1.  The use of the GNU compilers is documented in a
 separate manual.  See <a href="http://gcc.gnu.org/onlinedocs/gcc/index.html#Top">Introduction</a> in <cite>Using the GNU
 Compiler Collection (GCC)</cite>.
 </p>

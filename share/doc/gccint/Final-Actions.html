@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
-<!-- Copyright (C) 1988-2020 Free Software Foundation, Inc.
+<!-- Copyright (C) 1988-2021 Free Software Foundation, Inc.
 
 Permission is granted to copy, distribute and/or modify this document
 under the terms of the GNU Free Documentation License, Version 1.3 or
@@ -123,6 +123,16 @@ assembler output.
 <dt><code>scan-assembler-dem-not <var>regex</var> [{ target/xfail <var>selector</var> }]</code></dt>
 <dd><p>Passes if <var>regex</var> does not match text in the test&rsquo;s demangled assembler
 output.
+</p>
+</dd>
+<dt><code>scan-assembler-symbol-section <var>functions</var> <var>section</var> [{ target/xfail <var>selector</var> }]</code></dt>
+<dd><p>Passes if <var>functions</var> are all in <var>section</var>.  The caller needs to
+allow for <code>USER_LABEL_PREFIX</code> and different section name conventions.
+</p>
+</dd>
+<dt><code>scan-symbol-section <var>filename</var> <var>functions</var> <var>section</var> [{ target/xfail <var>selector</var> }]</code></dt>
+<dd><p>Passes if <var>functions</var> are all in <var>section</var>in <var>filename</var>.
+The same caveats as for <code>scan-assembler-symbol-section</code> apply.
 </p>
 </dd>
 <dt><code>scan-hidden <var>symbol</var> [{ target/xfail <var>selector</var> }]</code></dt>
@@ -257,6 +267,19 @@ suffix <var>suffix</var>.
 </p></dd>
 </dl>
 
+<p>The <var>suffix</var> argument which describes the dump file to be scanned
+may contain a glob pattern that must expand to exactly one file
+name. This is useful if, e.g., different pass instances are executed
+depending on torture testing command-line flags, producing dump files
+whose names differ only in their pass instance number suffix.  For
+example, to scan instances 1, 2, 3 of a tree pass &ldquo;mypass&rdquo; for
+occurrences of the string &ldquo;code has been optimized&rdquo;, use:
+</p><div class="smallexample">
+<pre class="smallexample">/* { dg-options &quot;-fdump-tree-mypass&quot; } */
+/* { dg-final { scan-tree-dump &quot;code has been optimized&quot; &quot;mypass\[1-3\]&quot; } } */
+</pre></div>
+
+
 <a name="Check-for-output-files"></a>
 <h4 class="subsubsection">7.2.6.4 Check for output files</h4>
 
@@ -289,6 +312,11 @@ suffix <var>suffix</var>.
 <dt><code>run-gcov [branches] [calls] { <var>opts</var> <var>sourcefile</var> }</code></dt>
 <dd><p>Check branch and/or call counts, in addition to line counts, in
 <code>gcov</code> tests.
+</p>
+</dd>
+<dt><code>run-gcov-pytest { <var>sourcefile</var> <var>pytest_file</var> }</code></dt>
+<dd><p>Check output of <code>gcov</code> intermediate format with a pytest
+script.
 </p></dd>
 </dl>
 

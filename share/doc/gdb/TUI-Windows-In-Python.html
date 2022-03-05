@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
-<!-- Copyright (C) 1988-2021 Free Software Foundation, Inc.
+<!-- Copyright (C) 1988-2022 Free Software Foundation, Inc.
 
 Permission is granted to copy, distribute and/or modify this document
 under the terms of the GNU Free Documentation License, Version 1.3 or
@@ -68,7 +68,7 @@ Previous: <a href="Registers-In-Python.html#Registers-In-Python" accesskey="p" r
 </div>
 <hr>
 <a name="Implementing-new-TUI-windows"></a>
-<h4 class="subsubsection">23.2.2.35 Implementing new TUI windows</h4>
+<h4 class="subsubsection">23.3.2.35 Implementing new TUI windows</h4>
 <a name="index-Python-TUI-Windows"></a>
 
 <p>New TUI (see <a href="TUI.html#TUI">TUI</a>) windows can be implemented in Python.
@@ -90,7 +90,7 @@ window.  This is called with a single argument of type
 that implements the TUI window protocol, also described below.
 </p></dd></dl>
 
-<p>As mentioned above, when a factory function is called, it is passed a
+<p>As mentioned above, when a factory function is called, it is passed
 an object of type <code>gdb.TuiWindow</code>.  This object has these
 methods and attributes:
 </p>
@@ -101,6 +101,10 @@ user changes the TUI layout, windows no longer visible in the new
 layout will be destroyed.  At this point, the <code>gdb.TuiWindow</code>
 will no longer be valid, and methods (and attributes) other than
 <code>is_valid</code> will throw an exception.
+</p>
+<p>When the TUI is disabled using <code>tui disable</code> (see <a href="TUI-Commands.html#TUI-Commands">tui disable</a>) the window is hidden rather than destroyed,
+but <code>is_valid</code> will still return <code>False</code> and other methods
+(and attributes) will still throw an exception.
 </p></dd></dl>
 
 <dl>
@@ -125,10 +129,14 @@ displayed above the window.  This attribute can be modified.
 </p></dd></dl>
 
 <dl>
-<dt><a name="index-TuiWindow_002ewrite"></a>Function: <strong>TuiWindow.write</strong> <em>(<var>string</var>)</em></dt>
+<dt><a name="index-TuiWindow_002ewrite"></a>Function: <strong>TuiWindow.write</strong> <em>(<var>string</var> <span class="roman">[</span>, <var>full_window</var><span class="roman">]</span>)</em></dt>
 <dd><p>Write <var>string</var> to the window.  <var>string</var> can contain ANSI
 terminal escape styling sequences; <small>GDB</small> will translate these
 as appropriate for the terminal.
+</p>
+<p>If the <var>full_window</var> parameter is <code>True</code>, then <var>string</var>
+contains the full contents of the window.  This is similar to calling
+<code>erase</code> before <code>write</code>, but avoids the flickering.
 </p></dd></dl>
 
 <p>The factory function that you supply should return an object
@@ -180,6 +188,14 @@ amount by which to scroll, with negative numbers meaning to scroll
 backward.  In the TUI model, it is the viewport that moves, not the
 contents.  A positive argument should cause the viewport to move down,
 and so the content should appear to move up.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-Window_002eclick"></a>Function: <strong>Window.click</strong> <em>(<var>x</var>, <var>y</var>, <var>button</var>)</em></dt>
+<dd><p>This is called on a mouse click in this window.  <var>x</var> and <var>y</var> are
+the mouse coordinates inside the window (0-based), and <var>button</var>
+specifies which mouse button was used, whose values can be 1 (left),
+2 (middle), or 3 (right).
 </p></dd></dl>
 
 <hr>

@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
-<!-- Copyright (C) 1988-2020 Free Software Foundation, Inc.
+<!-- Copyright (C) 1988-2021 Free Software Foundation, Inc.
 
 Permission is granted to copy, distribute and/or modify this document
 under the terms of the GNU Free Documentation License, Version 1.3 or
@@ -131,8 +131,32 @@ information to allow the user to make an informed choice about whether
 they should care (and how to fix it), but a balance must be drawn against
 overloading the user with irrelevant data.
 </p>
+<a name="Sometimes-the-user-didn_0027t-write-the-code"></a>
+<h4 class="subsection">28.1.4 Sometimes the user didn&rsquo;t write the code</h4>
+
+<p>GCC is typically used in two different ways:
+</p>
+<ul>
+<li> Semi-interactive usage: GCC is used as a development tool when the user
+is writing code, as the &ldquo;compile&rdquo; part of the &ldquo;edit-compile-debug&rdquo;
+cycle.  The user is actively hacking on the code themself (perhaps a
+project they wrote, or someone else&rsquo;s), where they just made a change
+to the code and want to see what happens, and to be warned about
+mistakes.
+
+</li><li> Batch rebuilds: where the user is recompiling one or more existing
+packages, and GCC is a detail that&rsquo;s being invoked by various build
+scripts.  Examples include a user trying to bring up an operating system
+consisting of hundreds of packages on a new CPU architecture, where the
+packages were written by many different people, or simply rebuilding
+packages after a dependency changed, where the user is hoping
+&ldquo;nothing breaks&rdquo;, since they are unfamiliar with the code.
+</li></ul>
+
+<p>Keep both of these styles of usage in mind when implementing diagnostics.
+</p>
 <a name="Precision-of-Wording"></a>
-<h4 class="subsection">28.1.4 Precision of Wording</h4>
+<h4 class="subsection">28.1.5 Precision of Wording</h4>
 
 <p>Provide the user with details that allow them to identify what the
 problem is.  For example, the vaguely-worded message:
@@ -164,7 +188,7 @@ information, as discussed below).
 messages.
 </p>
 <a name="Try-the-diagnostic-on-real_002dworld-code"></a>
-<h4 class="subsection">28.1.5 Try the diagnostic on real-world code</h4>
+<h4 class="subsection">28.1.6 Try the diagnostic on real-world code</h4>
 
 <p>It&rsquo;s worth testing a new warning on many instances of real-world code,
 written by different people, and seeing what it complains about, and
@@ -175,7 +199,7 @@ what it doesn&rsquo;t complain about.
 <p>It may also suggest ways to improve the precision of the message.
 </p>
 <a name="Make-mismatches-clear"></a>
-<h4 class="subsection">28.1.6 Make mismatches clear</h4>
+<h4 class="subsection">28.1.7 Make mismatches clear</h4>
 
 <p>Many diagnostics relate to a mismatch between two different places in the
 user&rsquo;s source code.  Examples include:
@@ -255,7 +279,7 @@ each other, they can be conditionally consolidated via
 </pre></div>
 
 <a name="Location-Information"></a>
-<h4 class="subsection">28.1.7 Location Information</h4>
+<h4 class="subsection">28.1.8 Location Information</h4>
 <a name="index-diagnostics_002c-locations"></a>
 <a name="index-location-information"></a>
 <a name="index-source-code_002c-location-information"></a>
@@ -361,7 +385,7 @@ demo.c:1:24: note: attribute 'noinline' is only applicable to functions
 
 
 <a name="Coding-Conventions"></a>
-<h4 class="subsection">28.1.8 Coding Conventions</h4>
+<h4 class="subsection">28.1.9 Coding Conventions</h4>
 
 <p>See the <a href="https://gcc.gnu.org/codingconventions.html#Diagnostics">diagnostics section</a> of the GCC coding conventions.
 </p>
@@ -402,7 +426,7 @@ For example, rather than using &lsquo;<samp>%qT</samp>&rsquo;:
 </p>
 
 <a name="Group-logically_002drelated-diagnostics"></a>
-<h4 class="subsection">28.1.9 Group logically-related diagnostics</h4>
+<h4 class="subsection">28.1.10 Group logically-related diagnostics</h4>
 
 <p>Use <code>auto_diagnostic_group</code> when issuing multiple related
 diagnostics (seen in various examples on this page).  This informs the
@@ -413,7 +437,7 @@ emitted within the group as a top-level diagnostic, and all subsequent
 diagnostics within the group as its children.
 </p>
 <a name="Quoting"></a>
-<h4 class="subsection">28.1.10 Quoting</h4>
+<h4 class="subsection">28.1.11 Quoting</h4>
 <p>Text should be quoted by either using the &lsquo;<samp>q</samp>&rsquo; modifier in a directive
 such as &lsquo;<samp>%qE</samp>&rsquo;, or by enclosing the quoted text in a pair of &lsquo;<samp>%&lt;</samp>&rsquo;
 and &lsquo;<samp>%&gt;</samp>&rsquo; directives, and never by using explicit quote characters.
@@ -441,13 +465,13 @@ appear in the source code should not be quoted. For example, in the message:
 source code it should not be quoted.
 </p>
 <a name="Spelling-and-Terminology"></a>
-<h4 class="subsection">28.1.11 Spelling and Terminology</h4>
+<h4 class="subsection">28.1.12 Spelling and Terminology</h4>
 
 <p>See the <a href="https://gcc.gnu.org/codingconventions.html#Spelling
 Spelling">terminology and markup</a> section of the GCC coding conventions.
 </p>
 <a name="Fix_002dit-hints"></a>
-<h4 class="subsection">28.1.12 Fix-it hints</h4>
+<h4 class="subsection">28.1.13 Fix-it hints</h4>
 <a name="index-fix_002dit-hints"></a>
 <a name="index-diagnostics-guidelines_002c-fix_002dit-hints"></a>
 
@@ -501,7 +525,7 @@ fix-it hints for idiomatic C and C++ can be seen in
 <samp>gcc-rich-location.h</samp>.
 </p>
 <a name="Fix_002dit-hints-should-work"></a>
-<h4 class="subsubsection">28.1.12.1 Fix-it hints should work</h4>
+<h4 class="subsubsection">28.1.13.1 Fix-it hints should work</h4>
 
 <p>When implementing a fix-it hint, please verify that the suggested edit
 leads to fixed, compilable code.  (Unfortunately, this currently must be
@@ -554,7 +578,7 @@ error_at (&amp;richloc, &quot;need %&lt;typename%&gt; before %&lt;%T::%E%&gt; be
 </pre></div>
 
 <a name="Express-deletion-in-terms-of-deletion_002c-not-replacement"></a>
-<h4 class="subsubsection">28.1.12.2 Express deletion in terms of deletion, not replacement</h4>
+<h4 class="subsubsection">28.1.13.2 Express deletion in terms of deletion, not replacement</h4>
 
 <p>It&rsquo;s best to express deletion suggestions in terms of deletion fix-it
 hints, rather than replacement fix-it hints.  For example, consider this:
@@ -630,7 +654,7 @@ available.
 </p>
 
 <a name="Multiple-suggestions"></a>
-<h4 class="subsubsection">28.1.12.3 Multiple suggestions</h4>
+<h4 class="subsubsection">28.1.13.3 Multiple suggestions</h4>
 
 <p>In the rare cases where you need to suggest more than one mutually
 exclusive solution to a problem, this can be done by emitting

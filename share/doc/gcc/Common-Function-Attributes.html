@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
-<!-- Copyright (C) 1988-2020 Free Software Foundation, Inc.
+<!-- Copyright (C) 1988-2021 Free Software Foundation, Inc.
 
 Permission is granted to copy, distribute and/or modify this document
 under the terms of the GNU Free Documentation License, Version 1.3 or
@@ -80,7 +80,6 @@ Next: <a href="AArch64-Function-Attributes.html#AArch64-Function-Attributes" acc
 <p>The following attributes are supported on most targets.
 </p>
 <dl compact="compact">
-<dt><code>access</code></dt>
 <dt><code>access (<var>access-mode</var>, <var>ref-index</var>)</code></dt>
 <dt><code>access (<var>access-mode</var>, <var>ref-index</var>, <var>size-index</var>)</code></dt>
 <dd>
@@ -93,8 +92,8 @@ may be diagnosed by warnings such as <samp>-Wstringop-overflow</samp>,
 <p>The <code>access</code> attribute specifies that a function to whose by-reference
 arguments the attribute applies accesses the referenced object according to
 <var>access-mode</var>.  The <var>access-mode</var> argument is required and must be
-one of three names: <code>read_only</code>, <code>read_write</code>, or <code>write_only</code>.
-The remaining two are positional arguments.
+one of four names: <code>read_only</code>, <code>read_write</code>, <code>write_only</code>,
+or <code>none</code>.  The remaining two are positional arguments.
 </p>
 <p>The required <var>ref-index</var> positional argument  denotes a function
 argument of pointer (or in C++, reference) type that is subject to
@@ -123,7 +122,7 @@ the <code>memcpy</code> function.
 </p>
 <div class="smallexample">
 <pre class="smallexample">__attribute__ ((access (read_only, 1))) int puts (const char*);
-__attribute__ ((access (read_only, 1, 2))) void* memcpy (void*, const void*, size_t);
+__attribute__ ((access (read_only, 2, 3))) void* memcpy (void*, const void*, size_t);
 </pre></div>
 
 <p>The <code>read_write</code> access mode applies to arguments of pointer types
@@ -151,6 +150,16 @@ function.
 __attribute__ ((access (write_only, 1, 2), access (read_write, 3))) int fgets (char*, int, FILE*);
 </pre></div>
 
+<p>The access mode <code>none</code> specifies that the pointer to which it applies
+is not used to access the referenced object at all.  Unless the pointer is
+null the pointed-to object must exist and have at least the size as denoted
+by the <var>size-index</var> argument.  When the optional <var>size-index</var>
+argument is omitted for an argument of <code>void*</code> type the actual pointer
+agument is ignored.  The referenced object need not be initialized.
+The mode is intended to be used as a means to help validate the expected
+object size, for example in functions that call <code>__builtin_object_size</code>.
+See <a href="Object-Size-Checking.html#Object-Size-Checking">Object Size Checking</a>.
+</p>
 </dd>
 <dt><code>alias (&quot;<var>target</var>&quot;)</code></dt>
 <dd><a name="index-alias-function-attribute"></a>
@@ -831,20 +840,113 @@ calls.
 </p>
 </dd>
 <dt><code>malloc</code></dt>
+<dt><code>malloc (<var>deallocator</var>)</code></dt>
+<dt><code>malloc (<var>deallocator</var>, <var>ptr-index</var>)</code></dt>
 <dd><a name="index-malloc-function-attribute"></a>
 <a name="index-functions-that-behave-like-malloc"></a>
-<p>This tells the compiler that a function is <code>malloc</code>-like, i.e.,
-that the pointer <var>P</var> returned by the function cannot alias any
+<p>Attribute <code>malloc</code> indicates that a function is <code>malloc</code>-like,
+i.e., that the pointer <var>P</var> returned by the function cannot alias any
 other pointer valid when the function returns, and moreover no
-pointers to valid objects occur in any storage addressed by <var>P</var>.
+pointers to valid objects occur in any storage addressed by <var>P</var>. In
+addition, the GCC predicts that a function with the attribute returns
+non-null in most cases.
 </p>
-<p>Using this attribute can improve optimization.  Compiler predicts
-that a function with the attribute returns non-null in most cases.
-Functions like
-<code>malloc</code> and <code>calloc</code> have this property because they return
-a pointer to uninitialized or zeroed-out storage.  However, functions
-like <code>realloc</code> do not have this property, as they can return a
-pointer to storage containing pointers.
+<p>Independently, the form of the attribute with one or two arguments
+associates <code>deallocator</code> as a suitable deallocation function for
+pointers returned from the <code>malloc</code>-like function.  <var>ptr-index</var>
+denotes the positional argument to which when the pointer is passed in
+calls to <code>deallocator</code> has the effect of deallocating it.
+</p>
+<p>Using the attribute with no arguments is designed to improve optimization
+by relying on the aliasing property it implies.  Functions like <code>malloc</code>
+and <code>calloc</code> have this property because they return a pointer to
+uninitialized or zeroed-out, newly obtained storage.  However, functions
+like <code>realloc</code> do not have this property, as they may return pointers
+to storage containing pointers to existing objects.  Additionally, since
+all such functions are assumed to return null only infrequently, callers
+can be optimized based on that assumption.
+</p>
+<p>Associating a function with a <var>deallocator</var> helps detect calls to
+mismatched allocation and deallocation functions and diagnose them under
+the control of options such as <samp>-Wmismatched-dealloc</samp>.  It also
+makes it possible to diagnose attempts to deallocate objects that were not
+allocated dynamically, by <samp>-Wfree-nonheap-object</samp>.  To indicate
+that an allocation function both satisifies the nonaliasing property and
+has a deallocator associated with it, both the plain form of the attribute
+and the one with the <var>deallocator</var> argument must be used.  The same
+function can be both an allocator and a deallocator.  Since inlining one
+of the associated functions but not the other could result in apparent
+mismatches, this form of attribute <code>malloc</code> is not accepted on inline
+functions.  For the same reason, using the attribute prevents both
+the allocation and deallocation functions from being expanded inline.
+</p>
+<p>For example, besides stating that the functions return pointers that do
+not alias any others, the following declarations make <code>fclose</code>
+a suitable deallocator for pointers returned from all functions except
+<code>popen</code>, and <code>pclose</code> as the only suitable deallocator for
+pointers returned from <code>popen</code>.  The deallocator functions must
+be declared before they can be referenced in the attribute.
+</p>
+<div class="smallexample">
+<pre class="smallexample">int fclose (FILE*);
+int pclose (FILE*);
+
+__attribute__ ((malloc, malloc (fclose, 1)))
+  FILE* fdopen (int, const char*);
+__attribute__ ((malloc, malloc (fclose, 1)))
+  FILE* fopen (const char*, const char*);
+__attribute__ ((malloc, malloc (fclose, 1)))
+  FILE* fmemopen(void *, size_t, const char *);
+__attribute__ ((malloc, malloc (pclose, 1)))
+  FILE* popen (const char*, const char*);
+__attribute__ ((malloc, malloc (fclose, 1)))
+  FILE* tmpfile (void);
+</pre></div>
+
+<p>The warnings guarded by <samp>-fanalyzer</samp> respect allocation and
+deallocation pairs marked with the <code>malloc</code>.  In particular:
+</p>
+<ul>
+<li> The analyzer will emit a <samp>-Wanalyzer-mismatching-deallocation</samp>
+diagnostic if there is an execution path in which the result of an
+allocation call is passed to a different deallocator.
+
+</li><li> The analyzer will emit a <samp>-Wanalyzer-double-free</samp>
+diagnostic if there is an execution path in which a value is passed
+more than once to a deallocation call.
+
+</li><li> The analyzer will consider the possibility that an allocation function
+could fail and return NULL.  It will emit
+<samp>-Wanalyzer-possible-null-dereference</samp> and
+<samp>-Wanalyzer-possible-null-argument</samp> diagnostics if there are
+execution paths in which an unchecked result of an allocation call is
+dereferenced or passed to a function requiring a non-null argument.
+If the allocator always returns non-null, use
+<code>__attribute__ ((returns_nonnull))</code> to suppress these warnings.
+For example:
+<div class="smallexample">
+<pre class="smallexample">char *xstrdup (const char *)
+  __attribute__((malloc (free), returns_nonnull));
+</pre></div>
+
+</li><li> The analyzer will emit a <samp>-Wanalyzer-use-after-free</samp>
+diagnostic if there is an execution path in which the memory passed
+by pointer to a deallocation call is used after the deallocation.
+
+</li><li> The analyzer will emit a <samp>-Wanalyzer-malloc-leak</samp> diagnostic if
+there is an execution path in which the result of an allocation call
+is leaked (without being passed to the deallocation function).
+
+</li><li> The analyzer will emit a <samp>-Wanalyzer-free-of-non-heap</samp> diagnostic
+if a deallocation function is used on a global or on-stack variable.
+
+</li></ul>
+
+<p>The analyzer assumes that deallocators can gracefully handle the <code>NULL</code>
+pointer.  If this is not the case, the deallocator can be marked with
+<code>__attribute__((nonnull))</code> so that <samp>-fanalyzer</samp> can emit
+a <samp>-Wanalyzer-possible-null-argument</samp> diagnostic for code paths
+in which the deallocator is called with NULL.
 </p>
 </dd>
 <dt><code>no_icf</code></dt>
@@ -1296,6 +1398,11 @@ flags <samp>-fstack-protector</samp>, <samp>-fstack-protector-strong</samp>
 or <samp>-fstack-protector-explicit</samp> are set.
 </p>
 </dd>
+<dt><code>no_stack_protector</code></dt>
+<dd><a name="index-no_005fstack_005fprotector-function-attribute"></a>
+<p>This attribute prevents stack protection code for the function.
+</p>
+</dd>
 <dt><code>target (<var>string</var>, &hellip;)</code></dt>
 <dd><a name="index-target-function-attribute"></a>
 <p>Multiple target back ends implement the <code>target</code> attribute
@@ -1358,18 +1465,34 @@ foo_v1 (void)
 <p>Will produce a <code>.symver foo_v1, foo@VERS_1</code> directive in the assembler
 output. 
 </p>
-<p>It&rsquo;s an error to define multiple version of a given symbol.  In such case
-an alias can be used.
+<p>One can also define multiple version for a given symbol
+(starting from binutils 2.35).
+</p>
+<div class="smallexample">
+<pre class="smallexample">__attribute__ ((__symver__ (&quot;foo@VERS_2&quot;), __symver__ (&quot;foo@VERS_3&quot;)))
+int symver_foo_v1 (void)
+{
+}
+</pre></div>
+
+<p>This example creates a symbol name <code>symver_foo_v1</code>
+which will be version <code>VERS_2</code> and <code>VERS_3</code> of <code>foo</code>.
+</p>
+<p>If you have an older release of binutils, then symbol alias needs to
+be used:
 </p>
 <div class="smallexample">
 <pre class="smallexample">__attribute__ ((__symver__ (&quot;foo@VERS_2&quot;)))
+int foo_v1 (void)
+{
+  return 0;
+}
+
+__attribute__ ((__symver__ (&quot;foo@VERS_3&quot;)))
 __attribute__ ((alias (&quot;foo_v1&quot;)))
 int symver_foo_v1 (void);
 </pre></div>
 
-<p>This example creates an alias of <code>foo_v1</code> with symbol name
-<code>symver_foo_v1</code> which will be version <code>VERS_2</code> of <code>foo</code>.
-</p>
 <p>Finally if the parameter is <code>&quot;<var>name2</var>@@<var>nodename</var>&quot;</code> then in
 addition to creating a symbol version (as if
 <code>&quot;<var>name2</var>@<var>nodename</var>&quot;</code> was used) the version will be also used
@@ -1422,6 +1545,17 @@ inline assembly.
 <p>When applied to a member function of a C++ class template, the
 attribute also means that the function is instantiated if the
 class itself is instantiated.
+</p>
+</dd>
+<dt><code>retain</code></dt>
+<dd><a name="index-retain-function-attribute"></a>
+<p>For ELF targets that support the GNU or FreeBSD OSABIs, this attribute
+will save the function from linker garbage collection.  To support
+this behavior, functions that have not been placed in specific sections
+(e.g. by the <code>section</code> attribute, or the <code>-ffunction-sections</code>
+option), will be placed in new, unique sections.
+</p>
+<p>This additional functionality requires Binutils version 2.36 or later.
 </p>
 </dd>
 <dt><code>visibility (&quot;<var>visibility_type</var>&quot;)</code></dt>
@@ -1611,9 +1745,107 @@ performing a link with relocatable output (i.e. <code>ld -r</code>) on them.
 with a named <code>target</code> must be <code>static</code>.
 </p>
 </dd>
+<dt><code>zero_call_used_regs (&quot;<var>choice</var>&quot;)</code></dt>
+<dd><a name="index-zero_005fcall_005fused_005fregs-function-attribute"></a>
+
+<p>The <code>zero_call_used_regs</code> attribute causes the compiler to zero
+a subset of all call-used registers<a name="DOCF7" href="#FOOT7"><sup>7</sup></a> at function return.
+This is used to increase program security by either mitigating
+Return-Oriented Programming (ROP) attacks or preventing information leakage
+through registers.
+</p>
+<p>In order to satisfy users with different security needs and control the
+run-time overhead at the same time, the <var>choice</var> parameter provides a
+flexible way to choose the subset of the call-used registers to be zeroed.
+The three basic values of <var>choice</var> are:
+</p>
+<ul>
+<li> &lsquo;<samp>skip</samp>&rsquo; doesn&rsquo;t zero any call-used registers.
+
+</li><li> &lsquo;<samp>used</samp>&rsquo; only zeros call-used registers that are used in the function.
+A &ldquo;used&rdquo; register is one whose content has been set or referenced in
+the function.
+
+</li><li> &lsquo;<samp>all</samp>&rsquo; zeros all call-used registers.
+</li></ul>
+
+<p>In addition to these three basic choices, it is possible to modify
+&lsquo;<samp>used</samp>&rsquo; or &lsquo;<samp>all</samp>&rsquo; as follows:
+</p>
+<ul>
+<li> Adding &lsquo;<samp>-gpr</samp>&rsquo; restricts the zeroing to general-purpose registers.
+
+</li><li> Adding &lsquo;<samp>-arg</samp>&rsquo; restricts the zeroing to registers that can sometimes
+be used to pass function arguments.  This includes all argument registers
+defined by the platform&rsquo;s calling conversion, regardless of whether the
+function uses those registers for function arguments or not.
+</li></ul>
+
+<p>The modifiers can be used individually or together.  If they are used
+together, they must appear in the order above.
+</p>
+<p>The full list of <var>choice</var>s is therefore:
+</p>
+<dl compact="compact">
+<dt><code>skip</code></dt>
+<dd><p>doesn&rsquo;t zero any call-used register.
+</p>
+</dd>
+<dt><code>used</code></dt>
+<dd><p>only zeros call-used registers that are used in the function.
+</p>
+</dd>
+<dt><code>used-gpr</code></dt>
+<dd><p>only zeros call-used general purpose registers that are used in the function.
+</p>
+</dd>
+<dt><code>used-arg</code></dt>
+<dd><p>only zeros call-used registers that are used in the function and pass arguments.
+</p>
+</dd>
+<dt><code>used-gpr-arg</code></dt>
+<dd><p>only zeros call-used general purpose registers that are used in the function
+and pass arguments.
+</p>
+</dd>
+<dt><code>all</code></dt>
+<dd><p>zeros all call-used registers.
+</p>
+</dd>
+<dt><code>all-gpr</code></dt>
+<dd><p>zeros all call-used general purpose registers.
+</p>
+</dd>
+<dt><code>all-arg</code></dt>
+<dd><p>zeros all call-used registers that pass arguments.
+</p>
+</dd>
+<dt><code>all-gpr-arg</code></dt>
+<dd><p>zeros all call-used general purpose registers that pass
+arguments.
+</p></dd>
+</dl>
+
+<p>Of this list, &lsquo;<samp>used-arg</samp>&rsquo;, &lsquo;<samp>used-gpr-arg</samp>&rsquo;, &lsquo;<samp>all-arg</samp>&rsquo;,
+and &lsquo;<samp>all-gpr-arg</samp>&rsquo; are mainly used for ROP mitigation.
+</p>
+<p>The default for the attribute is controlled by <samp>-fzero-call-used-regs</samp>.
+</p></dd>
 </dl>
 
 
+<div class="footnote">
+<hr>
+<h4 class="footnotes-heading">Footnotes</h4>
+
+<h3><a name="FOOT7" href="#DOCF7">(7)</a></h3>
+<p>A &ldquo;call-used&rdquo; register
+is a register whose contents can be changed by a function call;
+therefore, a caller cannot assume that the register has the same contents
+on return from the function as it had before calling the function.  Such
+registers are also called &ldquo;call-clobbered&rdquo;, &ldquo;caller-saved&rdquo;, or
+&ldquo;volatile&rdquo;.</p>
+</div>
 <hr>
 <div class="header">
 <p>

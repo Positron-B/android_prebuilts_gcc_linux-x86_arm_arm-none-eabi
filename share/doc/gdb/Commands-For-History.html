@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
-<!-- Copyright (C) 1988-2021 Free Software Foundation, Inc.
+<!-- Copyright (C) 1988-2022 Free Software Foundation, Inc.
 
 Permission is granted to copy, distribute and/or modify this document
 under the terms of the GNU Free Documentation License, Version 1.3 or
@@ -112,6 +112,7 @@ being entered.
 </dt>
 <dd><p>Search backward starting at the current line and moving &lsquo;up&rsquo; through
 the history as necessary.  This is an incremental search.
+This command sets the region to the matched text and activates the mark.
 </p>
 </dd>
 <dt><code>forward-search-history (C-s)</code>
@@ -119,6 +120,7 @@ the history as necessary.  This is an incremental search.
 </dt>
 <dd><p>Search forward starting at the current line and moving &lsquo;down&rsquo; through
 the history as necessary.  This is an incremental search.
+This command sets the region to the matched text and activates the mark.
 </p>
 </dd>
 <dt><code>non-incremental-reverse-search-history (M-p)</code>
@@ -206,6 +208,17 @@ the direction to move through the history.  A negative argument switches
 the direction through the history (back or forward).
 The history expansion facilities are used to extract the last argument,
 as if the &lsquo;<samp>!$</samp>&rsquo; history expansion had been specified.
+</p>
+</dd>
+<dt><code>operate-and-get-next (C-o)</code>
+<a name="index-operate_002dand_002dget_002dnext-_0028C_002do_0029"></a>
+</dt>
+<dd><p>Accept the current line for return to the calling application as if a
+newline had been entered,
+and fetch the next line relative to the current line from the history
+for editing.
+A numeric argument, if supplied, specifies the history entry to use instead
+of the current line.
 </p>
 </dd>
 </dl>

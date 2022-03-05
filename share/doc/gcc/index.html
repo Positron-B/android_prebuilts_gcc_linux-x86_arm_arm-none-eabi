@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
-<!-- Copyright (C) 1988-2020 Free Software Foundation, Inc.
+<!-- Copyright (C) 1988-2021 Free Software Foundation, Inc.
 
 Permission is granted to copy, distribute and/or modify this document
 under the terms of the GNU Free Documentation License, Version 1.3 or
@@ -83,7 +83,7 @@ ul.no-bullet {list-style: none}
 
 <p>This file documents the use of the GNU compilers.
 </p><br>
-<p>Copyright &copy; 1988-2020 Free Software Foundation, Inc.
+<p>Copyright &copy; 1988-2021 Free Software Foundation, Inc.
 </p>
 <p>Permission is granted to copy, distribute and/or modify this document
 under the terms of the GNU Free Documentation License, Version 1.3 or
@@ -251,6 +251,12 @@ Texts being (a) (see below), and with the Back-Cover Texts being (b)
     <li><a name="toc-Specifying-Subprocesses-and-the-Switches-to-Pass-to-Them" href="Spec-Files.html#Spec-Files">3.20 Specifying Subprocesses and the Switches to Pass to Them</a></li>
     <li><a name="toc-Environment-Variables-Affecting-GCC" href="Environment-Variables.html#Environment-Variables">3.21 Environment Variables Affecting GCC</a></li>
     <li><a name="toc-Using-Precompiled-Headers" href="Precompiled-Headers.html#Precompiled-Headers">3.22 Using Precompiled Headers</a></li>
+    <li><a name="toc-C_002b_002b-Modules-1" href="C_002b_002b-Modules.html#C_002b_002b-Modules">3.23 C++ Modules</a>
+    <ul class="no-bullet">
+      <li><a name="toc-Module-Mapper" href="C_002b_002b-Module-Mapper.html#C_002b_002b-Module-Mapper">3.23.1 Module Mapper</a></li>
+      <li><a name="toc-Module-Preprocessing" href="C_002b_002b-Module-Preprocessing.html#C_002b_002b-Module-Preprocessing">3.23.2 Module Preprocessing</a></li>
+      <li><a name="toc-Compiled-Module-Interface" href="C_002b_002b-Compiled-Module-Interface.html#C_002b_002b-Compiled-Module-Interface">3.23.3 Compiled Module Interface</a></li>
+    </ul></li>
   </ul></li>
   <li><a name="toc-C-Implementation_002dDefined-Behavior" href="C-Implementation.html#C-Implementation">4 C Implementation-Defined Behavior</a>
   <ul class="no-bullet">
@@ -315,7 +321,7 @@ Texts being (a) (see below), and with the Back-Cover Texts being (b)
     <li><a name="toc-Designated-Initializers" href="Designated-Inits.html#Designated-Inits">6.29 Designated Initializers</a></li>
     <li><a name="toc-Case-Ranges-1" href="Case-Ranges.html#Case-Ranges">6.30 Case Ranges</a></li>
     <li><a name="toc-Cast-to-a-Union-Type" href="Cast-to-Union.html#Cast-to-Union">6.31 Cast to a Union Type</a></li>
-    <li><a name="toc-Mixed-Declarations-and-Code" href="Mixed-Declarations.html#Mixed-Declarations">6.32 Mixed Declarations and Code</a></li>
+    <li><a name="toc-Mixed-Declarations_002c-Labels-and-Code" href="Mixed-Labels-and-Declarations.html#Mixed-Labels-and-Declarations">6.32 Mixed Declarations, Labels and Code</a></li>
     <li><a name="toc-Declaring-Attributes-of-Functions" href="Function-Attributes.html#Function-Attributes">6.33 Declaring Attributes of Functions</a>
     <ul class="no-bullet">
       <li><a name="toc-Common-Function-Attributes-1" href="Common-Function-Attributes.html#Common-Function-Attributes">6.33.1 Common Function Attributes</a></li>
@@ -411,6 +417,7 @@ Texts being (a) (see below), and with the Back-Cover Texts being (b)
         <li><a name="toc-Goto-Labels" href="Extended-Asm.html#Goto-Labels">6.47.2.7 Goto Labels</a></li>
         <li><a name="toc-x86-Operand-Modifiers" href="Extended-Asm.html#x86-Operand-Modifiers">6.47.2.8 x86 Operand Modifiers</a></li>
         <li><a name="toc-x86-Floating_002dPoint-asm-Operands" href="Extended-Asm.html#x86-Floating_002dPoint-asm-Operands">6.47.2.9 x86 Floating-Point <code>asm</code> Operands</a></li>
+        <li><a name="toc-MSP430-Operand-Modifiers" href="Extended-Asm.html#MSP430-Operand-Modifiers">6.47.2.10 MSP430 Operand Modifiers</a></li>
       </ul></li>
       <li><a name="toc-Constraints-for-asm-Operands" href="Constraints.html#Constraints">6.47.3 Constraints for <code>asm</code> Operands</a>
       <ul class="no-bullet">
@@ -484,6 +491,7 @@ Texts being (a) (see below), and with the Back-Cover Texts being (b)
         <li><a name="toc-Basic-PowerPC-Built_002din-Functions-Available-on-ISA-2_002e06-1" href="Basic-PowerPC-Built_002din-Functions-Available-on-ISA-2_002e06.html#Basic-PowerPC-Built_002din-Functions-Available-on-ISA-2_002e06">6.60.22.3 Basic PowerPC Built-in Functions Available on ISA 2.06</a></li>
         <li><a name="toc-Basic-PowerPC-Built_002din-Functions-Available-on-ISA-2_002e07-1" href="Basic-PowerPC-Built_002din-Functions-Available-on-ISA-2_002e07.html#Basic-PowerPC-Built_002din-Functions-Available-on-ISA-2_002e07">6.60.22.4 Basic PowerPC Built-in Functions Available on ISA 2.07</a></li>
         <li><a name="toc-Basic-PowerPC-Built_002din-Functions-Available-on-ISA-3_002e0-1" href="Basic-PowerPC-Built_002din-Functions-Available-on-ISA-3_002e0.html#Basic-PowerPC-Built_002din-Functions-Available-on-ISA-3_002e0">6.60.22.5 Basic PowerPC Built-in Functions Available on ISA 3.0</a></li>
+        <li><a name="toc-Basic-PowerPC-Built_002din-Functions-Available-on-ISA-3_002e1-1" href="Basic-PowerPC-Built_002din-Functions-Available-on-ISA-3_002e1.html#Basic-PowerPC-Built_002din-Functions-Available-on-ISA-3_002e1">6.60.22.6 Basic PowerPC Built-in Functions Available on ISA 3.1</a></li>
       </ul></li>
       <li><a name="toc-PowerPC-AltiVec_002fVSX-Built_002din-Functions-1" href="PowerPC-AltiVec_002fVSX-Built_002din-Functions.html#PowerPC-AltiVec_002fVSX-Built_002din-Functions">6.60.23 PowerPC AltiVec/VSX Built-in Functions</a>
       <ul class="no-bullet">
@@ -491,6 +499,7 @@ Texts being (a) (see below), and with the Back-Cover Texts being (b)
         <li><a name="toc-PowerPC-AltiVec-Built_002din-Functions-Available-on-ISA-2_002e06-1" href="PowerPC-AltiVec-Built_002din-Functions-Available-on-ISA-2_002e06.html#PowerPC-AltiVec-Built_002din-Functions-Available-on-ISA-2_002e06">6.60.23.2 PowerPC AltiVec Built-in Functions Available on ISA 2.06</a></li>
         <li><a name="toc-PowerPC-AltiVec-Built_002din-Functions-Available-on-ISA-2_002e07-1" href="PowerPC-AltiVec-Built_002din-Functions-Available-on-ISA-2_002e07.html#PowerPC-AltiVec-Built_002din-Functions-Available-on-ISA-2_002e07">6.60.23.3 PowerPC AltiVec Built-in Functions Available on ISA 2.07</a></li>
         <li><a name="toc-PowerPC-AltiVec-Built_002din-Functions-Available-on-ISA-3_002e0-1" href="PowerPC-AltiVec-Built_002din-Functions-Available-on-ISA-3_002e0.html#PowerPC-AltiVec-Built_002din-Functions-Available-on-ISA-3_002e0">6.60.23.4 PowerPC AltiVec Built-in Functions Available on ISA 3.0</a></li>
+        <li><a name="toc-PowerPC-AltiVec-Built_002din-Functions-Available-on-ISA-3_002e1-1" href="PowerPC-AltiVec-Built_002din-Functions-Available-on-ISA-3_002e1.html#PowerPC-AltiVec-Built_002din-Functions-Available-on-ISA-3_002e1">6.60.23.5 PowerPC AltiVec Built-in Functions Available on ISA 3.1</a></li>
       </ul></li>
       <li><a name="toc-PowerPC-Hardware-Transactional-Memory-Built_002din-Functions-1" href="PowerPC-Hardware-Transactional-Memory-Built_002din-Functions.html#PowerPC-Hardware-Transactional-Memory-Built_002din-Functions">6.60.24 PowerPC Hardware Transactional Memory Built-in Functions</a>
       <ul class="no-bullet">
@@ -499,17 +508,18 @@ Texts being (a) (see below), and with the Back-Cover Texts being (b)
       </ul></li>
       <li><a name="toc-PowerPC-Atomic-Memory-Operation-Functions-1" href="PowerPC-Atomic-Memory-Operation-Functions.html#PowerPC-Atomic-Memory-Operation-Functions">6.60.25 PowerPC Atomic Memory Operation Functions</a></li>
       <li><a name="toc-PowerPC-Matrix_002dMultiply-Assist-Built_002din-Functions-1" href="PowerPC-Matrix_002dMultiply-Assist-Built_002din-Functions.html#PowerPC-Matrix_002dMultiply-Assist-Built_002din-Functions">6.60.26 PowerPC Matrix-Multiply Assist Built-in Functions</a></li>
-      <li><a name="toc-RISC_002dV-Built_002din-Functions-1" href="RISC_002dV-Built_002din-Functions.html#RISC_002dV-Built_002din-Functions">6.60.27 RISC-V Built-in Functions</a></li>
-      <li><a name="toc-RX-Built_002din-Functions-1" href="RX-Built_002din-Functions.html#RX-Built_002din-Functions">6.60.28 RX Built-in Functions</a></li>
-      <li><a name="toc-S_002f390-System-z-Built_002din-Functions-1" href="S_002f390-System-z-Built_002din-Functions.html#S_002f390-System-z-Built_002din-Functions">6.60.29 S/390 System z Built-in Functions</a></li>
-      <li><a name="toc-SH-Built_002din-Functions-1" href="SH-Built_002din-Functions.html#SH-Built_002din-Functions">6.60.30 SH Built-in Functions</a></li>
-      <li><a name="toc-SPARC-VIS-Built_002din-Functions-1" href="SPARC-VIS-Built_002din-Functions.html#SPARC-VIS-Built_002din-Functions">6.60.31 SPARC VIS Built-in Functions</a></li>
-      <li><a name="toc-TI-C6X-Built_002din-Functions-1" href="TI-C6X-Built_002din-Functions.html#TI-C6X-Built_002din-Functions">6.60.32 TI C6X Built-in Functions</a></li>
-      <li><a name="toc-TILE_002dGx-Built_002din-Functions-1" href="TILE_002dGx-Built_002din-Functions.html#TILE_002dGx-Built_002din-Functions">6.60.33 TILE-Gx Built-in Functions</a></li>
-      <li><a name="toc-TILEPro-Built_002din-Functions-1" href="TILEPro-Built_002din-Functions.html#TILEPro-Built_002din-Functions">6.60.34 TILEPro Built-in Functions</a></li>
-      <li><a name="toc-x86-Built_002din-Functions-1" href="x86-Built_002din-Functions.html#x86-Built_002din-Functions">6.60.35 x86 Built-in Functions</a></li>
-      <li><a name="toc-x86-Transactional-Memory-Intrinsics" href="x86-transactional-memory-intrinsics.html#x86-transactional-memory-intrinsics">6.60.36 x86 Transactional Memory Intrinsics</a></li>
-      <li><a name="toc-x86-Control_002dFlow-Protection-Intrinsics" href="x86-control_002dflow-protection-intrinsics.html#x86-control_002dflow-protection-intrinsics">6.60.37 x86 Control-Flow Protection Intrinsics</a></li>
+      <li><a name="toc-PRU-Built_002din-Functions-1" href="PRU-Built_002din-Functions.html#PRU-Built_002din-Functions">6.60.27 PRU Built-in Functions</a></li>
+      <li><a name="toc-RISC_002dV-Built_002din-Functions-1" href="RISC_002dV-Built_002din-Functions.html#RISC_002dV-Built_002din-Functions">6.60.28 RISC-V Built-in Functions</a></li>
+      <li><a name="toc-RX-Built_002din-Functions-1" href="RX-Built_002din-Functions.html#RX-Built_002din-Functions">6.60.29 RX Built-in Functions</a></li>
+      <li><a name="toc-S_002f390-System-z-Built_002din-Functions-1" href="S_002f390-System-z-Built_002din-Functions.html#S_002f390-System-z-Built_002din-Functions">6.60.30 S/390 System z Built-in Functions</a></li>
+      <li><a name="toc-SH-Built_002din-Functions-1" href="SH-Built_002din-Functions.html#SH-Built_002din-Functions">6.60.31 SH Built-in Functions</a></li>
+      <li><a name="toc-SPARC-VIS-Built_002din-Functions-1" href="SPARC-VIS-Built_002din-Functions.html#SPARC-VIS-Built_002din-Functions">6.60.32 SPARC VIS Built-in Functions</a></li>
+      <li><a name="toc-TI-C6X-Built_002din-Functions-1" href="TI-C6X-Built_002din-Functions.html#TI-C6X-Built_002din-Functions">6.60.33 TI C6X Built-in Functions</a></li>
+      <li><a name="toc-TILE_002dGx-Built_002din-Functions-1" href="TILE_002dGx-Built_002din-Functions.html#TILE_002dGx-Built_002din-Functions">6.60.34 TILE-Gx Built-in Functions</a></li>
+      <li><a name="toc-TILEPro-Built_002din-Functions-1" href="TILEPro-Built_002din-Functions.html#TILEPro-Built_002din-Functions">6.60.35 TILEPro Built-in Functions</a></li>
+      <li><a name="toc-x86-Built_002din-Functions-1" href="x86-Built_002din-Functions.html#x86-Built_002din-Functions">6.60.36 x86 Built-in Functions</a></li>
+      <li><a name="toc-x86-Transactional-Memory-Intrinsics" href="x86-transactional-memory-intrinsics.html#x86-transactional-memory-intrinsics">6.60.37 x86 Transactional Memory Intrinsics</a></li>
+      <li><a name="toc-x86-Control_002dFlow-Protection-Intrinsics" href="x86-control_002dflow-protection-intrinsics.html#x86-control_002dflow-protection-intrinsics">6.60.38 x86 Control-Flow Protection Intrinsics</a></li>
     </ul></li>
     <li><a name="toc-Format-Checks-Specific-to-Particular-Target-Machines" href="Target-Format-Checks.html#Target-Format-Checks">6.61 Format Checks Specific to Particular Target Machines</a>
     <ul class="no-bullet">
@@ -670,8 +680,8 @@ Next: <a href="G_002b_002b-and-GCC.html#G_002b_002b-and-GCC" accesskey="n" rel="
 <p>This manual documents how to use the GNU compilers,
 as well as their features and incompatibilities, and how to report
 bugs.  It corresponds to the compilers
-(GNU Toolchain for the A-profile Architecture 10.3-2021.07 (arm-10.29))
-version 10.3.1.
+(GNU Toolchain for the Arm Architecture 11.2-2022.02 (arm-11.14))
+version 11.2.1.
 The internals of the GNU compilers, including how to port them to new
 targets and some information about how to write front ends for new
 languages, are documented in a separate manual.  See <a href="http://gcc.gnu.org/onlinedocs/gccint/index.html#Top">Introduction</a> in <cite>GNU Compiler Collection (GCC) Internals</cite>.

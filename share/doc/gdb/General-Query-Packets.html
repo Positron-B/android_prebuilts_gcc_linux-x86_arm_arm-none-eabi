@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
-<!-- Copyright (C) 1988-2021 Free Software Foundation, Inc.
+<!-- Copyright (C) 1988-2022 Free Software Foundation, Inc.
 
 Permission is granted to copy, distribute and/or modify this document
 under the terms of the GNU Free Documentation License, Version 1.3 or
@@ -97,7 +97,7 @@ parameters by a &lsquo;<samp>:</samp>&rsquo;; the parameters themselves should b
 separated by &lsquo;<samp>,</samp>&rsquo; or &lsquo;<samp>;</samp>&rsquo;.  Stubs must be careful to match the
 full packet name, and check for a separator or the end of the packet,
 in case two packet names share a common prefix.  New packets should not begin
-with &lsquo;<samp>qC</samp>&rsquo;, &lsquo;<samp>qP</samp>&rsquo;, or &lsquo;<samp>qL</samp>&rsquo;<a name="DOCF20" href="#FOOT20"><sup>20</sup></a>.
+with &lsquo;<samp>qC</samp>&rsquo;, &lsquo;<samp>qP</samp>&rsquo;, or &lsquo;<samp>qL</samp>&rsquo;<a name="DOCF22" href="#FOOT22"><sup>22</sup></a>.
 </p>
 <p>Like the descriptions of the other packets, each description here
 has a template showing the packet&rsquo;s overall syntax, followed by an
@@ -111,7 +111,7 @@ templates for clarity; these are not part of the packet&rsquo;s syntax.  No
 <dt>&lsquo;<samp>QAgent:1</samp>&rsquo;</dt>
 <dt>&lsquo;<samp>QAgent:0</samp>&rsquo;</dt>
 <dd><p>Turn on or off the agent as a helper to perform some debugging operations
-delegated from <small>GDB</small> (see <a href="In_002dprocess-Agent.html#Control-Agent">Control Agent</a>).
+delegated from <small>GDB</small> (see <a href="In_002dProcess-Agent.html#Control-Agent">Control Agent</a>).
 </p>
 </dd>
 <dt>&lsquo;<samp>QAllow:<var>op</var>:<var>val</var>&hellip;</samp>&rsquo;</dt>
@@ -480,6 +480,93 @@ and one indicates no further threads; <var>argthreadid</var> (eight hex
 digits) is <var>nextthread</var> from the request packet; <var>thread</var>&hellip;
 is a sequence of thread IDs, <var>threadid</var> (eight hex
 digits), from the target.  See <code>remote.c:parse_threadlist_response()</code>.
+</p></dd>
+</dl>
+
+</dd>
+<dt>&lsquo;<samp>qMemTags:<var>start address</var>,<var>length</var>:<var>type</var></samp>&rsquo;</dt>
+<dd><a name="qMemTags"></a><a name="index-fetch-memory-tags"></a>
+<a name="index-qMemTags-packet"></a>
+<p>Fetch memory tags of type <var>type</var> from the address range
+<span class="roman">[</span><var>start&nbsp;address</var>,&nbsp;<var>start&nbsp;address</var>&nbsp;+&nbsp;<var>length</var><span class="roman">)</span><!-- /@w -->.  The
+target is responsible for calculating how many tags will be returned, as this
+is architecture-specific.
+</p>
+<p><var>start address</var> is the starting address of the memory range.
+</p>
+<p><var>length</var> is the length, in bytes, of the memory range.
+</p>
+<p><var>type</var> is the type of tag the request wants to fetch.  The type is a signed
+integer.
+</p>
+<p>Reply:
+</p><dl compact="compact">
+<dt>&lsquo;<samp><var>mxx</var>&hellip;</samp>&rsquo;</dt>
+<dd><p>Hex encoded sequence of uninterpreted bytes, <var>xx</var>&hellip;, representing the
+tags found in the requested memory range.
+</p>
+</dd>
+<dt>&lsquo;<samp>E <var>nn</var></samp>&rsquo;</dt>
+<dd><p>An error occured.  This means that fetching of memory tags failed for some
+reason.
+</p>
+</dd>
+<dt>&lsquo;<samp><!-- /@w --></samp>&rsquo;</dt>
+<dd><p>An empty reply indicates that &lsquo;<samp>qMemTags</samp>&rsquo; is not supported by the stub,
+although this should not happen given <small>GDB</small> will only send this packet
+if the stub has advertised support for memory tagging via &lsquo;<samp>qSupported</samp>&rsquo;.
+</p></dd>
+</dl>
+
+</dd>
+<dt>&lsquo;<samp>QMemTags:<var>start address</var>,<var>length</var>:<var>type</var>:<var>tag bytes</var></samp>&rsquo;</dt>
+<dd><a name="QMemTags"></a><a name="index-store-memory-tags"></a>
+<a name="index-QMemTags-packet"></a>
+<p>Store memory tags of type <var>type</var> to the address range
+<span class="roman">[</span><var>start&nbsp;address</var>,&nbsp;<var>start&nbsp;address</var>&nbsp;+&nbsp;<var>length</var><span class="roman">)</span><!-- /@w -->.  The
+target is responsible for interpreting the type, the tag bytes and modifying
+the memory tag granules accordingly, given this is architecture-specific.
+</p>
+<p>The interpretation of how many tags (<var>nt</var>) should be written to how many
+memory tag granules (<var>ng</var>) is also architecture-specific.  The behavior is
+implementation-specific, but the following is suggested.
+</p>
+<p>If the number of memory tags, <var>nt</var>, is greater than or equal to the
+number of memory tag granules, <var>ng</var>, only <var>ng</var> tags will be
+stored.
+</p>
+<p>If <var>nt</var> is less than <var>ng</var>, the behavior is that of a fill operation,
+and the tag bytes will be used as a pattern that will get repeated until
+<var>ng</var> tags are stored.
+</p>
+<p><var>start address</var> is the starting address of the memory range.  The address
+does not have any restriction on alignment or size.
+</p>
+<p><var>length</var> is the length, in bytes, of the memory range.
+</p>
+<p><var>type</var> is the type of tag the request wants to fetch.  The type is a signed
+integer.
+</p>
+<p><var>tag bytes</var> is a sequence of hex encoded uninterpreted bytes which will be
+interpreted by the target.  Each pair of hex digits is interpreted as a
+single byte.
+</p>
+<p>Reply:
+</p><dl compact="compact">
+<dt>&lsquo;<samp>OK</samp>&rsquo;</dt>
+<dd><p>The request was successful and the memory tag granules were modified
+accordingly.
+</p>
+</dd>
+<dt>&lsquo;<samp>E <var>nn</var></samp>&rsquo;</dt>
+<dd><p>An error occured.  This means that modifying the memory tag granules failed
+for some reason.
+</p>
+</dd>
+<dt>&lsquo;<samp><!-- /@w --></samp>&rsquo;</dt>
+<dd><p>An empty reply indicates that &lsquo;<samp>QMemTags</samp>&rsquo; is not supported by the stub,
+although this should not happen given <small>GDB</small> will only send this packet
+if the stub has advertised support for memory tagging via &lsquo;<samp>qSupported</samp>&rsquo;.
 </p></dd>
 </dl>
 
@@ -1002,6 +1089,7 @@ stubs which may be configured for multiple targets.
 <tr><td width="35%">&lsquo;<samp>exec-events</samp>&rsquo;</td><td width="20%">No</td><td width="12%">&lsquo;<samp>-</samp>&rsquo;</td><td width="20%">No</td></tr>
 <tr><td width="35%">&lsquo;<samp>QThreadEvents</samp>&rsquo;</td><td width="20%">No</td><td width="12%">&lsquo;<samp>-</samp>&rsquo;</td><td width="20%">No</td></tr>
 <tr><td width="35%">&lsquo;<samp>no-resumed</samp>&rsquo;</td><td width="20%">No</td><td width="12%">&lsquo;<samp>-</samp>&rsquo;</td><td width="20%">No</td></tr>
+<tr><td width="35%">&lsquo;<samp>memory-tagging</samp>&rsquo;</td><td width="20%">No</td><td width="12%">&lsquo;<samp>-</samp>&rsquo;</td><td width="20%">No</td></tr>
 </table>
 
 <p>These are the currently defined stub features, in more detail:
@@ -1263,6 +1351,17 @@ and vforkdone events.
 </dd>
 <dt>&lsquo;<samp>no-resumed</samp>&rsquo;</dt>
 <dd><p>The remote stub reports the &lsquo;<samp>N</samp>&rsquo; stop reply.
+</p>
+
+</dd>
+<dt>&lsquo;<samp>memory-tagging</samp>&rsquo;</dt>
+<dd><p>The remote stub supports and implements the required memory tagging
+functionality and understands the &lsquo;<samp>qMemTags</samp>&rsquo; (see <a href="#qMemTags">qMemTags</a>) and
+&lsquo;<samp>QMemTags</samp>&rsquo; (see <a href="#QMemTags">QMemTags</a>) packets.
+</p>
+<p>For AArch64 GNU/Linux systems, this feature also requires access to the
+<samp>/proc/<var>pid</var>/smaps</samp> file so memory mapping page flags can be inspected.
+This is done via the &lsquo;<samp>vFile</samp>&rsquo; requests.
 </p>
 </dd>
 </dl>
@@ -1778,7 +1877,7 @@ btrace recording method in pt format.
 <hr>
 <h4 class="footnotes-heading">Footnotes</h4>
 
-<h3><a name="FOOT20" href="#DOCF20">(20)</a></h3>
+<h3><a name="FOOT22" href="#DOCF22">(22)</a></h3>
 <p>The &lsquo;<samp>qP</samp>&rsquo; and &lsquo;<samp>qL</samp>&rsquo;
 packets predate these conventions, and have arguments without any terminator
 for the packet name; we suspect they are in widespread use in places that

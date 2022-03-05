@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
-<!-- Copyright (C) 1988-2021 Free Software Foundation, Inc.
+<!-- Copyright (C) 1988-2022 Free Software Foundation, Inc.
 
 Permission is granted to copy, distribute and/or modify this document
 under the terms of the GNU Free Documentation License, Version 1.3 or
@@ -84,6 +84,30 @@ such as displaying common blocks.
 block whose name is <var>common-name</var>.  With no argument, the names of
 all <code>COMMON</code> blocks visible at the current program location are
 printed.
+<a name="index-arrays-slices-_0028Fortran_0029"></a>
+<a name="index-set-fortran-repack_002darray_002dslices"></a>
+<a name="index-show-fortran-repack_002darray_002dslices"></a>
+</p></dd>
+<dt><code>set fortran repack-array-slices [on|off]</code></dt>
+<dt><code>show fortran repack-array-slices</code></dt>
+<dd><p>When taking a slice from an array, a Fortran compiler can choose to
+either produce an array descriptor that describes the slice in place,
+or it may repack the slice, copying the elements of the slice into a
+new region of memory.
+</p>
+<p>When this setting is on, then <small>GDB</small> will also repack array
+slices in some situations.  When this setting is off, then
+<small>GDB</small> will create array descriptors for slices that reference
+the original data in place.
+</p>
+<p><small>GDB</small> will never repack an array slice if the data for the
+slice is contiguous within the original array.
+</p>
+<p><small>GDB</small> will always repack string slices if the data for the
+slice is non-contiguous within the original string as <small>GDB</small>
+does not support printing non-contiguous strings.
+</p>
+<p>The default for this setting is <code>off</code>.
 </p></dd>
 </dl>
 

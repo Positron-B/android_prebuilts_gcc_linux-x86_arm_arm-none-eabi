@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
-<!-- Copyright (C) 1988-2020 Free Software Foundation, Inc.
+<!-- Copyright (C) 1988-2021 Free Software Foundation, Inc.
 
 Permission is granted to copy, distribute and/or modify this document
 under the terms of the GNU Free Documentation License, Version 1.3 or
@@ -169,25 +169,6 @@ register or offset as this is entirely for use within the Linux
 kernel.
 </p>
 </dd>
-<dt><code>-mstack-protector-guard=<var>guard</var></code></dt>
-<dt><code>-mstack-protector-guard-reg=<var>reg</var></code></dt>
-<dt><code>-mstack-protector-guard-offset=<var>offset</var></code></dt>
-<dd><a name="index-mstack_002dprotector_002dguard-1"></a>
-<a name="index-mstack_002dprotector_002dguard_002dreg-1"></a>
-<a name="index-mstack_002dprotector_002dguard_002doffset-1"></a>
-<p>Generate stack protection code using canary at <var>guard</var>.  Supported
-locations are &lsquo;<samp>global</samp>&rsquo; for a global canary or &lsquo;<samp>sysreg</samp>&rsquo; for a
-canary in an appropriate system register.
-</p>
-<p>With the latter choice the options
-<samp>-mstack-protector-guard-reg=<var>reg</var></samp> and
-<samp>-mstack-protector-guard-offset=<var>offset</var></samp> furthermore specify
-which system register to use as base register for reading the canary,
-and from what offset from that base register. There is no default
-register or offset as this is entirely for use within the Linux
-kernel.
-</p>
-</dd>
 <dt><code>-mtls-dialect=desc</code></dt>
 <dd><a name="index-mtls_002ddialect_003ddesc"></a>
 <p>Use TLS descriptors as the thread-local storage mechanism for dynamic accesses
@@ -296,10 +277,11 @@ and the features that they enable by default:
 <tr><td width="20%">&lsquo;<samp>armv8-a</samp>&rsquo;</td><td width="20%">Armv8-A</td><td width="60%">&lsquo;<samp>+fp</samp>&rsquo;, &lsquo;<samp>+simd</samp>&rsquo;</td></tr>
 <tr><td width="20%">&lsquo;<samp>armv8.1-a</samp>&rsquo;</td><td width="20%">Armv8.1-A</td><td width="60%">&lsquo;<samp>armv8-a</samp>&rsquo;, &lsquo;<samp>+crc</samp>&rsquo;, &lsquo;<samp>+lse</samp>&rsquo;, &lsquo;<samp>+rdma</samp>&rsquo;</td></tr>
 <tr><td width="20%">&lsquo;<samp>armv8.2-a</samp>&rsquo;</td><td width="20%">Armv8.2-A</td><td width="60%">&lsquo;<samp>armv8.1-a</samp>&rsquo;</td></tr>
-<tr><td width="20%">&lsquo;<samp>armv8.3-a</samp>&rsquo;</td><td width="20%">Armv8.3-A</td><td width="60%">&lsquo;<samp>armv8.2-a</samp>&rsquo;</td></tr>
-<tr><td width="20%">&lsquo;<samp>armv8.4-a</samp>&rsquo;</td><td width="20%">Armv8.4-A</td><td width="60%">&lsquo;<samp>armv8.3-a</samp>&rsquo;, &lsquo;<samp>+fp16fml</samp>&rsquo;, &lsquo;<samp>+dotprod</samp>&rsquo;</td></tr>
+<tr><td width="20%">&lsquo;<samp>armv8.3-a</samp>&rsquo;</td><td width="20%">Armv8.3-A</td><td width="60%">&lsquo;<samp>armv8.2-a</samp>&rsquo;, &lsquo;<samp>+pauth</samp>&rsquo;</td></tr>
+<tr><td width="20%">&lsquo;<samp>armv8.4-a</samp>&rsquo;</td><td width="20%">Armv8.4-A</td><td width="60%">&lsquo;<samp>armv8.3-a</samp>&rsquo;, &lsquo;<samp>+flagm</samp>&rsquo;, &lsquo;<samp>+fp16fml</samp>&rsquo;, &lsquo;<samp>+dotprod</samp>&rsquo;</td></tr>
 <tr><td width="20%">&lsquo;<samp>armv8.5-a</samp>&rsquo;</td><td width="20%">Armv8.5-A</td><td width="60%">&lsquo;<samp>armv8.4-a</samp>&rsquo;, &lsquo;<samp>+sb</samp>&rsquo;, &lsquo;<samp>+ssbs</samp>&rsquo;, &lsquo;<samp>+predres</samp>&rsquo;</td></tr>
 <tr><td width="20%">&lsquo;<samp>armv8.6-a</samp>&rsquo;</td><td width="20%">Armv8.6-A</td><td width="60%">&lsquo;<samp>armv8.5-a</samp>&rsquo;, &lsquo;<samp>+bf16</samp>&rsquo;, &lsquo;<samp>+i8mm</samp>&rsquo;</td></tr>
+<tr><td width="20%">&lsquo;<samp>armv8-r</samp>&rsquo;</td><td width="20%">Armv8-R</td><td width="60%">&lsquo;<samp>armv8-r</samp>&rsquo;</td></tr>
 </table>
 
 <p>The value &lsquo;<samp>native</samp>&rsquo; is available on native AArch64 GNU/Linux and
@@ -327,10 +309,12 @@ performance of the code.  Permissible values for this option are:
 &lsquo;<samp>cortex-a57</samp>&rsquo;, &lsquo;<samp>cortex-a72</samp>&rsquo;, &lsquo;<samp>cortex-a73</samp>&rsquo;, &lsquo;<samp>cortex-a75</samp>&rsquo;,
 &lsquo;<samp>cortex-a76</samp>&rsquo;, &lsquo;<samp>cortex-a76ae</samp>&rsquo;, &lsquo;<samp>cortex-a77</samp>&rsquo;,
 &lsquo;<samp>cortex-a65</samp>&rsquo;, &lsquo;<samp>cortex-a65ae</samp>&rsquo;, &lsquo;<samp>cortex-a34</samp>&rsquo;,
-&lsquo;<samp>ares</samp>&rsquo;, &lsquo;<samp>exynos-m1</samp>&rsquo;, &lsquo;<samp>emag</samp>&rsquo;, &lsquo;<samp>falkor</samp>&rsquo;, &lsquo;<samp>neoverse-e1</samp>&rsquo;,
-&lsquo;<samp>neoverse-n1</samp>&rsquo;, &lsquo;<samp>neoverse-n2</samp>&rsquo;, &lsquo;<samp>neoverse-v1</samp>&rsquo;, &lsquo;<samp>qdf24xx</samp>&rsquo;,
-&lsquo;<samp>saphira</samp>&rsquo;, &lsquo;<samp>phecda</samp>&rsquo;, &lsquo;<samp>xgene1</samp>&rsquo;, &lsquo;<samp>vulcan</samp>&rsquo;, &lsquo;<samp>octeontx</samp>&rsquo;,
-&lsquo;<samp>octeontx81</samp>&rsquo;,  &lsquo;<samp>octeontx83</samp>&rsquo;,
+&lsquo;<samp>cortex-a78</samp>&rsquo;, &lsquo;<samp>cortex-a78ae</samp>&rsquo;, &lsquo;<samp>cortex-a78c</samp>&rsquo;,
+&lsquo;<samp>ares</samp>&rsquo;, &lsquo;<samp>exynos-m1</samp>&rsquo;, &lsquo;<samp>emag</samp>&rsquo;, &lsquo;<samp>falkor</samp>&rsquo;,
+&lsquo;<samp>neoverse-512tvb</samp>&rsquo;, &lsquo;<samp>neoverse-e1</samp>&rsquo;, &lsquo;<samp>neoverse-n1</samp>&rsquo;,
+&lsquo;<samp>neoverse-n2</samp>&rsquo;, &lsquo;<samp>neoverse-v1</samp>&rsquo;, &lsquo;<samp>qdf24xx</samp>&rsquo;,
+&lsquo;<samp>saphira</samp>&rsquo;, &lsquo;<samp>phecda</samp>&rsquo;, &lsquo;<samp>xgene1</samp>&rsquo;, &lsquo;<samp>vulcan</samp>&rsquo;,
+&lsquo;<samp>octeontx</samp>&rsquo;, &lsquo;<samp>octeontx81</samp>&rsquo;,  &lsquo;<samp>octeontx83</samp>&rsquo;,
 &lsquo;<samp>octeontx2</samp>&rsquo;, &lsquo;<samp>octeontx2t98</samp>&rsquo;, &lsquo;<samp>octeontx2t96</samp>&rsquo;
 &lsquo;<samp>octeontx2t93</samp>&rsquo;, &lsquo;<samp>octeontx2f95</samp>&rsquo;, &lsquo;<samp>octeontx2f95n</samp>&rsquo;,
 &lsquo;<samp>octeontx2f95mm</samp>&rsquo;,
@@ -340,13 +324,22 @@ performance of the code.  Permissible values for this option are:
 &lsquo;<samp>thunderxt83</samp>&rsquo;, &lsquo;<samp>thunderx2t99</samp>&rsquo;, &lsquo;<samp>thunderx3t110</samp>&rsquo;, &lsquo;<samp>zeus</samp>&rsquo;,
 &lsquo;<samp>cortex-a57.cortex-a53</samp>&rsquo;, &lsquo;<samp>cortex-a72.cortex-a53</samp>&rsquo;,
 &lsquo;<samp>cortex-a73.cortex-a35</samp>&rsquo;, &lsquo;<samp>cortex-a73.cortex-a53</samp>&rsquo;,
-&lsquo;<samp>cortex-a75.cortex-a55</samp>&rsquo;, &lsquo;<samp>cortex-a76.cortex-a55</samp>&rsquo;
-&lsquo;<samp>native</samp>&rsquo;.
+&lsquo;<samp>cortex-a75.cortex-a55</samp>&rsquo;, &lsquo;<samp>cortex-a76.cortex-a55</samp>&rsquo;,
+&lsquo;<samp>cortex-r82</samp>&rsquo;, &lsquo;<samp>cortex-x1</samp>&rsquo;, &lsquo;<samp>ampere1</samp>&rsquo;, &lsquo;<samp>native</samp>&rsquo;.
 </p>
 <p>The values &lsquo;<samp>cortex-a57.cortex-a53</samp>&rsquo;, &lsquo;<samp>cortex-a72.cortex-a53</samp>&rsquo;,
 &lsquo;<samp>cortex-a73.cortex-a35</samp>&rsquo;, &lsquo;<samp>cortex-a73.cortex-a53</samp>&rsquo;,
 &lsquo;<samp>cortex-a75.cortex-a55</samp>&rsquo;, &lsquo;<samp>cortex-a76.cortex-a55</samp>&rsquo; specify that GCC
 should tune for a big.LITTLE system.
+</p>
+<p>The value &lsquo;<samp>neoverse-512tvb</samp>&rsquo; specifies that GCC should tune
+for Neoverse cores that (a) implement SVE and (b) have a total vector
+bandwidth of 512 bits per cycle.  In other words, the option tells GCC to
+tune for Neoverse cores that can execute 4 128-bit Advanced SIMD arithmetic
+instructions a cycle and that can execute an equivalent number of SVE
+arithmetic instructions per cycle (2 for 256-bit SVE, 4 for 128-bit SVE).
+This is more general than tuning for a specific core like Neoverse V1
+but is more specific than the default tuning described below.
 </p>
 <p>Additionally on native AArch64 GNU/Linux systems the value
 &lsquo;<samp>native</samp>&rsquo; tunes performance to the host system.  This option has no effect
@@ -377,6 +370,16 @@ the target processor for which to tune for performance (as if
 by <samp>-mtune</samp>).  Where this option is used in conjunction
 with <samp>-march</samp> or <samp>-mtune</samp>, those options take precedence
 over the appropriate part of this option.
+</p>
+<p><samp>-mcpu=neoverse-512tvb</samp> is special in that it does not refer
+to a specific core, but instead refers to all Neoverse cores that
+(a) implement SVE and (b) have a total vector bandwidth of 512 bits
+a cycle.  Unless overridden by <samp>-march</samp>,
+<samp>-mcpu=neoverse-512tvb</samp> generates code that can run on a
+Neoverse V1 core, since Neoverse V1 is the first Neoverse core with
+these properties.  Unless overridden by <samp>-mtune</samp>,
+<samp>-mcpu=neoverse-512tvb</samp> tunes code in the same way as for
+<samp>-mtune=neoverse-512tvb</samp>.
 </p>
 </dd>
 <dt><code>-moverride=<var>string</var></code></dt>
@@ -604,6 +607,12 @@ not supported.
 Advanced SIMD and floating-point instructions.  This option is enabled by
 default for <samp>-march=armv8.6-a</samp>.  Use of this option with architectures
 prior to Armv8.2-A is not supported.
+</p></dd>
+<dt>&lsquo;<samp>flagm</samp>&rsquo;</dt>
+<dd><p>Enable the Flag Manipulation instructions Extension.
+</p></dd>
+<dt>&lsquo;<samp>pauth</samp>&rsquo;</dt>
+<dd><p>Enable the Pointer Authentication Extension.
 </p>
 </dd>
 </dl>

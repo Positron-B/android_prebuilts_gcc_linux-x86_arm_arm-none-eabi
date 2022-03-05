@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
-<!-- Copyright (C) 1988-2021 Free Software Foundation, Inc.
+<!-- Copyright (C) 1988-2022 Free Software Foundation, Inc.
 
 Permission is granted to copy, distribute and/or modify this document
 under the terms of the GNU Free Documentation License, Version 1.3 or
@@ -85,7 +85,17 @@ recent C<tt>++</tt>11 compiler, e.g. GCC.
 <dt>GNU make</dt>
 <dd><p><small>GDB</small>&rsquo;s build system relies on features only found in the GNU
 make program.  Other variants of <code>make</code> will not work.
-</p></dd>
+</p>
+</dd>
+<dt>GMP (The GNU Multiple Precision Arithmetic Library)</dt>
+<dd><p><small>GDB</small> now uses GMP to perform some of its arithmetics.
+This library may be included with your operating system distribution;
+if it is not, you can get the latest version from
+<a href="https://gmplib.org/">https://gmplib.org/</a>. If GMP is installed at an unusual path,
+you can use the <samp>--with-libgmp-prefix</samp> option to specify
+its location.
+</p>
+</dd>
 </dl>
 
 <a name="Tools_002fPackages-Optional-for-Building-GDB"></a>

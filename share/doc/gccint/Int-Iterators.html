@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
-<!-- Copyright (C) 1988-2020 Free Software Foundation, Inc.
+<!-- Copyright (C) 1988-2021 Free Software Foundation, Inc.
 
 Permission is granted to copy, distribute and/or modify this document
 under the terms of the GNU Free Documentation License, Version 1.3 or
@@ -89,11 +89,11 @@ Next: <a href="Subst-Iterators.html#Subst-Iterators" accesskey="n" rel="next">Su
 </pre></div>
 
 <p>defines a pseudo integer constant <var>name</var> that can be instantiated as
-<var>inti</var> if condition <var>condi</var> is true.  Each <var>int</var>
-must have the same rtx format.  See <a href="RTL-Classes.html#RTL-Classes">RTL Classes</a>. Int iterators can appear
-in only those rtx fields that have &rsquo;i&rsquo; as the specifier. This means that
-each <var>int</var> has to be a constant defined using define_constant or
-define_c_enum.
+<var>inti</var> if condition <var>condi</var> is true.  Each <var>int</var> must have the
+same rtx format.  See <a href="RTL-Classes.html#RTL-Classes">RTL Classes</a>.  Int iterators can appear in only
+those rtx fields that have &rsquo;i&rsquo;, &rsquo;n&rsquo;, &rsquo;w&rsquo;, or &rsquo;p&rsquo; as the specifier.  This
+means that each <var>int</var> has to be a constant defined using define_constant
+or define_c_enum.
 </p>
 <p>As with mode and code iterators, each pattern that uses <var>name</var> will be
 expanded <var>n</var> times, once with all uses of <var>name</var> replaced by

@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
-<!-- Copyright (C) 1988-2020 Free Software Foundation, Inc.
+<!-- Copyright (C) 1988-2021 Free Software Foundation, Inc.
 
 Permission is granted to copy, distribute and/or modify this document
 under the terms of the GNU Free Documentation License, Version 1.3 or
@@ -98,15 +98,20 @@ code, and issues warnings for problems found on them.
 -Wanalyzer-file-leak 
 -Wanalyzer-free-of-non-heap 
 -Wanalyzer-malloc-leak 
+-Wanalyzer-mismatching-deallocation 
 -Wanalyzer-possible-null-argument 
 -Wanalyzer-possible-null-dereference 
 -Wanalyzer-null-argument 
 -Wanalyzer-null-dereference 
+-Wanalyzer-shift-count-negative 
+-Wanalyzer-shift-count-overflow 
 -Wanalyzer-stale-setjmp-buffer 
 -Wanalyzer-tainted-array-index 
 -Wanalyzer-unsafe-call-within-signal-handler 
 -Wanalyzer-use-after-free 
 -Wanalyzer-use-of-pointer-in-stale-stack-frame 
+-Wanalyzer-write-to-const 
+-Wanalyzer-write-to-string-literal 
 
 </pre></div>
 
@@ -143,7 +148,8 @@ can have <code>fclose</code> called on it more than once.
 <samp>-Wno-analyzer-double-free</samp> to disable it.
 </p>
 <p>This diagnostic warns for paths through the code in which a pointer
-can have <code>free</code> called on it more than once.
+can have a deallocator called on it more than once, either <code>free</code>,
+or a deallocator referenced by attribute <code>malloc</code>.
 </p>
 </dd>
 <dt><code>-Wno-analyzer-exposure-through-output-file</code></dt>
@@ -188,7 +194,23 @@ is called on a non-heap pointer (e.g. an on-stack buffer, or a global).
 to disable it.
 </p>
 <p>This diagnostic warns for paths through the code in which a
-pointer allocated via <code>malloc</code> is leaked.
+pointer allocated via an allocator is leaked: either <code>malloc</code>,
+or a function marked with attribute <code>malloc</code>.
+</p>
+</dd>
+<dt><code>-Wno-analyzer-mismatching-deallocation</code></dt>
+<dd><a name="index-Wanalyzer_002dmismatching_002ddeallocation"></a>
+<a name="index-Wno_002danalyzer_002dmismatching_002ddeallocation"></a>
+<p>This warning requires <samp>-fanalyzer</samp>, which enables it; use
+<samp>-Wno-analyzer-mismatching-deallocation</samp>
+to disable it.
+</p>
+<p>This diagnostic warns for paths through the code in which the
+wrong deallocation function is called on a pointer value, based on
+which function was used to allocate the pointer value.  The diagnostic
+will warn about mismatches between <code>free</code>, scalar <code>delete</code>
+and vector <code>delete[]</code>, and those marked as allocator/deallocator
+pairs using attribute <code>malloc</code>.
 </p>
 </dd>
 <dt><code>-Wno-analyzer-possible-null-argument</code></dt>
@@ -233,6 +255,37 @@ value.
 </p>
 <p>This diagnostic warns for paths through the code in which a
 value known to be NULL is dereferenced.
+</p>
+</dd>
+<dt><code>-Wno-analyzer-shift-count-negative</code></dt>
+<dd><a name="index-Wanalyzer_002dshift_002dcount_002dnegative"></a>
+<a name="index-Wno_002danalyzer_002dshift_002dcount_002dnegative"></a>
+<p>This warning requires <samp>-fanalyzer</samp>, which enables it; use
+<samp>-Wno-analyzer-shift-count-negative</samp> to disable it.
+</p>
+<p>This diagnostic warns for paths through the code in which a
+shift is attempted with a negative count.  It is analogous to
+the <samp>-Wshift-count-negative</samp> diagnostic implemented in
+the C/C++ front ends, but is implemented based on analyzing
+interprocedural paths, rather than merely parsing the syntax tree.
+However, the analyzer does not prioritize detection of such paths, so
+false negatives are more likely relative to other warnings.
+</p>
+</dd>
+<dt><code>-Wno-analyzer-shift-count-overflow</code></dt>
+<dd><a name="index-Wanalyzer_002dshift_002dcount_002doverflow"></a>
+<a name="index-Wno_002danalyzer_002dshift_002dcount_002doverflow"></a>
+<p>This warning requires <samp>-fanalyzer</samp>, which enables it; use
+<samp>-Wno-analyzer-shift-count-overflow</samp> to disable it.
+</p>
+<p>This diagnostic warns for paths through the code in which a
+shift is attempted with a count greater than or equal to the
+precision of the operand&rsquo;s type.  It is analogous to
+the <samp>-Wshift-count-overflow</samp> diagnostic implemented in
+the C/C++ front ends, but is implemented based on analyzing
+interprocedural paths, rather than merely parsing the syntax tree.
+However, the analyzer does not prioritize detection of such paths, so
+false negatives are more likely relative to other warnings.
 </p>
 </dd>
 <dt><code>-Wno-analyzer-stale-setjmp-buffer</code></dt>
@@ -282,7 +335,8 @@ called from a signal handler.
 <samp>-Wno-analyzer-use-after-free</samp> to disable it.
 </p>
 <p>This diagnostic warns for paths through the code in which a
-pointer is used after <code>free</code> is called on it.
+pointer is used after a deallocator is called on it: either <code>free</code>,
+or a deallocator referenced by attribute <code>malloc</code>.
 </p>
 </dd>
 <dt><code>-Wno-analyzer-use-of-pointer-in-stale-stack-frame</code></dt>
@@ -294,6 +348,32 @@ to disable it.
 </p>
 <p>This diagnostic warns for paths through the code in which a pointer
 is dereferenced that points to a variable in a stale stack frame.
+</p>
+</dd>
+<dt><code>-Wno-analyzer-write-to-const</code></dt>
+<dd><a name="index-Wanalyzer_002dwrite_002dto_002dconst"></a>
+<a name="index-Wno_002danalyzer_002dwrite_002dto_002dconst"></a>
+<p>This warning requires <samp>-fanalyzer</samp>, which enables it; use
+<samp>-Wno-analyzer-write-to-const</samp>
+to disable it.
+</p>
+<p>This diagnostic warns for paths through the code in which the analyzer
+detects an attempt to write through a pointer to a <code>const</code> object.
+However, the analyzer does not prioritize detection of such paths, so
+false negatives are more likely relative to other warnings.
+</p>
+</dd>
+<dt><code>-Wno-analyzer-write-to-string-literal</code></dt>
+<dd><a name="index-Wanalyzer_002dwrite_002dto_002dstring_002dliteral"></a>
+<a name="index-Wno_002danalyzer_002dwrite_002dto_002dstring_002dliteral"></a>
+<p>This warning requires <samp>-fanalyzer</samp>, which enables it; use
+<samp>-Wno-analyzer-write-to-string-literal</samp>
+to disable it.
+</p>
+<p>This diagnostic warns for paths through the code in which the analyzer
+detects an attempt to write through a pointer to a string literal.
+However, the analyzer does not prioritize detection of such paths, so
+false negatives are more likely relative to other warnings.
 </p>
 </dd>
 </dl>
@@ -327,6 +407,18 @@ call site, and that are sufficiently complicated (as per
 such as the <code>taint</code> checker that implements
 <samp>-Wanalyzer-tainted-array-index</samp>, and this option is required
 to enable them.
+</p>
+</dd>
+<dt><code>-fno-analyzer-feasibility</code></dt>
+<dd><a name="index-fanalyzer_002dfeasibility"></a>
+<a name="index-fno_002danalyzer_002dfeasibility"></a>
+<p>This option is intended for analyzer developers.
+</p>
+<p>By default the analyzer verifies that there is a feasible control flow path
+for each diagnostic it emits: that the conditions that hold are not mutually
+exclusive.  Diagnostics for which no feasible path can be found are rejected.
+This filtering can be suppressed with <samp>-fno-analyzer-feasibility</samp>, for
+debugging issues in this code.
 </p>
 </dd>
 <dt><code>-fanalyzer-fine-grained</code></dt>
@@ -478,6 +570,21 @@ in relation to the program source.
 <p>Dump a textual representation of the &ldquo;exploded graph&rdquo; to
 one dump file per node, to <samp><var>file</var>.eg-<var>id</var>.txt</samp>.
 This is typically a large number of dump files.
+</p>
+</dd>
+<dt><code>-fdump-analyzer-feasibility</code></dt>
+<dd><a name="index-dump_002danalyzer_002dfeasibility"></a>
+<p>Dump internal details about the analyzer&rsquo;s search for feasible paths.
+The details are written in a form suitable for viewing with GraphViz
+to filenames of the form <samp><var>file</var>.*.fg.dot</samp> and
+<samp><var>file</var>.*.tg.dot</samp>.
+</p>
+</dd>
+<dt><code>-fdump-analyzer-json</code></dt>
+<dd><a name="index-fdump_002danalyzer_002djson"></a>
+<p>Dump a compressed JSON representation of analyzer internals to
+<samp><var>file</var>.analyzer.json.gz</samp>.  The precise format is subject
+to change.
 </p>
 </dd>
 <dt><code>-fdump-analyzer-state-purge</code></dt>

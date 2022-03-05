@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
-<!-- Copyright (C) 1988-2020 Free Software Foundation, Inc.
+<!-- Copyright (C) 1988-2021 Free Software Foundation, Inc.
 
 Permission is granted to copy, distribute and/or modify this document
 under the terms of the GNU Free Documentation License, Version 1.3 or
@@ -250,7 +250,7 @@ name suffix).  This option applies to all following input files until
 the next <samp>-x</samp> option.  Possible values for <var>language</var> are:
 </p><div class="smallexample">
 <pre class="smallexample">c  c-header  cpp-output
-c++  c++-header  c++-cpp-output
+c++  c++-header  c++-system-header c++-user-header c++-cpp-output
 objective-c  objective-c-header  objective-c-cpp-output
 objective-c++ objective-c++-header objective-c++-cpp-output
 assembler  assembler-with-cpp
@@ -313,9 +313,9 @@ standard output.
 </dd>
 <dt><code>-o <var>file</var></code></dt>
 <dd><a name="index-o"></a>
-<p>Place output in file <var>file</var>.  This applies to whatever
-sort of output is being produced, whether it be an executable file,
-an object file, an assembler file or preprocessed C code.
+<p>Place the primary output in file <var>file</var>.  This applies to whatever
+sort of output is being produced, whether it be an executable file, an
+object file, an assembler file or preprocessed C code.
 </p>
 <p>If <samp>-o</samp> is not specified, the default is to put an executable
 file in <samp>a.out</samp>, the object file for
@@ -323,6 +323,318 @@ file in <samp>a.out</samp>, the object file for
 assembler file in <samp><var>source</var>.s</samp>, a precompiled header file in
 <samp><var>source</var>.<var>suffix</var>.gch</samp>, and all preprocessed C source on
 standard output.
+</p>
+<p>Though <samp>-o</samp> names only the primary output, it also affects the
+naming of auxiliary and dump outputs.  See the examples below.  Unless
+overridden, both auxiliary outputs and dump outputs are placed in the
+same directory as the primary output.  In auxiliary outputs, the suffix
+of the input file is replaced with that of the auxiliary output file
+type; in dump outputs, the suffix of the dump file is appended to the
+input file suffix.  In compilation commands, the base name of both
+auxiliary and dump outputs is that of the primary output; in compile and
+link commands, the primary output name, minus the executable suffix, is
+combined with the input file name.  If both share the same base name,
+disregarding the suffix, the result of the combination is that base
+name, otherwise, they are concatenated, separated by a dash.
+</p>
+<div class="smallexample">
+<pre class="smallexample">gcc -c foo.c ...
+</pre></div>
+
+<p>will use <samp>foo.o</samp> as the primary output, and place aux outputs and
+dumps next to it, e.g., aux file <samp>foo.dwo</samp> for
+<samp>-gsplit-dwarf</samp>, and dump file <samp>foo.c.???r.final</samp> for
+<samp>-fdump-rtl-final</samp>.
+</p>
+<p>If a non-linker output file is explicitly specified, aux and dump files
+by default take the same base name:
+</p>
+<div class="smallexample">
+<pre class="smallexample">gcc -c foo.c -o dir/foobar.o ...
+</pre></div>
+
+<p>will name aux outputs <samp>dir/foobar.*</samp> and dump outputs
+<samp>dir/foobar.c.*</samp>.
+</p>
+<p>A linker output will instead prefix aux and dump outputs:
+</p>
+<div class="smallexample">
+<pre class="smallexample">gcc foo.c bar.c -o dir/foobar ...
+</pre></div>
+
+<p>will generally name aux outputs <samp>dir/foobar-foo.*</samp> and
+<samp>dir/foobar-bar.*</samp>, and dump outputs <samp>dir/foobar-foo.c.*</samp> and
+<samp>dir/foobar-bar.c.*</samp>.
+</p>
+<p>The one exception to the above is when the executable shares the base
+name with the single input:
+</p>
+<div class="smallexample">
+<pre class="smallexample">gcc foo.c -o dir/foo ...
+</pre></div>
+
+<p>in which case aux outputs are named <samp>dir/foo.*</samp> and dump outputs
+named <samp>dir/foo.c.*</samp>.
+</p>
+<p>The location and the names of auxiliary and dump outputs can be adjusted
+by the options <samp>-dumpbase</samp>, <samp>-dumpbase-ext</samp>,
+<samp>-dumpdir</samp>, <samp>-save-temps=cwd</samp>, and
+<samp>-save-temps=obj</samp>.
+</p>
+
+</dd>
+<dt><code>-dumpbase <var>dumpbase</var></code></dt>
+<dd><a name="index-dumpbase"></a>
+<p>This option sets the base name for auxiliary and dump output files.  It
+does not affect the name of the primary output file.  Intermediate
+outputs, when preserved, are not regarded as primary outputs, but as
+auxiliary outputs:
+</p>
+<div class="smallexample">
+<pre class="smallexample">gcc -save-temps -S foo.c
+</pre></div>
+
+<p>saves the (no longer) temporary preprocessed file in <samp>foo.i</samp>, and
+then compiles to the (implied) output file <samp>foo.s</samp>, whereas:
+</p>
+<div class="smallexample">
+<pre class="smallexample">gcc -save-temps -dumpbase save-foo -c foo.c
+</pre></div>
+
+<p>preprocesses to in <samp>save-foo.i</samp>, compiles to <samp>save-foo.s</samp> (now
+an intermediate, thus auxiliary output), and then assembles to the
+(implied) output file <samp>foo.o</samp>.
+</p>
+<p>Absent this option, dump and aux files take their names from the input
+file, or from the (non-linker) output file, if one is explicitly
+specified: dump output files (e.g. those requested by <samp>-fdump-*</samp>
+options) with the input name suffix, and aux output files (those
+requested by other non-dump options, e.g. <code>-save-temps</code>,
+<code>-gsplit-dwarf</code>, <code>-fcallgraph-info</code>) without it.
+</p>
+<p>Similar suffix differentiation of dump and aux outputs can be attained
+for explicitly-given <samp>-dumpbase basename.suf</samp> by also specifying
+<samp>-dumpbase-ext .suf</samp>.
+</p>
+<p>If <var>dumpbase</var> is explicitly specified with any directory component,
+any <var>dumppfx</var> specification (e.g. <samp>-dumpdir</samp> or
+<samp>-save-temps=*</samp>) is ignored, and instead of appending to it,
+<var>dumpbase</var> fully overrides it:
+</p>
+<div class="smallexample">
+<pre class="smallexample">gcc foo.c -c -o dir/foo.o -dumpbase alt/foo \
+  -dumpdir pfx- -save-temps=cwd ...
+</pre></div>
+
+<p>creates auxiliary and dump outputs named <samp>alt/foo.*</samp>, disregarding
+<samp>dir/</samp> in <samp>-o</samp>, the <samp>./</samp> prefix implied by
+<samp>-save-temps=cwd</samp>, and <samp>pfx-</samp> in <samp>-dumpdir</samp>.
+</p>
+<p>When <samp>-dumpbase</samp> is specified in a command that compiles multiple
+inputs, or that compiles and then links, it may be combined with
+<var>dumppfx</var>, as specified under <samp>-dumpdir</samp>.  Then, each input
+file is compiled using the combined <var>dumppfx</var>, and default values
+for <var>dumpbase</var> and <var>auxdropsuf</var> are computed for each input
+file:
+</p>
+<div class="smallexample">
+<pre class="smallexample">gcc foo.c bar.c -c -dumpbase main ...
+</pre></div>
+
+<p>creates <samp>foo.o</samp> and <samp>bar.o</samp> as primary outputs, and avoids
+overwriting the auxiliary and dump outputs by using the <var>dumpbase</var>
+as a prefix, creating auxiliary and dump outputs named <samp>main-foo.*</samp>
+and <samp>main-bar.*</samp>.
+</p>
+<p>An empty string specified as <var>dumpbase</var> avoids the influence of the
+output basename in the naming of auxiliary and dump outputs during
+compilation, computing default values :
+</p>
+<div class="smallexample">
+<pre class="smallexample">gcc -c foo.c -o dir/foobar.o -dumpbase '' ...
+</pre></div>
+
+<p>will name aux outputs <samp>dir/foo.*</samp> and dump outputs
+<samp>dir/foo.c.*</samp>.  Note how their basenames are taken from the input
+name, but the directory still defaults to that of the output.
+</p>
+<p>The empty-string dumpbase does not prevent the use of the output
+basename for outputs during linking:
+</p>
+<div class="smallexample">
+<pre class="smallexample">gcc foo.c bar.c -o dir/foobar -dumpbase '' -flto ...
+</pre></div>
+
+<p>The compilation of the source files will name auxiliary outputs
+<samp>dir/foo.*</samp> and <samp>dir/bar.*</samp>, and dump outputs
+<samp>dir/foo.c.*</samp> and <samp>dir/bar.c.*</samp>.  LTO recompilation during
+linking will use <samp>dir/foobar.</samp> as the prefix for dumps and
+auxiliary files.
+</p>
+
+</dd>
+<dt><code>-dumpbase-ext <var>auxdropsuf</var></code></dt>
+<dd><a name="index-dumpbase_002dext"></a>
+<p>When forming the name of an auxiliary (but not a dump) output file, drop
+trailing <var>auxdropsuf</var> from <var>dumpbase</var> before appending any
+suffixes.  If not specified, this option defaults to the suffix of a
+default <var>dumpbase</var>, i.e., the suffix of the input file when
+<samp>-dumpbase</samp> is not present in the command line, or <var>dumpbase</var>
+is combined with <var>dumppfx</var>.
+</p>
+<div class="smallexample">
+<pre class="smallexample">gcc foo.c -c -o dir/foo.o -dumpbase x-foo.c -dumpbase-ext .c ...
+</pre></div>
+
+<p>creates <samp>dir/foo.o</samp> as the main output, and generates auxiliary
+outputs in <samp>dir/x-foo.*</samp>, taking the location of the primary
+output, and dropping the <samp>.c</samp> suffix from the <var>dumpbase</var>.  Dump
+outputs retain the suffix: <samp>dir/x-foo.c.*</samp>.
+</p>
+<p>This option is disregarded if it does not match the suffix of a
+specified <var>dumpbase</var>, except as an alternative to the executable
+suffix when appending the linker output base name to <var>dumppfx</var>, as
+specified below:
+</p>
+<div class="smallexample">
+<pre class="smallexample">gcc foo.c bar.c -o main.out -dumpbase-ext .out ...
+</pre></div>
+
+<p>creates <samp>main.out</samp> as the primary output, and avoids overwriting
+the auxiliary and dump outputs by using the executable name minus
+<var>auxdropsuf</var> as a prefix, creating auxiliary outputs named
+<samp>main-foo.*</samp> and <samp>main-bar.*</samp> and dump outputs named
+<samp>main-foo.c.*</samp> and <samp>main-bar.c.*</samp>.
+</p>
+
+</dd>
+<dt><code>-dumpdir <var>dumppfx</var></code></dt>
+<dd><a name="index-dumpdir"></a>
+<p>When forming the name of an auxiliary or dump output file, use
+<var>dumppfx</var> as a prefix:
+</p>
+<div class="smallexample">
+<pre class="smallexample">gcc -dumpdir pfx- -c foo.c ...
+</pre></div>
+
+<p>creates <samp>foo.o</samp> as the primary output, and auxiliary outputs named
+<samp>pfx-foo.*</samp>, combining the given <var>dumppfx</var> with the default
+<var>dumpbase</var> derived from the default primary output, derived in turn
+from the input name.  Dump outputs also take the input name suffix:
+<samp>pfx-foo.c.*</samp>.
+</p>
+<p>If <var>dumppfx</var> is to be used as a directory name, it must end with a
+directory separator:
+</p>
+<div class="smallexample">
+<pre class="smallexample">gcc -dumpdir dir/ -c foo.c -o obj/bar.o ...
+</pre></div>
+
+<p>creates <samp>obj/bar.o</samp> as the primary output, and auxiliary outputs
+named <samp>dir/bar.*</samp>, combining the given <var>dumppfx</var> with the
+default <var>dumpbase</var> derived from the primary output name.  Dump
+outputs also take the input name suffix: <samp>dir/bar.c.*</samp>.
+</p>
+<p>It defaults to the location of the output file, unless the output
+file is a special file like <code>/dev/null</code>. Options
+<samp>-save-temps=cwd</samp> and <samp>-save-temps=obj</samp> override this
+default, just like an explicit <samp>-dumpdir</samp> option.  In case
+multiple such options are given, the last one prevails:
+</p>
+<div class="smallexample">
+<pre class="smallexample">gcc -dumpdir pfx- -c foo.c -save-temps=obj ...
+</pre></div>
+
+<p>outputs <samp>foo.o</samp>, with auxiliary outputs named <samp>foo.*</samp> because
+<samp>-save-temps=*</samp> overrides the <var>dumppfx</var> given by the earlier
+<samp>-dumpdir</samp> option.  It does not matter that <samp>=obj</samp> is the
+default for <samp>-save-temps</samp>, nor that the output directory is
+implicitly the current directory.  Dump outputs are named
+<samp>foo.c.*</samp>.
+</p>
+<p>When compiling from multiple input files, if <samp>-dumpbase</samp> is
+specified, <var>dumpbase</var>, minus a <var>auxdropsuf</var> suffix, and a dash
+are appended to (or override, if containing any directory components) an
+explicit or defaulted <var>dumppfx</var>, so that each of the multiple
+compilations gets differently-named aux and dump outputs.
+</p>
+<div class="smallexample">
+<pre class="smallexample">gcc foo.c bar.c -c -dumpdir dir/pfx- -dumpbase main ...
+</pre></div>
+
+<p>outputs auxiliary dumps to <samp>dir/pfx-main-foo.*</samp> and
+<samp>dir/pfx-main-bar.*</samp>, appending <var>dumpbase</var>- to <var>dumppfx</var>.
+Dump outputs retain the input file suffix: <samp>dir/pfx-main-foo.c.*</samp>
+and <samp>dir/pfx-main-bar.c.*</samp>, respectively.  Contrast with the
+single-input compilation:
+</p>
+<div class="smallexample">
+<pre class="smallexample">gcc foo.c -c -dumpdir dir/pfx- -dumpbase main ...
+</pre></div>
+
+<p>that, applying <samp>-dumpbase</samp> to a single source, does not compute
+and append a separate <var>dumpbase</var> per input file.  Its auxiliary and
+dump outputs go in <samp>dir/pfx-main.*</samp>.
+</p>
+<p>When compiling and then linking from multiple input files, a defaulted
+or explicitly specified <var>dumppfx</var> also undergoes the <var>dumpbase</var>-
+transformation above (e.g. the compilation of <samp>foo.c</samp> and
+<samp>bar.c</samp> above, but without <samp>-c</samp>).  If neither
+<samp>-dumpdir</samp> nor <samp>-dumpbase</samp> are given, the linker output
+base name, minus <var>auxdropsuf</var>, if specified, or the executable
+suffix otherwise, plus a dash is appended to the default <var>dumppfx</var>
+instead.  Note, however, that unlike earlier cases of linking:
+</p>
+<div class="smallexample">
+<pre class="smallexample">gcc foo.c bar.c -dumpdir dir/pfx- -o main ...
+</pre></div>
+
+<p>does not append the output name <samp>main</samp> to <var>dumppfx</var>, because
+<samp>-dumpdir</samp> is explicitly specified.  The goal is that the
+explicitly-specified <var>dumppfx</var> may contain the specified output name
+as part of the prefix, if desired; only an explicitly-specified
+<samp>-dumpbase</samp> would be combined with it, in order to avoid simply
+discarding a meaningful option.
+</p>
+<p>When compiling and then linking from a single input file, the linker
+output base name will only be appended to the default <var>dumppfx</var> as
+above if it does not share the base name with the single input file
+name.  This has been covered in single-input linking cases above, but
+not with an explicit <samp>-dumpdir</samp> that inhibits the combination,
+even if overridden by <samp>-save-temps=*</samp>:
+</p>
+<div class="smallexample">
+<pre class="smallexample">gcc foo.c -dumpdir alt/pfx- -o dir/main.exe -save-temps=cwd ...
+</pre></div>
+
+<p>Auxiliary outputs are named <samp>foo.*</samp>, and dump outputs
+<samp>foo.c.*</samp>, in the current working directory as ultimately requested
+by <samp>-save-temps=cwd</samp>.
+</p>
+<p>Summing it all up for an intuitive though slightly imprecise data flow:
+the primary output name is broken into a directory part and a basename
+part; <var>dumppfx</var> is set to the former, unless overridden by
+<samp>-dumpdir</samp> or <samp>-save-temps=*</samp>, and <var>dumpbase</var> is set
+to the latter, unless overriden by <samp>-dumpbase</samp>.  If there are
+multiple inputs or linking, this <var>dumpbase</var> may be combined with
+<var>dumppfx</var> and taken from each input file.  Auxiliary output names
+for each input are formed by combining <var>dumppfx</var>, <var>dumpbase</var>
+minus suffix, and the auxiliary output suffix; dump output names are
+only different in that the suffix from <var>dumpbase</var> is retained.
+</p>
+<p>When it comes to auxiliary and dump outputs created during LTO
+recompilation, a combination of <var>dumppfx</var> and <var>dumpbase</var>, as
+given or as derived from the linker output name but not from inputs,
+even in cases in which this combination would not otherwise be used as
+such, is passed down with a trailing period replacing the compiler-added
+dash, if any, as a <samp>-dumpdir</samp> option to <code>lto-wrapper</code>;
+being involved in linking, this program does not normally get any
+<samp>-dumpbase</samp> and <samp>-dumpbase-ext</samp>, and it ignores them.
+</p>
+<p>When running sub-compilers, <code>lto-wrapper</code> appends LTO stage
+names to the received <var>dumppfx</var>, ensures it contains a directory
+component so that it overrides any <samp>-dumpdir</samp>, and passes that as
+<samp>-dumpbase</samp> to sub-compilers.
 </p>
 </dd>
 <dt><code>-v</code></dt>

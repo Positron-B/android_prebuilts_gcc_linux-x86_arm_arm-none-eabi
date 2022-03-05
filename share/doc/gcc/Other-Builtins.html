@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
-<!-- Copyright (C) 1988-2020 Free Software Foundation, Inc.
+<!-- Copyright (C) 1988-2021 Free Software Foundation, Inc.
 
 Permission is granted to copy, distribute and/or modify this document
 under the terms of the GNU Free Documentation License, Version 1.3 or
@@ -523,7 +523,7 @@ a particular case, a call to the library function is emitted.
 <code>j1f</code>, <code>j1l</code>, <code>j1</code>, <code>jnf</code>, <code>jnl</code>, <code>jn</code>,
 <code>lgammaf_r</code>, <code>lgammal_r</code>, <code>lgamma_r</code>, <code>mempcpy</code>,
 <code>pow10f</code>, <code>pow10l</code>, <code>pow10</code>, <code>printf_unlocked</code>,
-<code>rindex</code>, <code>roundeven</code>, <code>roundevenf</code>, <code>roudnevenl</code>,
+<code>rindex</code>, <code>roundeven</code>, <code>roundevenf</code>, <code>roundevenl</code>,
 <code>scalbf</code>, <code>scalbl</code>, <code>scalb</code>,
 <code>signbit</code>, <code>signbitf</code>, <code>signbitl</code>, <code>signbitd32</code>,
 <code>signbitd64</code>, <code>signbitd128</code>, <code>significandf</code>,
@@ -1130,6 +1130,36 @@ refer to the latest revision of the C++ standard.
 </p></dd></dl>
 
 <dl>
+<dt><a name="index-_005f_005fbuiltin_005fclear_005fpadding"></a>Built-in Function: <em>void</em> <strong>__builtin_clear_padding</strong> <em>(<var>ptr</var>)</em></dt>
+<dd><p>The built-in function <code>__builtin_clear_padding</code> function clears
+padding bits inside of the object representation of object pointed by
+<var>ptr</var>, which has to be a pointer.  The value representation of the
+object is not affected.  The type of the object is assumed to be the type
+the pointer points to.  Inside of a union, the only cleared bits are
+bits that are padding bits for all the union members.
+</p>
+<p>This built-in-function is useful if the padding bits of an object might
+have intederminate values and the object representation needs to be
+bitwise compared to some other object, for example for atomic operations.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-_005f_005fbuiltin_005fbit_005fcast"></a>Built-in Function: <em><var>type</var></em> <strong>__builtin_bit_cast</strong> <em>(<var>type</var>, <var>arg</var>)</em></dt>
+<dd><p>The <code>__builtin_bit_cast</code> function is available only
+in C++.  The built-in is intended to be used by implementations of
+the <code>std::bit_cast</code> C++ template function.  Programs should make
+use of the latter function rather than invoking the built-in directly.
+</p>
+<p>This built-in function allows reinterpreting the bits of the <var>arg</var>
+argument as if it had type <var>type</var>.  <var>type</var> and the type of the
+<var>arg</var> argument need to be trivially copyable types with the same size.
+When manifestly constant-evaluated, it performs extra diagnostics required
+for <code>std::bit_cast</code> and returns a constant expression if <var>arg</var>
+is a constant expression.  For more details
+refer to the latest revision of the C++ standard.
+</p></dd></dl>
+
+<dl>
 <dt><a name="index-_005f_005fbuiltin_005fexpect"></a>Built-in Function: <em>long</em> <strong>__builtin_expect</strong> <em>(long <var>exp</var>, long <var>c</var>)</em></dt>
 <dd><a name="index-fprofile_002darcs-1"></a>
 <p>You may use <code>__builtin_expect</code> to provide the compiler with
@@ -1540,6 +1570,21 @@ to be a signaling NaN.  The <code>nans</code> function is proposed by
 </p></dd></dl>
 
 <dl>
+<dt><a name="index-_005f_005fbuiltin_005fnansd32"></a>Built-in Function: <em>_Decimal32</em> <strong>__builtin_nansd32</strong> <em>(const char *str)</em></dt>
+<dd><p>Similar to <code>__builtin_nans</code>, except the return type is <code>_Decimal32</code>.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-_005f_005fbuiltin_005fnansd64"></a>Built-in Function: <em>_Decimal64</em> <strong>__builtin_nansd64</strong> <em>(const char *str)</em></dt>
+<dd><p>Similar to <code>__builtin_nans</code>, except the return type is <code>_Decimal64</code>.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-_005f_005fbuiltin_005fnansd128"></a>Built-in Function: <em>_Decimal128</em> <strong>__builtin_nansd128</strong> <em>(const char *str)</em></dt>
+<dd><p>Similar to <code>__builtin_nans</code>, except the return type is <code>_Decimal128</code>.
+</p></dd></dl>
+
+<dl>
 <dt><a name="index-_005f_005fbuiltin_005fnansf"></a>Built-in Function: <em>float</em> <strong>__builtin_nansf</strong> <em>(const char *str)</em></dt>
 <dd><p>Similar to <code>__builtin_nans</code>, except the return type is <code>float</code>.
 </p></dd></dl>
@@ -1697,14 +1742,21 @@ exactly 8 bits.
 <dl>
 <dt><a name="index-_005f_005fbuiltin_005fbswap32"></a>Built-in Function: <em>uint32_t</em> <strong>__builtin_bswap32</strong> <em>(uint32_t x)</em></dt>
 <dd><p>Similar to <code>__builtin_bswap16</code>, except the argument and return types
-are 32 bit.
+are 32-bit.
 </p></dd></dl>
 
 <dl>
 <dt><a name="index-_005f_005fbuiltin_005fbswap64"></a>Built-in Function: <em>uint64_t</em> <strong>__builtin_bswap64</strong> <em>(uint64_t x)</em></dt>
 <dd><p>Similar to <code>__builtin_bswap32</code>, except the argument and return types
-are 64 bit.
+are 64-bit.
 </p></dd></dl>
+
+<dl>
+<dt><a name="index-_005f_005fbuiltin_005fbswap128"></a>Built-in Function: <em>uint128_t</em> <strong>__builtin_bswap128</strong> <em>(uint128_t x)</em></dt>
+<dd><p>Similar to <code>__builtin_bswap64</code>, except the argument and return types
+are 128-bit.  Only supported on targets when 128-bit types are supported.
+</p></dd></dl>
+
 
 <dl>
 <dt><a name="index-_005f_005fbuiltin_005fextend_005fpointer-1"></a>Built-in Function: <em>Pmode</em> <strong>__builtin_extend_pointer</strong> <em>(void * x)</em></dt>

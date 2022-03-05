@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
-<!-- Copyright (C) 1988-2020 Free Software Foundation, Inc.
+<!-- Copyright (C) 1988-2021 Free Software Foundation, Inc.
 
 Permission is granted to copy, distribute and/or modify this document
 under the terms of the GNU Free Documentation License, Version 1.3 or
@@ -150,6 +150,14 @@ and pointers.
 <dd><p>Target has <code>int</code> and <code>long</code> with different sizes.
 </p>
 </dd>
+<dt><code>short_eq_int</code></dt>
+<dd><p>Target has <code>short</code> and <code>int</code> with the same size.
+</p>
+</dd>
+<dt><code>ptr_eq_short</code></dt>
+<dd><p>Target has pointers (<code>void *</code>) and <code>short</code> with the same size.
+</p>
+</dd>
 <dt><code>int_eq_float</code></dt>
 <dd><p>Target has <code>int</code> and <code>float</code> with the same size.
 </p>
@@ -171,12 +179,17 @@ and pointers.
 </p>
 </dd>
 <dt><code>size20plus</code></dt>
-<dd><p>Target has a 20-bit or larger address space, so at least supports
+<dd><p>Target has a 20-bit or larger address space, so supports at least
 16-bit array and structure sizes.
 </p>
 </dd>
+<dt><code>size24plus</code></dt>
+<dd><p>Target has a 24-bit or larger address space, so supports at least
+20-bit array and structure sizes.
+</p>
+</dd>
 <dt><code>size32plus</code></dt>
-<dd><p>Target has a 32-bit or larger address space, so at least supports
+<dd><p>Target has a 32-bit or larger address space, so supports at least
 24-bit array and structure sizes.
 </p>
 </dd>
@@ -211,6 +224,11 @@ for any options added with <code>dg-add-options</code>.
 <dt><code>inf</code></dt>
 <dd><p>Target supports floating point infinite (<code>inf</code>) for type
 <code>double</code>.
+</p>
+</dd>
+<dt><code>inff</code></dt>
+<dd><p>Target supports floating point infinite (<code>inf</code>) for type
+<code>float</code>.
 </p></dd>
 </dl>
 <a name="Fortran_002dspecific-attributes"></a>
@@ -317,6 +335,10 @@ optabs on vectors.
 <dt><code>vect_fully_masked</code></dt>
 <dd><p>Target supports fully-masked (also known as fully-predicated) loops,
 so that vector loops can handle partial as well as full vectors.
+</p>
+</dd>
+<dt><code>vect_masked_load</code></dt>
+<dd><p>Target supports vector masked loads.
 </p>
 </dd>
 <dt><code>vect_masked_store</code></dt>
@@ -554,6 +576,25 @@ and from <code>char</code> to <code>int</code>.
 </dd>
 <dt><code>vect_fold_extract_last</code></dt>
 <dd><p>Target supports the <code>fold_extract_last</code> optab.
+</p>
+</dd>
+<dt><code>vect_len_load_store</code></dt>
+<dd><p>Target supports the <code>len_load</code> and <code>len_store</code> optabs.
+</p>
+</dd>
+<dt><code>vect_partial_vectors_usage_1</code></dt>
+<dd><p>Target supports loop vectorization with partial vectors and
+<code>vect-partial-vector-usage</code> is set to 1.
+</p>
+</dd>
+<dt><code>vect_partial_vectors_usage_2</code></dt>
+<dd><p>Target supports loop vectorization with partial vectors and
+<code>vect-partial-vector-usage</code> is set to 2.
+</p>
+</dd>
+<dt><code>vect_partial_vectors</code></dt>
+<dd><p>Target supports loop vectorization with partial vectors and
+<code>vect-partial-vector-usage</code> is nonzero.
 </p></dd>
 </dl>
 
@@ -636,8 +677,7 @@ variant of the ABI for the ARM Architecture (as selected with
 </p>
 </dd>
 <dt><code>arm_softfloat</code></dt>
-<dd><p>ARM target uses the soft-float ABI with no floating-point instructions
-used whatsoever (as selected with <code>-mfloat-abi=soft</code>).
+<dd><p>ARM target uses emulated floating point operations.
 </p>
 </dd>
 <dt><code>arm_hard_vfp_ok</code></dt>
@@ -919,12 +959,36 @@ intrinsics from <code>arm_acle.h</code>.
 Some multilibs may be incompatible with these options.
 </p>
 </dd>
+<dt><code>arm_dsp_ok</code></dt>
+<dd><a name="arm_005fdsp_005fok"></a><p>ARM Target supports options suitable for accessing the DSP intrinsics
+from <code>arm_acle.h</code>.
+Some multilibs may be incompatible with these options.
+</p>
+</dd>
 <dt><code>arm_softfp_ok</code></dt>
 <dd><a name="arm_005fsoftfp_005fok"></a><p>ARM target supports the <code>-mfloat-abi=softfp</code> option.
 </p>
 </dd>
 <dt><code>arm_hard_ok</code></dt>
 <dd><a name="arm_005fhard_005fok"></a><p>ARM target supports the <code>-mfloat-abi=hard</code> option.
+</p>
+</dd>
+<dt><code>arm_v8_1_lob_ok</code></dt>
+<dd><a name="arm_005fv8_005f1_005flob_005fok"></a><p>ARM Target supports executing the Armv8.1-M Mainline Low Overhead Loop
+instructions <code>DLS</code> and <code>LE</code>.
+Some multilibs may be incompatible with these options.
+</p>
+</dd>
+<dt><code>arm_thumb2_no_arm_v8_1_lob</code></dt>
+<dd><p>ARM target where Thumb-2 is used without options but does not support
+executing the Armv8.1-M Mainline Low Overhead Loop instructions
+<code>DLS</code> and <code>LE</code>.
+</p>
+</dd>
+<dt><code>arm_thumb2_ok_no_arm_v8_1_lob</code></dt>
+<dd><p>ARM target generates Thumb-2 code for <code>-mthumb</code> but does not
+support executing the Armv8.1-M Mainline Low Overhead Loop
+instructions <code>DLS</code> and <code>LE</code>.
 </p>
 </dd>
 </dl>
@@ -1009,8 +1073,21 @@ when using the new ABI.
 </p></dd>
 </dl>
 
+<a name="MSP430_002dspecific-attributes"></a>
+<h4 class="subsubsection">7.2.3.10 MSP430-specific attributes</h4>
+
+<dl compact="compact">
+<dt><code>msp430_small</code></dt>
+<dd><p>MSP430 target has the small memory model enabled (<code>-msmall</code>).
+</p>
+</dd>
+<dt><code>msp430_large</code></dt>
+<dd><p>MSP430 target has the large memory model enabled (<code>-mlarge</code>).
+</p></dd>
+</dl>
+
 <a name="PowerPC_002dspecific-attributes"></a>
-<h4 class="subsubsection">7.2.3.10 PowerPC-specific attributes</h4>
+<h4 class="subsubsection">7.2.3.11 PowerPC-specific attributes</h4>
 
 <dl compact="compact">
 <dt><code>dfp_hw</code></dt>
@@ -1098,11 +1175,36 @@ PowerPC target supports PowerPC 405.
 </dd>
 <dt><code>vsx_hw</code></dt>
 <dd><p>PowerPC target supports executing VSX instructions (ISA 2.06).
+</p>
+</dd>
+<dt><code>has_arch_pwr5</code></dt>
+<dd><p>PowerPC target pre-defines macro _ARCH_PWR5 which means the <code>-mcpu</code>
+setting is Power5 or later.
+</p>
+</dd>
+<dt><code>has_arch_pwr6</code></dt>
+<dd><p>PowerPC target pre-defines macro _ARCH_PWR6 which means the <code>-mcpu</code>
+setting is Power6 or later.
+</p>
+</dd>
+<dt><code>has_arch_pwr7</code></dt>
+<dd><p>PowerPC target pre-defines macro _ARCH_PWR7 which means the <code>-mcpu</code>
+setting is Power7 or later.
+</p>
+</dd>
+<dt><code>has_arch_pwr8</code></dt>
+<dd><p>PowerPC target pre-defines macro _ARCH_PWR8 which means the <code>-mcpu</code>
+setting is Power8 or later.
+</p>
+</dd>
+<dt><code>has_arch_pwr9</code></dt>
+<dd><p>PowerPC target pre-defines macro _ARCH_PWR9 which means the <code>-mcpu</code>
+setting is Power9 or later.
 </p></dd>
 </dl>
 
 <a name="Other-hardware-attributes"></a>
-<h4 class="subsubsection">7.2.3.11 Other hardware attributes</h4>
+<h4 class="subsubsection">7.2.3.12 Other hardware attributes</h4>
 
 <dl compact="compact">
 <dt><code>autoincdec</code></dt>
@@ -1125,6 +1227,10 @@ PowerPC target supports PowerPC 405.
 <dd><p>Target supports the execution of <code>avx2</code> instructions.
 </p>
 </dd>
+<dt><code>avxvnni</code></dt>
+<dd><p>Target supports the execution of <code>avxvnni</code> instructions.
+</p>
+</dd>
 <dt><code>avx512f</code></dt>
 <dd><p>Target supports compiling <code>avx512f</code> instructions.
 </p>
@@ -1135,6 +1241,18 @@ PowerPC target supports PowerPC 405.
 </dd>
 <dt><code>avx512vp2intersect</code></dt>
 <dd><p>Target supports the execution of <code>avx512vp2intersect</code> instructions.
+</p>
+</dd>
+<dt><code>amx_tile</code></dt>
+<dd><p>Target supports the execution of <code>amx-tile</code> instructions.
+</p>
+</dd>
+<dt><code>amx_int8</code></dt>
+<dd><p>Target supports the execution of <code>amx-int8</code> instructions.
+</p>
+</dd>
+<dt><code>amx_bf16</code></dt>
+<dd><p>Target supports the execution of <code>amx-bf16</code> instructions.
 </p>
 </dd>
 <dt><code>cell_hw</code></dt>
@@ -1214,7 +1332,7 @@ or <code>EM_SPARCV9</code> executables.
 </dl>
 
 <a name="Environment-attributes"></a>
-<h4 class="subsubsection">7.2.3.12 Environment attributes</h4>
+<h4 class="subsubsection">7.2.3.13 Environment attributes</h4>
 
 <dl compact="compact">
 <dt><code>c</code></dt>
@@ -1259,6 +1377,12 @@ overloads for <code>strchr</code> etc. functions.
 <dt><code>fenv_exceptions</code></dt>
 <dd><p>Target supports <samp>fenv.h</samp> with all the standard IEEE exceptions
 and floating-point exceptions are raised by arithmetic operations.
+</p>
+</dd>
+<dt><code>fenv_exceptions_dfp</code></dt>
+<dd><p>Target supports <samp>fenv.h</samp> with all the standard IEEE exceptions
+and floating-point exceptions are raised by arithmetic operations for
+decimal floating point.
 </p>
 </dd>
 <dt><code>fileio</code></dt>
@@ -1348,8 +1472,17 @@ This will be obsolete when GCC ensures a working <code>stdint.h</code> for
 all targets.
 </p>
 </dd>
+<dt><code>stdint_types_mbig_endian</code></dt>
+<dd><p>Target accepts the option <samp>-mbig-endian</samp> and <code>stdint.h</code>
+can be included without error when <samp>-mbig-endian</samp> is passed.
+</p>
+</dd>
 <dt><code>stpcpy</code></dt>
 <dd><p>Target provides <code>stpcpy</code> function.
+</p>
+</dd>
+<dt><code>sysconf</code></dt>
+<dd><p>Target supports <code>sysconf</code>.
 </p>
 </dd>
 <dt><code>trampolines</code></dt>
@@ -1378,9 +1511,13 @@ all targets.
 </dl>
 
 <a name="Other-attributes"></a>
-<h4 class="subsubsection">7.2.3.13 Other attributes</h4>
+<h4 class="subsubsection">7.2.3.14 Other attributes</h4>
 
 <dl compact="compact">
+<dt><code>R_flag_in_section</code></dt>
+<dd><p>Target supports the &rsquo;R&rsquo; flag in .section directive in assembly inputs.
+</p>
+</dd>
 <dt><code>automatic_stack_alignment</code></dt>
 <dd><p>Target supports automatic stack alignment.
 </p>
@@ -1455,6 +1592,10 @@ testing configuration.
 <dd><p>Target is using an LLVM assembler and/or linker, instead of GNU Binutils.
 </p>
 </dd>
+<dt><code>lra</code></dt>
+<dd><p>Target supports local register allocator (LRA).
+</p>
+</dd>
 <dt><code>lto</code></dt>
 <dd><p>Compiler has been configured to support link-time optimization (LTO).
 </p>
@@ -1490,8 +1631,16 @@ with <samp>-r</samp> and <samp>-flto</samp> options.
 <dd><p>Target does not generate PIC by default.
 </p>
 </dd>
+<dt><code>o_flag_in_section</code></dt>
+<dd><p>Target supports the &rsquo;o&rsquo; flag in .section directive in assembly inputs.
+</p>
+</dd>
 <dt><code>offload_gcn</code></dt>
 <dd><p>Target has been configured for OpenACC/OpenMP offloading on AMD GCN.
+</p>
+</dd>
+<dt><code>persistent</code></dt>
+<dd><p>Target supports the <code>persistent</code> variable attribute.
 </p>
 </dd>
 <dt><code>pie_enabled</code></dt>
@@ -1583,11 +1732,15 @@ or equal to the required vector alignment.
 <dt><code>indirect_calls</code></dt>
 <dd><p>Target supports indirect calls, i.e. calls where the target is not
 constant.
+</p>
+</dd>
+<dt><code>lgccjit</code></dt>
+<dd><p>Target supports -lgccjit, i.e. libgccjit.so can be linked into jit tests.
 </p></dd>
 </dl>
 
 <a name="Local-to-tests-in-gcc_002etarget_002fi386"></a>
-<h4 class="subsubsection">7.2.3.14 Local to tests in <code>gcc.target/i386</code></h4>
+<h4 class="subsubsection">7.2.3.15 Local to tests in <code>gcc.target/i386</code></h4>
 
 <dl compact="compact">
 <dt><code>3dnow</code></dt>
@@ -1645,7 +1798,7 @@ position of profiling calls such that they precede the prologue.
 </dl>
 
 <a name="Local-to-tests-in-gcc_002etest_002dframework"></a>
-<h4 class="subsubsection">7.2.3.15 Local to tests in <code>gcc.test-framework</code></h4>
+<h4 class="subsubsection">7.2.3.16 Local to tests in <code>gcc.test-framework</code></h4>
 
 <dl compact="compact">
 <dt><code>no</code></dt>

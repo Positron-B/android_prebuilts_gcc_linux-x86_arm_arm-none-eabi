@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
-<!-- Copyright (C) 1988-2020 Free Software Foundation, Inc.
+<!-- Copyright (C) 1988-2021 Free Software Foundation, Inc.
 
 Permission is granted to copy, distribute and/or modify this document
 under the terms of the GNU Free Documentation License, Version 1.3 or
@@ -563,6 +563,34 @@ mode <var>n</var>.
 </p>
 <p>This pattern is not allowed to <code>FAIL</code>.
 </p>
+<a name="index-len_005fload_005fm-instruction-pattern"></a>
+</dd>
+<dt>&lsquo;<samp>len_load_<var>m</var></samp>&rsquo;</dt>
+<dd><p>Load the number of vector elements specified by operand 2 from memory
+operand 1 into vector register operand 0, setting the other elements of
+operand 0 to undefined values.  Operands 0 and 1 have mode <var>m</var>,
+which must be a vector mode.  Operand 2 has whichever integer mode the
+target prefers.  If operand 2 exceeds the number of elements in mode
+<var>m</var>, the behavior is undefined.  If the target prefers the length
+to be measured in bytes rather than elements, it should only implement
+this pattern for vectors of <code>QI</code> elements.
+</p>
+<p>This pattern is not allowed to <code>FAIL</code>.
+</p>
+<a name="index-len_005fstore_005fm-instruction-pattern"></a>
+</dd>
+<dt>&lsquo;<samp>len_store_<var>m</var></samp>&rsquo;</dt>
+<dd><p>Store the number of vector elements specified by operand 2 from vector
+register operand 1 into memory operand 0, leaving the other elements of
+operand 0 unchanged.  Operands 0 and 1 have mode <var>m</var>, which must be
+a vector mode.  Operand 2 has whichever integer mode the target prefers.
+If operand 2 exceeds the number of elements in mode <var>m</var>, the behavior
+is undefined.  If the target prefers the length to be measured in bytes
+rather than elements, it should only implement this pattern for vectors
+of <code>QI</code> elements.
+</p>
+<p>This pattern is not allowed to <code>FAIL</code>.
+</p>
 <a name="index-vec_005fpermm-instruction-pattern"></a>
 </dd>
 <dt>&lsquo;<samp>vec_perm<var>m</var></samp>&rsquo;</dt>
@@ -1046,6 +1074,30 @@ pair if it is less efficient than lo/hi one.
 <dd><p>Signed/Unsigned widening shift left.  The first input (operand 1) is a vector
 with N signed/unsigned elements of size S.  Operand 2 is a constant.  Shift
 the high/low elements of operand 1, and put the N/2 results of size 2*S in the
+output vector (operand 0).
+</p>
+<a name="index-vec_005fwiden_005fsaddl_005fhi_005fm-instruction-pattern"></a>
+<a name="index-vec_005fwiden_005fsaddl_005flo_005fm-instruction-pattern"></a>
+<a name="index-vec_005fwiden_005fuaddl_005fhi_005fm-instruction-pattern"></a>
+<a name="index-vec_005fwiden_005fuaddl_005flo_005fm-instruction-pattern"></a>
+</dd>
+<dt>&lsquo;<samp>vec_widen_uaddl_hi_<var>m</var></samp>&rsquo;, &lsquo;<samp>vec_widen_uaddl_lo_<var>m</var></samp>&rsquo;</dt>
+<dt>&lsquo;<samp>vec_widen_saddl_hi_<var>m</var></samp>&rsquo;, &lsquo;<samp>vec_widen_saddl_lo_<var>m</var></samp>&rsquo;</dt>
+<dd><p>Signed/Unsigned widening add long.  Operands 1 and 2 are vectors with N
+signed/unsigned elements of size S.  Add the high/low elements of 1 and 2
+together, widen the resulting elements and put the N/2 results of size 2*S in
+the output vector (operand 0).
+</p>
+<a name="index-vec_005fwiden_005fssubl_005fhi_005fm-instruction-pattern"></a>
+<a name="index-vec_005fwiden_005fssubl_005flo_005fm-instruction-pattern"></a>
+<a name="index-vec_005fwiden_005fusubl_005fhi_005fm-instruction-pattern"></a>
+<a name="index-vec_005fwiden_005fusubl_005flo_005fm-instruction-pattern"></a>
+</dd>
+<dt>&lsquo;<samp>vec_widen_usubl_hi_<var>m</var></samp>&rsquo;, &lsquo;<samp>vec_widen_usubl_lo_<var>m</var></samp>&rsquo;</dt>
+<dt>&lsquo;<samp>vec_widen_ssubl_hi_<var>m</var></samp>&rsquo;, &lsquo;<samp>vec_widen_ssubl_lo_<var>m</var></samp>&rsquo;</dt>
+<dd><p>Signed/Unsigned widening subtract long.  Operands 1 and 2 are vectors with N
+signed/unsigned elements of size S.  Subtract the high/low elements of 2 from
+1 and widen the resulting elements. Put the N/2 results of size 2*S in the
 output vector (operand 0).
 </p>
 <a name="index-mulhisi3-instruction-pattern"></a>
@@ -1612,6 +1664,196 @@ vector floating-point mode.
 the magnitude of operand 1 and the sign of operand 2 into operand 0.
 All operands have mode <var>m</var>, which is a scalar or vector
 floating-point mode.
+</p>
+<p>This pattern is not allowed to <code>FAIL</code>.
+</p>
+<a name="index-cadd90m3-instruction-pattern"></a>
+</dd>
+<dt>&lsquo;<samp>cadd90<var>m</var>3</samp>&rsquo;</dt>
+<dd><p>Perform vector add and subtract on even/odd number pairs.  The operation being
+matched is semantically described as
+</p>
+<div class="smallexample">
+<pre class="smallexample">  for (int i = 0; i &lt; N; i += 2)
+    {
+      c[i] = a[i] - b[i+1];
+      c[i+1] = a[i+1] + b[i];
+    }
+</pre></div>
+
+<p>This operation is semantically equivalent to performing a vector addition of
+complex numbers in operand 1 with operand 2 rotated by 90 degrees around
+the argand plane and storing the result in operand 0.
+</p>
+<p>In GCC lane ordering the real part of the number must be in the even lanes with
+the imaginary part in the odd lanes.
+</p>
+<p>The operation is only supported for vector modes <var>m</var>.
+</p>
+<p>This pattern is not allowed to <code>FAIL</code>.
+</p>
+<a name="index-cadd270m3-instruction-pattern"></a>
+</dd>
+<dt>&lsquo;<samp>cadd270<var>m</var>3</samp>&rsquo;</dt>
+<dd><p>Perform vector add and subtract on even/odd number pairs.  The operation being
+matched is semantically described as
+</p>
+<div class="smallexample">
+<pre class="smallexample">  for (int i = 0; i &lt; N; i += 2)
+    {
+      c[i] = a[i] + b[i+1];
+      c[i+1] = a[i+1] - b[i];
+    }
+</pre></div>
+
+<p>This operation is semantically equivalent to performing a vector addition of
+complex numbers in operand 1 with operand 2 rotated by 270 degrees around
+the argand plane and storing the result in operand 0.
+</p>
+<p>In GCC lane ordering the real part of the number must be in the even lanes with
+the imaginary part in the odd lanes.
+</p>
+<p>The operation is only supported for vector modes <var>m</var>.
+</p>
+<p>This pattern is not allowed to <code>FAIL</code>.
+</p>
+<a name="index-cmlam4-instruction-pattern"></a>
+</dd>
+<dt>&lsquo;<samp>cmla<var>m</var>4</samp>&rsquo;</dt>
+<dd><p>Perform a vector multiply and accumulate that is semantically the same as
+a multiply and accumulate of complex numbers.
+</p>
+<div class="smallexample">
+<pre class="smallexample">  complex TYPE c[N];
+  complex TYPE a[N];
+  complex TYPE b[N];
+  for (int i = 0; i &lt; N; i += 1)
+    {
+      c[i] += a[i] * b[i];
+    }
+</pre></div>
+
+<p>In GCC lane ordering the real part of the number must be in the even lanes with
+the imaginary part in the odd lanes.
+</p>
+<p>The operation is only supported for vector modes <var>m</var>.
+</p>
+<p>This pattern is not allowed to <code>FAIL</code>.
+</p>
+<a name="index-cmla_005fconjm4-instruction-pattern"></a>
+</dd>
+<dt>&lsquo;<samp>cmla_conj<var>m</var>4</samp>&rsquo;</dt>
+<dd><p>Perform a vector multiply by conjugate and accumulate that is semantically
+the same as a multiply and accumulate of complex numbers where the second
+multiply arguments is conjugated.
+</p>
+<div class="smallexample">
+<pre class="smallexample">  complex TYPE c[N];
+  complex TYPE a[N];
+  complex TYPE b[N];
+  for (int i = 0; i &lt; N; i += 1)
+    {
+      c[i] += a[i] * conj (b[i]);
+    }
+</pre></div>
+
+<p>In GCC lane ordering the real part of the number must be in the even lanes with
+the imaginary part in the odd lanes.
+</p>
+<p>The operation is only supported for vector modes <var>m</var>.
+</p>
+<p>This pattern is not allowed to <code>FAIL</code>.
+</p>
+<a name="index-cmlsm4-instruction-pattern"></a>
+</dd>
+<dt>&lsquo;<samp>cmls<var>m</var>4</samp>&rsquo;</dt>
+<dd><p>Perform a vector multiply and subtract that is semantically the same as
+a multiply and subtract of complex numbers.
+</p>
+<div class="smallexample">
+<pre class="smallexample">  complex TYPE c[N];
+  complex TYPE a[N];
+  complex TYPE b[N];
+  for (int i = 0; i &lt; N; i += 1)
+    {
+      c[i] -= a[i] * b[i];
+    }
+</pre></div>
+
+<p>In GCC lane ordering the real part of the number must be in the even lanes with
+the imaginary part in the odd lanes.
+</p>
+<p>The operation is only supported for vector modes <var>m</var>.
+</p>
+<p>This pattern is not allowed to <code>FAIL</code>.
+</p>
+<a name="index-cmls_005fconjm4-instruction-pattern"></a>
+</dd>
+<dt>&lsquo;<samp>cmls_conj<var>m</var>4</samp>&rsquo;</dt>
+<dd><p>Perform a vector multiply by conjugate and subtract that is semantically
+the same as a multiply and subtract of complex numbers where the second
+multiply arguments is conjugated.
+</p>
+<div class="smallexample">
+<pre class="smallexample">  complex TYPE c[N];
+  complex TYPE a[N];
+  complex TYPE b[N];
+  for (int i = 0; i &lt; N; i += 1)
+    {
+      c[i] -= a[i] * conj (b[i]);
+    }
+</pre></div>
+
+<p>In GCC lane ordering the real part of the number must be in the even lanes with
+the imaginary part in the odd lanes.
+</p>
+<p>The operation is only supported for vector modes <var>m</var>.
+</p>
+<p>This pattern is not allowed to <code>FAIL</code>.
+</p>
+<a name="index-cmulm4-instruction-pattern"></a>
+</dd>
+<dt>&lsquo;<samp>cmul<var>m</var>4</samp>&rsquo;</dt>
+<dd><p>Perform a vector multiply that is semantically the same as multiply of
+complex numbers.
+</p>
+<div class="smallexample">
+<pre class="smallexample">  complex TYPE c[N];
+  complex TYPE a[N];
+  complex TYPE b[N];
+  for (int i = 0; i &lt; N; i += 1)
+    {
+      c[i] = a[i] * b[i];
+    }
+</pre></div>
+
+<p>In GCC lane ordering the real part of the number must be in the even lanes with
+the imaginary part in the odd lanes.
+</p>
+<p>The operation is only supported for vector modes <var>m</var>.
+</p>
+<p>This pattern is not allowed to <code>FAIL</code>.
+</p>
+<a name="index-cmul_005fconjm4-instruction-pattern"></a>
+</dd>
+<dt>&lsquo;<samp>cmul_conj<var>m</var>4</samp>&rsquo;</dt>
+<dd><p>Perform a vector multiply by conjugate that is semantically the same as a
+multiply of complex numbers where the second multiply arguments is conjugated.
+</p>
+<div class="smallexample">
+<pre class="smallexample">  complex TYPE c[N];
+  complex TYPE a[N];
+  complex TYPE b[N];
+  for (int i = 0; i &lt; N; i += 1)
+    {
+      c[i] = a[i] * conj (b[i]);
+    }
+</pre></div>
+
+<p>In GCC lane ordering the real part of the number must be in the even lanes with
+the imaginary part in the odd lanes.
+</p>
+<p>The operation is only supported for vector modes <var>m</var>.
 </p>
 <p>This pattern is not allowed to <code>FAIL</code>.
 </p>

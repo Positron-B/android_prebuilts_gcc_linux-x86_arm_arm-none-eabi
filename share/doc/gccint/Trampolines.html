@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
-<!-- Copyright (C) 1988-2020 Free Software Foundation, Inc.
+<!-- Copyright (C) 1988-2021 Free Software Foundation, Inc.
 
 Permission is granted to copy, distribute and/or modify this document
 under the terms of the GNU Free Documentation License, Version 1.3 or
@@ -204,9 +204,23 @@ Note that the block move need only cover the constant parts of the
 trampoline.  If the target isolates the variable parts of the trampoline
 to the end, not all <code>TRAMPOLINE_SIZE</code> bytes need be copied.
 </p>
-<p>If the target requires any other actions, such as flushing caches or
+<p>If the target requires any other actions, such as flushing caches
+(possibly calling function maybe_emit_call_builtin___clear_cache) or
 enabling stack execution, these actions should be performed after
 initializing the trampoline proper.
+</p></dd></dl>
+
+<dl>
+<dt><a name="index-TARGET_005fEMIT_005fCALL_005fBUILTIN_005f_005f_005fCLEAR_005fCACHE"></a>Target Hook: <em>void</em> <strong>TARGET_EMIT_CALL_BUILTIN___CLEAR_CACHE</strong> <em>(rtx <var>begin</var>, rtx <var>end</var>)</em></dt>
+<dd><p>On targets that do not define a <code>clear_cache</code> insn expander,
+but that define the <code>CLEAR_CACHE_INSN</code> macro,
+maybe_emit_call_builtin___clear_cache relies on this target hook
+to clear an address range in the instruction cache.
+</p>
+<p>The default implementation calls the <code>__clear_cache</code> builtin,
+taking the assembler name from the builtin declaration.  Overriding
+definitions may call alternate functions, with alternate calling
+conventions, or emit alternate RTX to perform the job.
 </p></dd></dl>
 
 <dl>
@@ -239,7 +253,7 @@ the following macro.
 <dd><p>If defined, expands to a C expression clearing the <em>instruction
 cache</em> in the specified interval.  The definition of this macro would
 typically be a series of <code>asm</code> statements.  Both <var>beg</var> and
-<var>end</var> are both pointer expressions.
+<var>end</var> are pointer expressions.
 </p></dd></dl>
 
 <p>To use a standard subroutine, define the following macro.  In addition,

@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
-<!-- Copyright (C) 1988-2021 Free Software Foundation, Inc.
+<!-- Copyright (C) 1988-2022 Free Software Foundation, Inc.
 
 Permission is granted to copy, distribute and/or modify this document
 under the terms of the GNU Free Documentation License, Version 1.3 or
@@ -68,7 +68,7 @@ Next: <a href="Pretty-Printing-API.html#Pretty-Printing-API" accesskey="n" rel="
 </div>
 <hr>
 <a name="Types-In-Python-1"></a>
-<h4 class="subsubsection">23.2.2.4 Types In Python</h4>
+<h4 class="subsubsection">23.3.2.4 Types In Python</h4>
 <a name="index-types-in-Python"></a>
 <a name="index-Python_002c-working-with-types"></a>
 
@@ -177,13 +177,26 @@ there is no associated objfile.
 </p>
 <dl>
 <dt><a name="index-Type_002efields"></a>Function: <strong>Type.fields</strong> <em>()</em></dt>
-<dd><p>For structure and union types, this method returns the fields.  Range
-types have two fields, the minimum and maximum values.  Enum types
-have one field per enum constant.  Function and method types have one
-field per parameter.  The base types of C<tt>++</tt> classes are also
-represented as fields.  If the type has no fields, or does not fit
-into one of these categories, an empty sequence will be returned.
+<dd>
+<p>Return the fields of this type.  The behavior depends on the type code:
 </p>
+<ul>
+<li> For structure and union types, this method returns the fields.
+
+</li><li> Range types have two fields, the minimum and maximum values.
+
+</li><li> Enum types have one field per enum constant.
+
+</li><li> Function and method types have one field per parameter.  The base types of
+C<tt>++</tt> classes are also represented as fields.
+
+</li><li> Array types have one field representing the array&rsquo;s range.
+
+</li><li> If the type does not fit into one of these categories, a <code>TypeError</code>
+is raised.
+
+</li></ul>
+
 <p>Each field is a <code>gdb.Field</code> object, with some pre-defined attributes:
 </p><dl compact="compact">
 <dt><code>bitpos</code></dt>

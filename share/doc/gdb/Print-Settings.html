@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
-<!-- Copyright (C) 1988-2021 Free Software Foundation, Inc.
+<!-- Copyright (C) 1988-2022 Free Software Foundation, Inc.
 
 Permission is granted to copy, distribute and/or modify this document
 under the terms of the GNU Free Documentation License, Version 1.3 or
@@ -68,7 +68,7 @@ Next: <a href="Pretty-Printing.html#Pretty-Printing" accesskey="n" rel="next">Pr
 </div>
 <hr>
 <a name="Print-Settings-1"></a>
-<h3 class="section">10.8 Print Settings</h3>
+<h3 class="section">10.9 Print Settings</h3>
 
 <a name="index-format-options"></a>
 <a name="index-print-settings"></a>
@@ -588,6 +588,22 @@ language, for most languages <code>{...}</code> is used, but Fortran uses
 <dt><code>show print max-depth</code></dt>
 <dd><p>Display the current threshold after which nested structures are
 replaces with ellipsis.
+</p>
+<a name="set-print-memory_002dtag_002dviolations"></a><a name="index-printing-memory-tag-violation-information"></a>
+</dd>
+<dt><code>set print memory-tag-violations</code></dt>
+<dt><code>set print memory-tag-violations on</code></dt>
+<dd><p>Cause <small>GDB</small> to display additional information about memory tag violations
+when printing pointers and addresses.
+</p>
+</dd>
+<dt><code>set print memory-tag-violations off</code></dt>
+<dd><p>Stop printing memory tag violation information.
+</p>
+</dd>
+<dt><code>show print memory-tag-violations</code></dt>
+<dd><p>Show whether memory tag violation information is displayed when printing
+pointers and addresses.
 </p>
 <a name="set-print-null_002dstop"></a></dd>
 <dt><code>set print null-stop</code></dt>

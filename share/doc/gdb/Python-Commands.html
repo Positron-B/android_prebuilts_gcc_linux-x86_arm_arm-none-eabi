@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
-<!-- Copyright (C) 1988-2021 Free Software Foundation, Inc.
+<!-- Copyright (C) 1988-2022 Free Software Foundation, Inc.
 
 Permission is granted to copy, distribute and/or modify this document
 under the terms of the GNU Free Documentation License, Version 1.3 or
@@ -68,7 +68,7 @@ Next: <a href="Python-API.html#Python-API" accesskey="n" rel="next">Python API</
 </div>
 <hr>
 <a name="Python-Commands-1"></a>
-<h4 class="subsection">23.2.1 Python Commands</h4>
+<h4 class="subsection">23.3.1 Python Commands</h4>
 <a name="index-python-commands"></a>
 <a name="index-commands-to-access-python"></a>
 
@@ -131,6 +131,45 @@ controlled using <code>set python print-stack</code>: if <code>full</code>, then
 full Python stack printing is enabled; if <code>none</code>, then Python stack
 and message printing is disabled; if <code>message</code>, the default, only
 the message component of the error is printed.
+</p>
+<a name="index-set-python-ignore_002denvironment"></a>
+</dd>
+<dt><code>set python ignore-environment <span class="roman">[</span>on<span class="roman">|</span>off<span class="roman">]</span></code></dt>
+<dd><p>By default this option is &lsquo;<samp>off</samp>&rsquo;, and, when <small>GDB</small>
+initializes its internal Python interpreter, the Python interpreter
+will check the environment for variables that will effect how it
+behaves, for example <code>PYTHONHOME</code>, and
+<code>PYTHONPATH</code><a name="DOCF19" href="#FOOT19"><sup>19</sup></a>.
+</p>
+<p>If this option is set to &lsquo;<samp>on</samp>&rsquo; before Python is initialized then
+Python will ignore all such environment variables.  As Python is
+initialized early during <small>GDB</small>&rsquo;s startup process, then this
+option must be placed into the early initialization file
+(see <a href="Initialization-Files.html#Initialization-Files">Initialization Files</a>) to have the desired effect.
+</p>
+<p>This option is equivalent to passing <samp>-E</samp> to the real
+<code>python</code> executable.
+</p>
+<a name="index-set-python-dont_002dwrite_002dbytecode"></a>
+</dd>
+<dt><code>set python dont-write-bytecode <span class="roman">[</span>auto<span class="roman">|</span>on<span class="roman">|</span>off<span class="roman">]</span></code></dt>
+<dd><p>When this option is &lsquo;<samp>off</samp>&rsquo;, then, once <small>GDB</small> has
+initialized the Python interpreter, the interpreter will byte-compile
+any Python modules that it imports and write the byte code to disk in
+<samp>.pyc</samp> files.
+</p>
+<p>If this option is set to &lsquo;<samp>on</samp>&rsquo; before Python is initialized then
+Python will no longer write the byte code to disk.  As Python is
+initialized early during <small>GDB</small>&rsquo;s startup process, then this
+option must be placed into the early initialization file
+(see <a href="Initialization-Files.html#Initialization-Files">Initialization Files</a>) to have the desired effect.
+</p>
+<p>By default this option is set to &lsquo;<samp>auto</samp>&rsquo;, in this mode Python will
+check the environment variable <code>PYTHONDONTWRITEBYTECODE</code> to see
+if it should write out byte-code or not.
+</p>
+<p>This option is equivalent to passing <samp>-B</samp> to the real
+<code>python</code> executable.
 </p></dd>
 </dl>
 
@@ -145,6 +184,35 @@ the <code>script-extension</code> setting.  See <a href="Extending-GDB.html#Exte
 </p></dd>
 </dl>
 
+<p>The following commands are intended to help debug <small>GDB</small> itself:
+</p>
+<dl compact="compact">
+<dd><a name="index-set-debug-py_002dbreakpoint"></a>
+<a name="index-show-debug-py_002dbreakpoint"></a>
+</dd>
+<dt><code>set debug py-breakpoint on<span class="roman">|</span>off</code></dt>
+<dt><code>show debug py-breakpoint</code></dt>
+<dd><p>When &lsquo;<samp>on</samp>&rsquo;, <small>GDB</small> prints debug messages related to the
+Python breakpoint API.  This is &lsquo;<samp>off</samp>&rsquo; by default.
+</p>
+<a name="index-set-debug-py_002dunwind"></a>
+<a name="index-show-debug-py_002dunwind"></a>
+</dd>
+<dt><code>set debug py-unwind on<span class="roman">|</span>off</code></dt>
+<dt><code>show debug py-unwind</code></dt>
+<dd><p>When &lsquo;<samp>on</samp>&rsquo;, <small>GDB</small> prints debug messages related to the
+Python unwinder API.  This is &lsquo;<samp>off</samp>&rsquo; by default.
+</p></dd>
+</dl>
+
+<div class="footnote">
+<hr>
+<h4 class="footnotes-heading">Footnotes</h4>
+
+<h3><a name="FOOT19" href="#DOCF19">(19)</a></h3>
+<p>See the ENVIRONMENT VARIABLES section of
+<code>man 1 python</code> for a comprehensive list.</p>
+</div>
 <hr>
 <div class="header">
 <p>

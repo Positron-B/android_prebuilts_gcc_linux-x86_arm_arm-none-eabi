@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
-<!-- Copyright (C) 1988-2021 Free Software Foundation, Inc.
+<!-- Copyright (C) 1988-2022 Free Software Foundation, Inc.
 
 Permission is granted to copy, distribute and/or modify this document
 under the terms of the GNU Free Documentation License, Version 1.3 or
@@ -68,7 +68,7 @@ Next: <a href="Types-In-Python.html#Types-In-Python" accesskey="n" rel="next">Ty
 </div>
 <hr>
 <a name="Values-From-Inferior-1"></a>
-<h4 class="subsubsection">23.2.2.3 Values From Inferior</h4>
+<h4 class="subsubsection">23.3.2.3 Values From Inferior</h4>
 <a name="index-values-from-inferior_002c-with-Python"></a>
 <a name="index-python_002c-working-with-values-from-inferior"></a>
 
@@ -427,6 +427,12 @@ corresponding symbol name (if one exists), <code>False</code> if it shouldn&rsqu
 <dd><p><code>True</code> if unions which are contained in other structures or unions
 should be expanded, <code>False</code> if they shouldn&rsquo;t (see <code>set print
 union</code> in <a href="Print-Settings.html#Print-Settings">Print Settings</a>).
+</p>
+</dd>
+<dt><code>address</code></dt>
+<dd><p><code>True</code> if the string representation of a pointer should include the
+address, <code>False</code> if it shouldn&rsquo;t (see <code>set print address</code> in
+<a href="Print-Settings.html#Print-Settings">Print Settings</a>).
 </p>
 </dd>
 <dt><code>deref_refs</code></dt>

@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
-<!-- Copyright (C) 1988-2021 Free Software Foundation, Inc.
+<!-- Copyright (C) 1988-2022 Free Software Foundation, Inc.
 
 Permission is granted to copy, distribute and/or modify this document
 under the terms of the GNU Free Documentation License, Version 1.3 or
@@ -223,7 +223,7 @@ Linux kernel prefers &lsquo;<samp>BREAK-g</samp>&rsquo;, a.k.a Magic SysRq g.
 It is <code>BREAK</code> signal followed by character <code>g</code>.
 </p>
 </dd>
-<dt><code>show interrupt-sequence</code></dt>
+<dt><code>show remote interrupt-sequence</code></dt>
 <dd><p>Show which of &lsquo;<samp>Ctrl-C</samp>&rsquo;, <code>BREAK</code> or <code>BREAK-g</code>
 is sent by <small>GDB</small> to interrupt the remote program.
 <code>BREAK-g</code> is BREAK signal followed by <code>g</code> and
@@ -238,7 +238,7 @@ Linux kernel.  Linux kernel expects <code>BREAK</code> followed by <code>g</code
 which is known as Magic SysRq g in order to connect <small>GDB</small>.
 </p>
 </dd>
-<dt><code>show interrupt-on-connect</code></dt>
+<dt><code>show remote interrupt-on-connect</code></dt>
 <dd><p>Show whether interrupt-sequence is sent
 to remote target when <small>GDB</small> connects to it.
 </p>

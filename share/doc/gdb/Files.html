@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
-<!-- Copyright (C) 1988-2021 Free Software Foundation, Inc.
+<!-- Copyright (C) 1988-2022 Free Software Foundation, Inc.
 
 Permission is granted to copy, distribute and/or modify this document
 under the terms of the GNU Free Documentation License, Version 1.3 or
@@ -333,24 +333,26 @@ current ones.
 </p>
 <a name="index-maint-info-sections"></a>
 </dd>
-<dt><code>maint info sections</code></dt>
+<dt><code>maint info sections <span class="roman">[</span>-all-objects<span class="roman">]</span> <span class="roman">[</span><var>filter-list</var><span class="roman">]</span></code></dt>
 <dd><p>Another command that can give you extra information about program sections
 is <code>maint info sections</code>.  In addition to the section information
 displayed by <code>info files</code>, this command displays the flags and file
-offset of each section in the executable and core dump files.  In addition,
-<code>maint info sections</code> provides the following command options (which
-may be arbitrarily combined):
+offset of each section in the executable and core dump files.
+</p>
+<p>When &lsquo;<samp>-all-objects</samp>&rsquo; is passed then sections from all loaded object
+files, including shared libraries, are printed.
+</p>
+<p>The optional <var>filter-list</var> is a space separated list of filter
+keywords.  Sections that match any one of the filter criteria will be
+printed.  There are two types of filter:
 </p>
 <dl compact="compact">
-<dt><code>ALLOBJ</code></dt>
-<dd><p>Display sections for all loaded object files, including shared libraries.
+<dt><code><var>section-name</var></code></dt>
+<dd><p>Display information about any section named <var>section-name</var>.
 </p></dd>
-<dt><code><var>sections</var></code></dt>
-<dd><p>Display info only for named <var>sections</var>.
-</p></dd>
-<dt><code><var>section-flags</var></code></dt>
-<dd><p>Display info only for sections for which <var>section-flags</var> are true.
-The section flags that <small>GDB</small> currently knows about are:
+<dt><code><var>section-flag</var></code></dt>
+<dd><p>Display information for any section with <var>section-flag</var>.  The
+section flags that <small>GDB</small> currently knows about are:
 </p><dl compact="compact">
 <dt><code>ALLOC</code></dt>
 <dd><p>Section will have space allocated in the process when loaded.
@@ -394,6 +396,15 @@ COFF shared library information.
 </dl>
 </dd>
 </dl>
+
+<a name="index-maint-info-target_002dsections"></a>
+</dd>
+<dt><code>maint info target-sections</code></dt>
+<dd><p>This command prints <small>GDB</small>&rsquo;s internal section table.  For each
+target <small>GDB</small> maintains a table containing the allocatable
+sections from all currently mapped objects, along with information
+about where the section is mapped.
+</p>
 <a name="index-set-trust_002dreadonly_002dsections"></a>
 <a name="index-read_002donly-sections"></a>
 </dd>
@@ -586,8 +597,8 @@ to specify a local system root using a directory that happens to be
 named <samp>target:</samp> or <samp>remote:</samp>, you need to use some
 equivalent variant of the name like <samp>./target:</samp>.
 </p>
-<p>For targets with an MS-DOS based filesystem, such as MS-Windows and
-SymbianOS, <small>GDB</small> tries prefixing a few variants of the target
+<p>For targets with an MS-DOS based filesystem, such as MS-Windows,
+<small>GDB</small> tries prefixing a few variants of the target
 absolute file name with <var>path</var>.  But first, on Unix hosts,
 <small>GDB</small> converts all backslash directory separators into forward
 slashes, because the backslash is not a directory separator on Unix:

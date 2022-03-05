@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
-<!-- Copyright (C) 1988-2020 Free Software Foundation, Inc.
+<!-- Copyright (C) 1988-2021 Free Software Foundation, Inc.
 
 Permission is granted to copy, distribute and/or modify this document
 under the terms of the GNU Free Documentation License, Version 1.3 or
@@ -91,7 +91,7 @@ the operand parameters after the assembler template:
                  <span class="roman">[</span> : <var>Clobbers</var> <span class="roman">]</span> <span class="roman">]</span>)
 
 asm <var>asm-qualifiers</var> ( <var>AssemblerTemplate</var> 
-                      : 
+                      : <var>OutputOperands</var>
                       : <var>InputOperands</var>
                       : <var>Clobbers</var>
                       : <var>GotoLabels</var>)
@@ -208,7 +208,7 @@ there is no need for the output variables. Also, the optimizers may move
 code out of loops if they believe that the code will always return the same 
 result (i.e. none of its input values change between calls). Using the 
 <code>volatile</code> qualifier disables these optimizations. <code>asm</code> statements 
-that have no output operands, including <code>asm goto</code> statements, 
+that have no output operands and <code>asm goto</code> statements, 
 are implicitly volatile.
 </p>
 <p>This i386 code demonstrates a case that does not use (or require) the 
@@ -1104,10 +1104,7 @@ case, consider using the <code>__builtin_unreachable</code> intrinsic after the
 <code>asm</code> statement). Optimization of <code>asm goto</code> may be improved by 
 using the <code>hot</code> and <code>cold</code> label attributes (see <a href="Label-Attributes.html#Label-Attributes">Label Attributes</a>).
 </p>
-<p>An <code>asm goto</code> statement cannot have outputs.
-This is due to an internal restriction of 
-the compiler: control transfer instructions cannot have outputs. 
-If the assembler code does modify anything, use the <code>&quot;memory&quot;</code> clobber 
+<p>If the assembler code does modify anything, use the <code>&quot;memory&quot;</code> clobber 
 to force the 
 optimizers to flush all register values to memory and reload them if 
 necessary after the <code>asm</code> statement.
@@ -1115,16 +1112,30 @@ necessary after the <code>asm</code> statement.
 <p>Also note that an <code>asm goto</code> statement is always implicitly
 considered volatile.
 </p>
-<p>To reference a label in the assembler template,
-prefix it with &lsquo;<samp>%l</samp>&rsquo; (lowercase &lsquo;<samp>L</samp>&rsquo;) followed 
-by its (zero-based) position in <var>GotoLabels</var> plus the number of input 
-operands.  For example, if the <code>asm</code> has three inputs and references two 
-labels, refer to the first label as &lsquo;<samp>%l3</samp>&rsquo; and the second as &lsquo;<samp>%l4</samp>&rsquo;).
+<p>Be careful when you set output operands inside <code>asm goto</code> only on
+some possible control flow paths.  If you don&rsquo;t set up the output on
+given path and never use it on this path, it is okay.  Otherwise, you
+should use &lsquo;<samp>+</samp>&rsquo; constraint modifier meaning that the operand is
+input and output one.  With this modifier you will have the correct
+values on all possible paths from the <code>asm goto</code>.
 </p>
-<p>Alternately, you can reference labels using the actual C label name enclosed
-in brackets.  For example, to reference a label named <code>carry</code>, you can
-use &lsquo;<samp>%l[carry]</samp>&rsquo;.  The label must still be listed in the <var>GotoLabels</var>
-section when using this approach.
+<p>To reference a label in the assembler template, prefix it with
+&lsquo;<samp>%l</samp>&rsquo; (lowercase &lsquo;<samp>L</samp>&rsquo;) followed by its (zero-based) position
+in <var>GotoLabels</var> plus the number of input and output operands.
+Output operand with constraint modifier &lsquo;<samp>+</samp>&rsquo; is counted as two
+operands because it is considered as one output and one input operand.
+For example, if the <code>asm</code> has three inputs, one output operand
+with constraint modifier &lsquo;<samp>+</samp>&rsquo; and one output operand with
+constraint modifier &lsquo;<samp>=</samp>&rsquo; and references two labels, refer to the
+first label as &lsquo;<samp>%l6</samp>&rsquo; and the second as &lsquo;<samp>%l7</samp>&rsquo;).
+</p>
+<p>Alternately, you can reference labels using the actual C label name
+enclosed in brackets.  For example, to reference a label named
+<code>carry</code>, you can use &lsquo;<samp>%l[carry]</samp>&rsquo;.  The label must still be
+listed in the <var>GotoLabels</var> section when using this approach.  It
+is better to use the named references for labels as in this case you
+can avoid counting input and output operands and special treatment of
+output operands with constraint modifier &lsquo;<samp>+</samp>&rsquo;.
 </p>
 <p>Here is an example of <code>asm goto</code> for i386:
 </p>
@@ -1157,6 +1168,41 @@ return 1;
   return y;
 error:
   return -1;
+}
+</pre></div>
+
+<p>The following example shows an <code>asm goto</code> that uses an output.
+</p>
+<div class="example">
+<pre class="example">int foo(int count)
+{
+  asm goto (&quot;dec %0; jb %l[stop]&quot;
+            : &quot;+r&quot; (count)
+            :
+            :
+            : stop);
+  return count;
+stop:
+  return 0;
+}
+</pre></div>
+
+<p>The following artificial example shows an <code>asm goto</code> that sets
+up an output only on one path inside the <code>asm goto</code>.  Usage of
+constraint modifier <code>=</code> instead of <code>+</code> would be wrong as
+<code>factor</code> is used on all paths from the <code>asm goto</code>.
+</p>
+<div class="example">
+<pre class="example">int foo(int inp)
+{
+  int factor = 0;
+  asm goto (&quot;cmp %1, 10; jb %l[lab]; mov 2, %0&quot;
+            : &quot;+r&quot; (factor)
+            : &quot;r&quot; (inp)
+            :
+            : lab);
+lab:
+  return inp * factor; /* return 2 * inp or 0 if inp &lt; 10 */
 }
 </pre></div>
 
@@ -1205,6 +1251,9 @@ for the &lsquo;<samp>att</samp>&rsquo; and &lsquo;<samp>intel</samp>&rsquo; dial
 <tr><td><code>%0</code></td><td><code>%eax</code></td><td><code>eax</code></td></tr>
 <tr><td><code>%1</code></td><td><code>$2</code></td><td><code>2</code></td></tr>
 <tr><td><code>%3</code></td><td><code>$.L3</code></td><td><code>OFFSET FLAT:.L3</code></td></tr>
+<tr><td><code>%4</code></td><td><code>$8</code></td><td><code>8</code></td></tr>
+<tr><td><code>%5</code></td><td><code>%xmm0</code></td><td><code>xmm0</code></td></tr>
+<tr><td><code>%7</code></td><td><code>$0</code></td><td><code>0</code></td></tr>
 </table>
 
 <p>The table below shows the list of supported modifiers and their effects.
@@ -1213,27 +1262,43 @@ for the &lsquo;<samp>att</samp>&rsquo; and &lsquo;<samp>intel</samp>&rsquo; dial
 <thead><tr><th>Modifier</th><th>Description</th><th>Operand</th><th>&lsquo;<samp>att</samp>&rsquo;</th><th>&lsquo;<samp>intel</samp>&rsquo;</th></tr></thead>
 <tr><td><code>A</code></td><td>Print an absolute memory reference.</td><td><code>%A0</code></td><td><code>*%rax</code></td><td><code>rax</code></td></tr>
 <tr><td><code>b</code></td><td>Print the QImode name of the register.</td><td><code>%b0</code></td><td><code>%al</code></td><td><code>al</code></td></tr>
+<tr><td><code>B</code></td><td>print the opcode suffix of b.</td><td><code>%B0</code></td><td><code>b</code></td><td></td></tr>
 <tr><td><code>c</code></td><td>Require a constant operand and print the constant expression with no punctuation.</td><td><code>%c1</code></td><td><code>2</code></td><td><code>2</code></td></tr>
+<tr><td><code>d</code></td><td>print duplicated register operand for AVX instruction.</td><td><code>%d5</code></td><td><code>%xmm0, %xmm0</code></td><td><code>xmm0, xmm0</code></td></tr>
 <tr><td><code>E</code></td><td>Print the address in Double Integer (DImode) mode (8 bytes) when the target is 64-bit.
 Otherwise mode is unspecified (VOIDmode).</td><td><code>%E1</code></td><td><code>%(rax)</code></td><td><code>[rax]</code></td></tr>
+<tr><td><code>g</code></td><td>Print the V16SFmode name of the register.</td><td><code>%g0</code></td><td><code>%zmm0</code></td><td><code>zmm0</code></td></tr>
 <tr><td><code>h</code></td><td>Print the QImode name for a &ldquo;high&rdquo; register.</td><td><code>%h0</code></td><td><code>%ah</code></td><td><code>ah</code></td></tr>
 <tr><td><code>H</code></td><td>Add 8 bytes to an offsettable memory reference. Useful when accessing the
 high 8 bytes of SSE values. For a memref in (%rax), it generates</td><td><code>%H0</code></td><td><code>8(%rax)</code></td><td><code>8[rax]</code></td></tr>
 <tr><td><code>k</code></td><td>Print the SImode name of the register.</td><td><code>%k0</code></td><td><code>%eax</code></td><td><code>eax</code></td></tr>
 <tr><td><code>l</code></td><td>Print the label name with no punctuation.</td><td><code>%l3</code></td><td><code>.L3</code></td><td><code>.L3</code></td></tr>
+<tr><td><code>L</code></td><td>print the opcode suffix of l.</td><td><code>%L0</code></td><td><code>l</code></td><td></td></tr>
+<tr><td><code>N</code></td><td>print maskz.</td><td><code>%N7</code></td><td><code>{z}</code></td><td><code>{z}</code></td></tr>
 <tr><td><code>p</code></td><td>Print raw symbol name (without syntax-specific prefixes).</td><td><code>%p2</code></td><td><code>42</code></td><td><code>42</code></td></tr>
 <tr><td><code>P</code></td><td>If used for a function, print the PLT suffix and generate PIC code.
 For example, emit <code>foo@PLT</code> instead of &rsquo;foo&rsquo; for the function
 foo(). If used for a constant, drop all syntax-specific prefixes and
 issue the bare constant. See <code>p</code> above.</td></tr>
 <tr><td><code>q</code></td><td>Print the DImode name of the register.</td><td><code>%q0</code></td><td><code>%rax</code></td><td><code>rax</code></td></tr>
+<tr><td><code>Q</code></td><td>print the opcode suffix of q.</td><td><code>%Q0</code></td><td><code>q</code></td><td></td></tr>
+<tr><td><code>R</code></td><td>print embedded rounding and sae.</td><td><code>%R4</code></td><td><code>{rn-sae}, </code></td><td><code>, {rn-sae}</code></td></tr>
+<tr><td><code>r</code></td><td>print only sae.</td><td><code>%r4</code></td><td><code>{sae}, </code></td><td><code>, {sae}</code></td></tr>
+<tr><td><code>s</code></td><td>print a shift double count, followed by the assemblers argument
+delimiterprint the opcode suffix of s.</td><td><code>%s1</code></td><td><code>$2, </code></td><td><code>2, </code></td></tr>
+<tr><td><code>S</code></td><td>print the opcode suffix of s.</td><td><code>%S0</code></td><td><code>s</code></td><td></td></tr>
+<tr><td><code>t</code></td><td>print the V8SFmode name of the register.</td><td><code>%t5</code></td><td><code>%ymm0</code></td><td><code>ymm0</code></td></tr>
+<tr><td><code>T</code></td><td>print the opcode suffix of t.</td><td><code>%T0</code></td><td><code>t</code></td><td></td></tr>
+<tr><td><code>V</code></td><td>print naked full integer register name without %.</td><td><code>%V0</code></td><td><code>eax</code></td><td><code>eax</code></td></tr>
 <tr><td><code>w</code></td><td>Print the HImode name of the register.</td><td><code>%w0</code></td><td><code>%ax</code></td><td><code>ax</code></td></tr>
+<tr><td><code>W</code></td><td>print the opcode suffix of w.</td><td><code>%W0</code></td><td><code>w</code></td><td></td></tr>
+<tr><td><code>x</code></td><td>print the V4SFmode name of the register.</td><td><code>%x5</code></td><td><code>%xmm0</code></td><td><code>xmm0</code></td></tr>
+<tr><td><code>y</code></td><td>print &quot;st(0)&quot; instead of &quot;st&quot; as a register.</td><td><code>%y6</code></td><td><code>%st(0)</code></td><td><code>st(0)</code></td></tr>
 <tr><td><code>z</code></td><td>Print the opcode suffix for the size of the current integer operand (one of <code>b</code>/<code>w</code>/<code>l</code>/<code>q</code>).</td><td><code>%z0</code></td><td><code>l</code></td><td></td></tr>
+<tr><td><code>Z</code></td><td>Like <code>z</code>, with special suffixes for x87 instructions.</td></tr>
 </table>
 
-<p><code>V</code> is a special modifier which prints the name of the full integer
-register without <code>%</code>.
-</p>
+
 <a name="x86floatingpointasmoperands"></a><a name="x86-Floating_002dPoint-asm-Operands"></a>
 <h4 class="subsubsection">6.47.2.9 x86 Floating-Point <code>asm</code> Operands</h4>
 
@@ -1320,6 +1385,42 @@ for the compiler to know that <code>fyl2xp1</code> pops both inputs.
 <div class="smallexample">
 <pre class="smallexample">asm (&quot;fyl2xp1&quot; : &quot;=t&quot; (result) : &quot;0&quot; (x), &quot;u&quot; (y) : &quot;st(1)&quot;);
 </pre></div>
+
+<a name="msp430Operandmodifiers"></a><a name="MSP430-Operand-Modifiers"></a>
+<h4 class="subsubsection">6.47.2.10 MSP430 Operand Modifiers</h4>
+
+<p>The list below describes the supported modifiers and their effects for MSP430.
+</p>
+<table>
+<thead><tr><th width="10%">Modifier</th><th width="90%">Description</th></tr></thead>
+<tr><td width="10%"><code>A</code></td><td width="90%">Select low 16-bits of the constant/register/memory operand.</td></tr>
+<tr><td width="10%"><code>B</code></td><td width="90%">Select high 16-bits of the constant/register/memory
+operand.</td></tr>
+<tr><td width="10%"><code>C</code></td><td width="90%">Select bits 32-47 of the constant/register/memory operand.</td></tr>
+<tr><td width="10%"><code>D</code></td><td width="90%">Select bits 48-63 of the constant/register/memory operand.</td></tr>
+<tr><td width="10%"><code>H</code></td><td width="90%">Equivalent to <code>B</code> (for backwards compatibility).</td></tr>
+<tr><td width="10%"><code>I</code></td><td width="90%">Print the inverse (logical <code>NOT</code>) of the constant
+value.</td></tr>
+<tr><td width="10%"><code>J</code></td><td width="90%">Print an integer without a <code>#</code> prefix.</td></tr>
+<tr><td width="10%"><code>L</code></td><td width="90%">Equivalent to <code>A</code> (for backwards compatibility).</td></tr>
+<tr><td width="10%"><code>O</code></td><td width="90%">Offset of the current frame from the top of the stack.</td></tr>
+<tr><td width="10%"><code>Q</code></td><td width="90%">Use the <code>A</code> instruction postfix.</td></tr>
+<tr><td width="10%"><code>R</code></td><td width="90%">Inverse of condition code, for unsigned comparisons.</td></tr>
+<tr><td width="10%"><code>W</code></td><td width="90%">Subtract 16 from the constant value.</td></tr>
+<tr><td width="10%"><code>X</code></td><td width="90%">Use the <code>X</code> instruction postfix.</td></tr>
+<tr><td width="10%"><code>Y</code></td><td width="90%">Subtract 4 from the constant value.</td></tr>
+<tr><td width="10%"><code>Z</code></td><td width="90%">Subtract 1 from the constant value.</td></tr>
+<tr><td width="10%"><code>b</code></td><td width="90%">Append <code>.B</code>, <code>.W</code> or <code>.A</code> to the
+instruction, depending on the mode.</td></tr>
+<tr><td width="10%"><code>d</code></td><td width="90%">Offset 1 byte of a memory reference or constant value.</td></tr>
+<tr><td width="10%"><code>e</code></td><td width="90%">Offset 3 bytes of a memory reference or constant value.</td></tr>
+<tr><td width="10%"><code>f</code></td><td width="90%">Offset 5 bytes of a memory reference or constant value.</td></tr>
+<tr><td width="10%"><code>g</code></td><td width="90%">Offset 7 bytes of a memory reference or constant value.</td></tr>
+<tr><td width="10%"><code>p</code></td><td width="90%">Print the value of 2, raised to the power of the given
+constant.  Used to select the specified bit position.</td></tr>
+<tr><td width="10%"><code>r</code></td><td width="90%">Inverse of condition code, for signed comparisons.</td></tr>
+<tr><td width="10%"><code>x</code></td><td width="90%">Equivialent to <code>X</code>, but only for pointers.</td></tr>
+</table>
 
 
 

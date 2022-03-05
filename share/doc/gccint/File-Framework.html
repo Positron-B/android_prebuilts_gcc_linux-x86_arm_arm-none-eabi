@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
-<!-- Copyright (C) 1988-2020 Free Software Foundation, Inc.
+<!-- Copyright (C) 1988-2021 Free Software Foundation, Inc.
 
 Permission is granted to copy, distribute and/or modify this document
 under the terms of the GNU Free Documentation License, Version 1.3 or
@@ -274,48 +274,9 @@ set via <code>__attribute__</code>.
 </p></dd></dl>
 
 <dl>
-<dt><a name="index-TARGET_005fASM_005fRECORD_005fGCC_005fSWITCHES"></a>Target Hook: <em>int</em> <strong>TARGET_ASM_RECORD_GCC_SWITCHES</strong> <em>(print_switch_type <var>type</var>, const char *<var>text</var>)</em></dt>
+<dt><a name="index-TARGET_005fASM_005fRECORD_005fGCC_005fSWITCHES"></a>Target Hook: <em>void</em> <strong>TARGET_ASM_RECORD_GCC_SWITCHES</strong> <em>(const char *<var></var>)</em></dt>
 <dd><p>Provides the target with the ability to record the gcc command line
-switches that have been passed to the compiler, and options that are
-enabled.  The <var>type</var> argument specifies what is being recorded.
-It can take the following values:
-</p>
-<dl compact="compact">
-<dt><code>SWITCH_TYPE_PASSED</code></dt>
-<dd><p><var>text</var> is a command line switch that has been set by the user.
-</p>
-</dd>
-<dt><code>SWITCH_TYPE_ENABLED</code></dt>
-<dd><p><var>text</var> is an option which has been enabled.  This might be as a
-direct result of a command line switch, or because it is enabled by
-default or because it has been enabled as a side effect of a different
-command line switch.  For example, the <samp>-O2</samp> switch enables
-various different individual optimization passes.
-</p>
-</dd>
-<dt><code>SWITCH_TYPE_DESCRIPTIVE</code></dt>
-<dd><p><var>text</var> is either NULL or some descriptive text which should be
-ignored.  If <var>text</var> is NULL then it is being used to warn the
-target hook that either recording is starting or ending.  The first
-time <var>type</var> is SWITCH_TYPE_DESCRIPTIVE and <var>text</var> is NULL, the
-warning is for start up and the second time the warning is for
-wind down.  This feature is to allow the target hook to make any
-necessary preparations before it starts to record switches and to
-perform any necessary tidying up after it has finished recording
-switches.
-</p>
-</dd>
-<dt><code>SWITCH_TYPE_LINE_START</code></dt>
-<dd><p>This option can be ignored by this target hook.
-</p>
-</dd>
-<dt><code>SWITCH_TYPE_LINE_END</code></dt>
-<dd><p>This option can be ignored by this target hook.
-</p></dd>
-</dl>
-
-<p>The hook&rsquo;s return value must be zero.  Other return values may be
-supported in the future.
+switches provided as argument.
 </p>
 <p>By default this hook is set to NULL, but an example implementation is
 provided for ELF based targets.  Called <var>elf_record_gcc_switches</var>,

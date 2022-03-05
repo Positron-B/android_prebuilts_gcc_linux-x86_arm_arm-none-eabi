@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
-<!-- Copyright (C) 1988-2020 Free Software Foundation, Inc.
+<!-- Copyright (C) 1988-2021 Free Software Foundation, Inc.
 
 Permission is granted to copy, distribute and/or modify this document
 under the terms of the GNU Free Documentation License, Version 1.3 or
@@ -90,7 +90,12 @@ do whole-program analysis).
 just emit warnings.
 </p>
 <p>The gimple representation can be seen using <samp>-fdump-ipa-analyzer</samp>.
-</p>
+</p><blockquote>
+<p><b>Tip:</b> If the analyzer ICEs before this is written out, one workaround is to use
+<samp>--param=analyzer-bb-explosion-factor=0</samp> to force the analyzer
+to bail out after analyzing the first basic block.
+</p></blockquote>
+
 <p>First, we build a <code>supergraph</code> which combines the callgraph and all
 of the CFGs into a single directed graph, with both interprocedural and
 intraprocedural edges.  The nodes and edges in the supergraph are called
@@ -298,55 +303,38 @@ the different paths are worth exploringly separately.
 
 <p>Part of the state stored at a <code>exploded_node</code> is a <code>region_model</code>.
 This is an implementation of the region-based ternary model described in
-<a href="http://lcs.ios.ac.cn/~xuzb/canalyze/memmodel.pdf">&quot;A Memory Model for Static Analysis of C Programs&quot;</a>
+<a href="https://www.researchgate.net/publication/221430855_A_Memory_Model_for_Static_Analysis_of_C_Programs">&quot;A Memory Model for Static Analysis of C Programs&quot;</a>
 (Zhongxing Xu, Ted Kremenek, and Jian Zhang).
 </p>
 <p>A <code>region_model</code> encapsulates a representation of the state of
-memory, with a tree of <code>region</code> instances, along with their associated
-values.  The representation is graph-like because values can be pointers
-to regions.  It also stores a constraint_manager, capturing relationships
-between the values.
+memory, with a <code>store</code> recording a binding between <code>region</code>
+instances, to <code>svalue</code> instances.  The bindings are organized into
+clusters, where regions accessible via well-defined pointer arithmetic
+are in the same cluster.  The representation is graph-like because values
+can be pointers to regions.  It also stores a constraint_manager,
+capturing relationships between the values.
 </p>
 <p>Because each node in the <code>exploded_graph</code> has a <code>region_model</code>,
 and each of the latter is graph-like, the <code>exploded_graph</code> is in some
 ways a graph of graphs.
 </p>
-<p>Here&rsquo;s an example of printing a <code>region_model</code>, showing the ASCII-art
-used to visualize the region hierarchy (colorized when printing to stderr):
+<p>Here&rsquo;s an example of printing a <code>program_state</code>, showing the
+<code>region_model</code> within it, along with state for the <code>malloc</code>
+state machine.
 </p>
 <div class="smallexample">
 <pre class="smallexample">(gdb) call debug (*this)
-r0: {kind: 'root', parent: null, sval: null}
-|-stack: r1: {kind: 'stack', parent: r0, sval: sv1}
-|  |: sval: sv1: {poisoned: uninit}
-|  |-frame for 'test': r2: {kind: 'frame', parent: r1, sval: null, map: {'ptr_3': r3}, function: 'test', depth: 0}
-|  |  `-'ptr_3': r3: {kind: 'map', parent: r2, sval: sv3, type: 'void *', map: {}}
-|  |    |: sval: sv3: {type: 'void *', unknown}
-|  |    |: type: 'void *'
-|  `-frame for 'calls_malloc': r4: {kind: 'frame', parent: r1, sval: null, map: {'result_3': r7, '_4': r8, '&lt;anonymous&gt;': r5}, function: 'calls_malloc', depth: 1}
-|    |-'&lt;anonymous&gt;': r5: {kind: 'map', parent: r4, sval: sv4, type: 'void *', map: {}}
-|    |  |: sval: sv4: {type: 'void *', &amp;r6}
-|    |  |: type: 'void *'
-|    |-'result_3': r7: {kind: 'map', parent: r4, sval: sv4, type: 'void *', map: {}}
-|    |  |: sval: sv4: {type: 'void *', &amp;r6}
-|    |  |: type: 'void *'
-|    `-'_4': r8: {kind: 'map', parent: r4, sval: sv4, type: 'void *', map: {}}
-|      |: sval: sv4: {type: 'void *', &amp;r6}
-|      |: type: 'void *'
-`-heap: r9: {kind: 'heap', parent: r0, sval: sv2}
-  |: sval: sv2: {poisoned: uninit}
-  `-r6: {kind: 'symbolic', parent: r9, sval: null, map: {}}
-svalues:
-  sv0: {type: 'size_t', '1024'}
-  sv1: {poisoned: uninit}
-  sv2: {poisoned: uninit}
-  sv3: {type: 'void *', unknown}
-  sv4: {type: 'void *', &amp;r6}
-constraint manager:
+rmodel:
+stack depth: 1
+  frame (index 0): frame: âtestâ@1
+clusters within frame: âtestâ@1
+  cluster for: ptr_3: &amp;HEAP_ALLOCATED_REGION(12)
+m_called_unknown_fn: FALSE
+constraint_manager:
   equiv classes:
-    ec0: {sv0 == '1024'}
-    ec1: {sv4}
   constraints:
+malloc:
+  0x2e89590: &amp;HEAP_ALLOCATED_REGION(12): unchecked ('ptr_3')
 </pre></div>
 
 <p>This is the state at the point of returning from <code>calls_malloc</code> back
@@ -367,13 +355,12 @@ void test (void)
 }
 </pre></div>
 
-<p>The &ldquo;root&rdquo; region (&ldquo;r0&rdquo;) has a &ldquo;stack&rdquo; child (&ldquo;r1&rdquo;), with two
-children: a frame for <code>test</code> (&ldquo;r2&rdquo;), and a frame for
-<code>calls_malloc</code> (&ldquo;r4&rdquo;).  These frame regions have child regions for
-storing their local variables.  For example, the return region
-and that of various other regions within the &ldquo;calls_malloc&rdquo; frame all have
-value &ldquo;sv4&rdquo;, a pointer to a heap-allocated region &ldquo;r6&rdquo;.  Within the parent
-frame, <code>ptr_3</code> has value &ldquo;sv3&rdquo;, an unknown <code>void *</code>.
+<p>Within the store, there is the cluster for <code>ptr_3</code> within the frame
+for <code>test</code>, where the whole cluster is bound to a pointer value,
+pointing at <code>HEAP_ALLOCATED_REGION(12)</code>.  Additionally, this pointer
+has the <code>unchecked</code> state for the <code>malloc</code> state machine
+indicating it hasn&rsquo;t yet been checked against NULL since the allocation
+call.
 </p>
 <a name="Analyzer-Paths"></a>
 <h4 class="subsection">27.1.5 Analyzer Paths</h4>
@@ -389,21 +376,56 @@ isn&rsquo;t just an incidental detail of the analyzer; it&rsquo;s required.
 </li></ul>
 
 <p>Without state-merging, all paths in the exploded graph are feasible
-(in terms of constraints being satisified).
+(in terms of constraints being satisfied).
 With state-merging, paths in the exploded graph can be infeasible.
 </p>
 <p>We collate warnings and only emit them for the simplest path
 e.g. for a bug in a utility function, with lots of routes to calling it,
 we only emit the simplest path (which could be intraprocedural, if
-it can be reproduced without a caller).  We apply a check that
-each duplicate warning&rsquo;s shortest path is feasible, rejecting any
-warnings for which the shortest path is infeasible (which could lead to
-false negatives).
+it can be reproduced without a caller).
 </p>
-<p>We use the shortest feasible <code>exploded_path</code> through the
-<code>exploded_graph</code> (a list of <code>exploded_edge *</code>) to build a
-<code>diagnostic_path</code> (a list of events for the diagnostic subsystem) -
-specifically a <code>checker_path</code>.
+<p>We thus want to find the shortest feasible path through the exploded
+graph from the origin to the exploded node at which the diagnostic was
+saved.  Unfortunately, if we simply find the shortest such path and
+check if it&rsquo;s feasible we might falsely reject the diagnostic, as there
+might be a longer path that is feasible.  Examples include the cases
+where the diagnostic requires us to go at least once around a loop for a
+later condition to be satisfied, or where for a later condition to be
+satisfied we need to enter a suite of code that the simpler path skips.
+</p>
+<p>We attempt to find the shortest feasible path to each diagnostic by
+first constructing a &ldquo;trimmed graph&rdquo; from the exploded graph,
+containing only those nodes and edges from which there are paths to
+the target node, and using Dijkstra&rsquo;s algorithm to order the trimmed
+nodes by minimal distance to the target.
+</p>
+<p>We then use a worklist to iteratively build a &ldquo;feasible graph&rdquo;
+(actually a tree), capturing the pertinent state along each path, in
+which every path to a &ldquo;feasible node&rdquo; is feasible by construction,
+restricting ourselves to the trimmed graph to ensure we stay on target,
+and ordering the worklist so that the first feasible path we find to the
+target node is the shortest possible path.  Hence we start by trying the
+shortest possible path, but if that fails, we explore progressively
+longer paths, eventually trying iterations through loops.  The
+exploration is captured in the feasible_graph, which can be dumped as a
+.dot file via <samp>-fdump-analyzer-feasibility</samp> to visualize the
+exploration.  The indices of the feasible nodes show the order in which
+they were created.  We effectively explore the tree of feasible paths in
+order of shortest path until we either find a feasible path to the
+target node, or hit a limit and give up.
+</p>
+<p>This is something of a brute-force approach, but the trimmed graph
+hopefully keeps the complexity manageable.
+</p>
+<p>This algorithm can be disabled (for debugging purposes) via
+<samp>-fno-analyzer-feasibility</samp>, which simply uses the shortest path,
+and notes if it is infeasible.
+</p>
+<p>The above gives us a shortest feasible <code>exploded_path</code> through the
+<code>exploded_graph</code> (a list of <code>exploded_edge *</code>).  We use this
+<code>exploded_path</code> to build a <code>diagnostic_path</code> (a list of
+<strong>events</strong> for the diagnostic subsystem) - specifically a
+<code>checker_path</code>.
 </p>
 <p>Having built the <code>checker_path</code>, we prune it to try to eliminate
 events that aren&rsquo;t relevant, to minimize how much the user has to read.
@@ -443,20 +465,7 @@ from callee back to caller
 (that values are equal to themselves), which is not the case for NaN.
 As a simple workaround, constraints on floating-point values are
 currently ignored.
-</li><li> The region model code creates lots of little mutable objects at each
-<code>region_model</code> (and thus per <code>exploded_node</code>) rather than
-sharing immutable objects and having the mutable state in the
-<code>program_state</code> or <code>region_model</code>.  The latter approach might be
-more efficient, and might avoid dealing with IDs rather than pointers
-(which requires us to impose an ordering to get meaningful equality).
-</li><li> The region model code doesn&rsquo;t yet support <code>memcpy</code>.  At the
-gimple-ssa level these have been optimized to statements like this:
-<div class="smallexample">
-<pre class="smallexample">_10 = MEM &lt;long unsigned int&gt; [(char * {ref-all})&amp;c]
-MEM &lt;long unsigned int&gt; [(char * {ref-all})&amp;d] = _10;
-</pre></div>
-<p>Perhaps they could be supported via a new <code>compound_svalue</code> type.
-</p></li><li> There are various other limitations in the region model (grep for TODO/xfail
+</li><li> There are various other limitations in the region model (grep for TODO/xfail
 in the testsuite).
 </li><li> The constraint_manager&rsquo;s implementation of transitivity is currently too
 expensive to enable by default and so must be manually enabled via

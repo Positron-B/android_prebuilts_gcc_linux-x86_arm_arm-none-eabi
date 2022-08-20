@@ -1724,12 +1724,13 @@ the imaginary part in the odd lanes.
 a multiply and accumulate of complex numbers.
 </p>
 <div class="smallexample">
-<pre class="smallexample">  complex TYPE c[N];
-  complex TYPE a[N];
-  complex TYPE b[N];
+<pre class="smallexample">  complex TYPE op0[N];
+  complex TYPE op1[N];
+  complex TYPE op2[N];
+  complex TYPE op3[N];
   for (int i = 0; i &lt; N; i += 1)
     {
-      c[i] += a[i] * b[i];
+      op0[i] = op1[i] * op2[i] + op3[i];
     }
 </pre></div>
 
@@ -1748,12 +1749,13 @@ the same as a multiply and accumulate of complex numbers where the second
 multiply arguments is conjugated.
 </p>
 <div class="smallexample">
-<pre class="smallexample">  complex TYPE c[N];
-  complex TYPE a[N];
-  complex TYPE b[N];
+<pre class="smallexample">  complex TYPE op0[N];
+  complex TYPE op1[N];
+  complex TYPE op2[N];
+  complex TYPE op3[N];
   for (int i = 0; i &lt; N; i += 1)
     {
-      c[i] += a[i] * conj (b[i]);
+      op0[i] = op1[i] * conj (op2[i]) + op3[i];
     }
 </pre></div>
 
@@ -1771,12 +1773,13 @@ the imaginary part in the odd lanes.
 a multiply and subtract of complex numbers.
 </p>
 <div class="smallexample">
-<pre class="smallexample">  complex TYPE c[N];
-  complex TYPE a[N];
-  complex TYPE b[N];
+<pre class="smallexample">  complex TYPE op0[N];
+  complex TYPE op1[N];
+  complex TYPE op2[N];
+  complex TYPE op3[N];
   for (int i = 0; i &lt; N; i += 1)
     {
-      c[i] -= a[i] * b[i];
+      op0[i] = op1[i] * op2[i] - op3[i];
     }
 </pre></div>
 
@@ -1795,12 +1798,13 @@ the same as a multiply and subtract of complex numbers where the second
 multiply arguments is conjugated.
 </p>
 <div class="smallexample">
-<pre class="smallexample">  complex TYPE c[N];
-  complex TYPE a[N];
-  complex TYPE b[N];
+<pre class="smallexample">  complex TYPE op0[N];
+  complex TYPE op1[N];
+  complex TYPE op2[N];
+  complex TYPE op3[N];
   for (int i = 0; i &lt; N; i += 1)
     {
-      c[i] -= a[i] * conj (b[i]);
+      op0[i] = op1[i] * conj (op2[i]) - op3[i];
     }
 </pre></div>
 
@@ -1818,12 +1822,12 @@ the imaginary part in the odd lanes.
 complex numbers.
 </p>
 <div class="smallexample">
-<pre class="smallexample">  complex TYPE c[N];
-  complex TYPE a[N];
-  complex TYPE b[N];
+<pre class="smallexample">  complex TYPE op0[N];
+  complex TYPE op1[N];
+  complex TYPE op2[N];
   for (int i = 0; i &lt; N; i += 1)
     {
-      c[i] = a[i] * b[i];
+      op0[i] = op1[i] * op2[i];
     }
 </pre></div>
 
@@ -1841,12 +1845,12 @@ the imaginary part in the odd lanes.
 multiply of complex numbers where the second multiply arguments is conjugated.
 </p>
 <div class="smallexample">
-<pre class="smallexample">  complex TYPE c[N];
-  complex TYPE a[N];
-  complex TYPE b[N];
+<pre class="smallexample">  complex TYPE op0[N];
+  complex TYPE op1[N];
+  complex TYPE op2[N];
   for (int i = 0; i &lt; N; i += 1)
     {
-      c[i] = a[i] * conj (b[i]);
+      op0[i] = op1[i] * conj (op2[i]);
     }
 </pre></div>
 
